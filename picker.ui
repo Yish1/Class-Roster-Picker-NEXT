@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>702</width>
+    <width>703</width>
     <height>406</height>
    </rect>
   </property>
@@ -27,7 +27,7 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgba(42, 45, 47, 0.83);
+    <string notr="true">background-color: rgba(42, 45, 47, 0.81);
 border-top-left-radius :28px;
 border-bottom-left-radius :28px;
 border-top-right-radius :28px;
@@ -47,7 +47,7 @@ border-bottom-right-radius :28px;</string>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">border-image: url(:/images/bg.webp);
+    <string notr="true">border-image: url(:/images/(1070).webp);
 border-top-left-radius :28px;
 border-bottom-left-radius :28px;
 border-top-right-radius :28px;
@@ -422,9 +422,9 @@ QPushButton:hover{
    </property>
    <property name="styleSheet">
     <string notr="true"> QProgressBar {
-        border: 2px solid #2196F3;
-        border-radius: 1px;
-        background-color: #E0E0E0;
+        border: 2px solid rgba(88, 88, 88, 0.81);
+        border-radius: 2px;
+        background-color: rgba(0, 0, 0, 0);
     }
 
     QProgressBar::chunk {

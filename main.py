@@ -20,6 +20,7 @@ from datetime import datetime, timedelta
 from ui import Ui_Form  # 导入ui文件
 from Crypto.Cipher import ARC4
 import webbrowser as web
+from runsmallwindow import run_small_window
 
 dmversion = 6.0
 
@@ -54,13 +55,20 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         self.progressBar.hide()
 
         self.pushButton_2.clicked.connect(self.start)
-        self.pushButton_5.clicked.connect(lambda: print("小窗模式"))
+        self.pushButton_5.clicked.connect(self.small_mode)
+        self.small_window_flag = None
+
         # 将窗口移动到屏幕中央
         # self.center()
         self.cs_sha256()
         self.read_name_list()
 
         self.timer = None
+
+    def small_mode(self):
+        # 保留对子窗口实例的引用
+        if self.small_window_flag is None:
+            self.small_window_flag = run_small_window(name_list)
 
     def closeEvent(self, event):
         # 关闭其他窗口的代码
@@ -334,6 +342,8 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                          for line in f.readlines() if line.strip()]
 
         print("\n", name_list)
+        run_small_window(name_list,1)
+        self.small_window_flag = None
         mdcd = len(name_list)
         print("读取到的有效名单长度:", mdcd)
 
@@ -451,9 +461,9 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         global mrunning
         mrunning = True
         self.progressBar.setStyleSheet(" QProgressBar {\n"
-        "        border: 2px solid #2196F3;\n"
-        "        border-radius: 1px;\n"
-        "        background-color: #E0E0E0;\n"
+        "        border: 2px solid rgba(88, 88, 88, 0.81);\n"
+        "        border-radius: 2px;\n"
+        "        background-color: rgba(0, 0, 0, 0);\n"
         "    }\n"
         "\n"
         "    QProgressBar::chunk {\n"
@@ -473,9 +483,9 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             self.progressBar.hide()
             self.ptimer.stop()  # 停止定时器
             self.progressBar.setStyleSheet(" QProgressBar {\n"
-            "        border: 2px solid #2196F3;\n"
-            "        border-radius: 1px;\n"
-            "        background-color: #E0E0E0;\n"
+            "        border: 2px solid rgba(88, 88, 88, 0.81);\n"
+            "        border-radius: 2px;\n"
+            "        background-color: rgba(0, 0, 0, 0);\n"
             "    }\n"
             "\n"
             "    QProgressBar::chunk {\n"
@@ -509,7 +519,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                                             "}\n"
                                             "QPushButton{background:rgba(118, 218, 96, 1);border-radius:5px;}QPushButton:hover{background:rgba(80, 182, 84, 1);}")
             self.pushButton_5.clicked.disconnect()
-            self.pushButton_5.clicked.connect(lambda: print("小窗模式1"))
+            self.pushButton_5.clicked.connect(self.small_mode)
             self.pushButton_5.setStyleSheet(
                 "QPushButton{background:rgba(237, 237, 237, 1);border-radius:5px;}QPushButton:hover{background:rgba(210, 210, 210, 0.6);}")
 
@@ -557,10 +567,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         global name
         if len(name_list) == 0:
             self.init_name(self.make_name_list())
-            reply = QtWidgets.QMessageBox.warning(
-                self, "警告",
-                "名单文件为空，请输入名字（一行一个）后再重新打开本软件", QtWidgets.QMessageBox.Yes
-            )
+            self.show_message("名单文件为空，请输入名字（一行一个）后再重新打开本软件！", "警告")
             sys.exit()
         name = random.choice(name_list)
         self.label_3.setText(name)
@@ -673,10 +680,10 @@ if __name__ == "__main__":
     if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
         QtWidgets.QApplication.setAttribute(
             QtCore.Qt.AA_UseHighDpiPixmaps, True)
-    app = QtWidgets.QApplication(sys.argv)
-    available_styles = QtWidgets.QStyleFactory.keys()
-    # print(available_styles)
+    # available_styles = QtWidgets.QStyleFactory.keys()
+    # # print(available_styles)
     # QApplication.setStyle('windows')
+    app = QtWidgets.QApplication(sys.argv)
     mainWindow = DraggableWindow()
     mainWindow.show()
     sys.exit(app.exec_())

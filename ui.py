@@ -14,13 +14,13 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(702, 406)
+        Form.resize(703, 406)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/picker.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Form.setWindowIcon(icon)
         self.label = QtWidgets.QLabel(Form)
         self.label.setGeometry(QtCore.QRect(10, 10, 681, 391))
-        self.label.setStyleSheet("background-color: rgba(42, 45, 47, 0.83);\n"
+        self.label.setStyleSheet("background-color: rgba(42, 45, 47, 0.81);\n"
 "border-top-left-radius :28px;\n"
 "border-bottom-left-radius :28px;\n"
 "border-top-right-radius :28px;\n"
@@ -29,7 +29,7 @@ class Ui_Form(object):
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(Form)
         self.label_2.setGeometry(QtCore.QRect(10, 10, 681, 391))
-        self.label_2.setStyleSheet("border-image: url(:/images/bg.webp);\n"
+        self.label_2.setStyleSheet("border-image: url(:/images/(1070).webp);\n"
 "border-top-left-radius :28px;\n"
 "border-bottom-left-radius :28px;\n"
 "border-top-right-radius :28px;\n"
@@ -245,9 +245,9 @@ class Ui_Form(object):
         self.progressBar = QtWidgets.QProgressBar(Form)
         self.progressBar.setGeometry(QtCore.QRect(90, 30, 491, 21))
         self.progressBar.setStyleSheet(" QProgressBar {\n"
-"        border: 2px solid #2196F3;\n"
-"        border-radius: 1px;\n"
-"        background-color: #E0E0E0;\n"
+"        border: 2px solid rgba(88, 88, 88, 0.81);\n"
+"        border-radius: 2px;\n"
+"        background-color: rgba(0, 0, 0, 0);\n"
 "    }\n"
 "\n"
 "    QProgressBar::chunk {\n"
@@ -311,5 +311,5 @@ class Ui_Form(object):
         self.comboBox.setCurrentIndex(-1)
         self.pushButton_3.clicked.connect(Form.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Form)
-
+        
 import res
