@@ -225,6 +225,8 @@ class Ui_Form(object):
         self.spinBox.setStyleSheet("* {\n"
 "    font-size: 15px;\n"
 "}")
+        self.spinBox.setMinimum(1)
+        self.spinBox.setMaximum(999999)
         self.spinBox.setObjectName("spinBox")
         self.verticalLayout.addWidget(self.spinBox)
         self.pushButton_4 = QtWidgets.QPushButton(Form)
@@ -311,5 +313,5 @@ class Ui_Form(object):
         self.comboBox.setCurrentIndex(-1)
         self.pushButton_3.clicked.connect(Form.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Form)
-        
+
 import res

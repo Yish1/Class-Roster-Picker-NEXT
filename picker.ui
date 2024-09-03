@@ -375,6 +375,12 @@ QComboBox QAbstractItemView {
     font-size: 15px;
 }</string>
       </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>999999</number>
+      </property>
      </widget>
     </item>
    </layout>
