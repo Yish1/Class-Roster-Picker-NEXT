@@ -9,7 +9,7 @@ import hashlib
 import gettext
 import glob
 import ctypes
-# import ptvsd  # QThread断点工具
+import ptvsd  # QThread断点工具
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QIcon, QPixmap
@@ -62,8 +62,8 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
 
         # 将窗口移动到屏幕中央
         # self.center()
-        self.cs_sha256()
         self.read_name_list()
+        self.cs_sha256()
 
         self.timer = None
 
@@ -128,6 +128,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         folder_name = "name"
         os.makedirs("name", exist_ok=True)
         if not os.path.exists(folder_name) or not os.listdir(folder_name):
+            self.init_name(self.make_name_list())
             print("first_run")
         txt_name = [filename for filename in os.listdir(
             folder_name) if filename.endswith(".txt")]
@@ -418,7 +419,6 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             self.thread.signals.update_pushbotton.connect(
                 self.update_pushbotton)
             self.thread.signals.update_list.connect(self.update_list)
-            self.thread.signals.init_tts.connect(self.init_tts)
             self.thread.signals.enable_button.connect(self.enable_button)
             self.thread.signals.qtimer.connect(self.qtimer)
             self.thread.signals.finished.connect(lambda: print("结束点名"))
@@ -547,7 +547,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                                             "QPushButton{background:rgba(237, 237, 237, 1);border-radius:5px;}QPushButton:hover{background:rgba(80, 182, 84, 1);}")
             self.pushButton_5.clicked.disconnect()
             self.pushButton_5.clicked.connect(self.start)
-        
+
         elif value == 3:
             self.pushButton_5.setEnabled(False)
 
@@ -560,9 +560,6 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             self.listWidget.setCurrentRow(self.listWidget.count() - 1)
         elif mode == 0:
             self.label_3.setText(value)
-
-    def init_tts(self):
-        self.ttsinitialize()
 
     def qtimer(self, start, time=None):
         if start == 1:
@@ -603,7 +600,6 @@ class WorkerSignals(QObject):
     update_pushbotton = pyqtSignal(str)
     enable_button = pyqtSignal(int)
     finished = pyqtSignal()
-    init_tts = pyqtSignal()
     qtimer = pyqtSignal(int, int)
 
 
@@ -616,7 +612,7 @@ class WorkerThread(QRunnable):
 
     def run(self):
         global running
-        # ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        ptvsd.debug_this_thread()  # 在此线程启动断点调试
 
         def ttsread(text):
             self.signals.enable_button.emit(3)
@@ -650,7 +646,6 @@ class WorkerThread(QRunnable):
                 pygame.mixer.music.fadeout(800)
             except pygame.error as e:
                 print(f"停止音乐播放时发生错误：{str(e)}")
-            self.signals.init_tts.emit()
             if self.allownametts == 1:
                 ttsread(text="恭喜 %s" % name)
             elif self.allownametts == 2:
