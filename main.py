@@ -657,7 +657,7 @@ class WorkerThread(QRunnable):
 
         else:  # 开始按钮
             running = True
-            self.signals.qtimer.emit(1, 30)
+            self.signals.qtimer.emit(1, 50)
             print("开始点名")
             self.signals.show_progress.emit(1, 0, 0)
             self.signals.update_pushbotton.emit(" 结束")
@@ -767,7 +767,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
         self.label_2.setText(name)
 
     def get_name_list(self):
-            self.qtimer(1, 30)
+            self.qtimer(1, 50)
 
     def closeEvent(self, event):
         print("子窗口被关闭")
