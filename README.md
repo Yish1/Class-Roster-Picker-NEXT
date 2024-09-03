@@ -8,7 +8,8 @@
 
 </div>
 
-> [!WARNING]  
+> [!WARNING]
+> 此项目仍在开发中，请移步至 https://github.com/Yish1/Class-Roster-Picker  
 > 更新时请备份名单，然后卸载旧版本重新安装，否则可能出现错误
 > 
 
