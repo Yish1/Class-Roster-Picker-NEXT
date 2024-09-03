@@ -547,6 +547,12 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                                             "QPushButton{background:rgba(237, 237, 237, 1);border-radius:5px;}QPushButton:hover{background:rgba(80, 182, 84, 1);}")
             self.pushButton_5.clicked.disconnect()
             self.pushButton_5.clicked.connect(self.start)
+        
+        elif value == 3:
+            self.pushButton_5.setEnabled(False)
+
+        elif value == 4:
+            self.pushButton_5.setEnabled(True)
 
     def update_list(self, mode, value):
         if mode == 1:
@@ -613,8 +619,10 @@ class WorkerThread(QRunnable):
         # ptvsd.debug_this_thread()  # 在此线程启动断点调试
 
         def ttsread(text):
+            self.signals.enable_button.emit(3)
             speaker = win32com.client.Dispatch("SAPI.SpVoice")
             speaker.Speak(text)
+            self.signals.enable_button.emit(4)
 
         def stop():
             self.signals.update_list.emit(1, name)
@@ -679,7 +687,7 @@ class WorkerThread(QRunnable):
             except pygame.error as e:
                 print("无法播放音乐文件：%s，错误信息：{str(e)}") % file_path
 
-class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):
+class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
     def __init__(self,main_instance = None):
         super().__init__()
         self.setupUi(self)  # 初始化UI
