@@ -18,9 +18,9 @@ from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QComboBox, QPush
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from datetime import datetime, timedelta
 from ui import Ui_Form  # 导入ui文件
+from smallwindow import Ui_smallwindow
 from Crypto.Cipher import ARC4
 import webbrowser as web
-from runsmallwindow import run_small_window
 
 dmversion = 6.0
 
@@ -29,6 +29,8 @@ allownametts = None
 mrunning = False
 running = False
 default_name_list = "默认名单"
+name_list = ""
+small_window_flag = 0
 mdcd = 0
 pygame.init()
 pygame.mixer.init()
@@ -56,7 +58,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
 
         self.pushButton_2.clicked.connect(self.start)
         self.pushButton_5.clicked.connect(self.small_mode)
-        self.small_window_flag = None
+        self.pushButton.clicked.connect(lambda:self.mini(1))
 
         # 将窗口移动到屏幕中央
         # self.center()
@@ -66,9 +68,12 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         self.timer = None
 
     def small_mode(self):
+        global small_window_flag
         # 保留对子窗口实例的引用
-        if self.small_window_flag is None:
-            self.small_window_flag = run_small_window(name_list)
+        a = smallWindow(mainWindow)
+        if small_window_flag == 0:
+            self.showMinimized()
+            small_window_flag = a.run_small_window()
 
     def closeEvent(self, event):
         # 关闭其他窗口的代码
@@ -100,6 +105,11 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         self.m_flag = False
         self.setCursor(QCursor(Qt.ArrowCursor))
 
+    def mini(self,mode):
+        if mode == 1:
+            self.showMinimized()
+        elif mode == 2:
+            self.showNormal() 
     # 功能实现代码
     def make_name_list(self):
         for i in range(1, 21):
@@ -342,8 +352,6 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                          for line in f.readlines() if line.strip()]
 
         print("\n", name_list)
-        run_small_window(name_list,1)
-        self.small_window_flag = None
         mdcd = len(name_list)
         print("读取到的有效名单长度:", mdcd)
 
@@ -646,7 +654,7 @@ class WorkerThread(QRunnable):
 
         else:  # 开始按钮
             running = True
-            self.signals.qtimer.emit(1, 15)
+            self.signals.qtimer.emit(1, 30)
             print("开始点名")
             self.signals.show_progress.emit(1, 0, 0)
             self.signals.update_pushbotton.emit(" 结束")
@@ -671,7 +679,111 @@ class WorkerThread(QRunnable):
             except pygame.error as e:
                 print("无法播放音乐文件：%s，错误信息：{str(e)}") % file_path
 
+class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):
+    def __init__(self,main_instance = None):
+        super().__init__()
+        self.setupUi(self)  # 初始化UI
+        self.setMinimumSize(QtCore.QSize(322, 191))
+        # 设置半透明背景
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.m_flag = False
+        self.label_2.setText("开始")
+        self.m_moved = False  # 用于检测是否移动
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
 
+        self.timer = None
+        self.runflag = None
+        self.main_instance = main_instance
+
+    def closeEvent(self, event):
+        # 关闭其他窗口的代码
+        for widget in QApplication.topLevelWidgets():
+            if isinstance(widget, QWidget) and widget != self:
+                widget.close()
+        event.accept()
+
+    def center(self):
+        screen = QtWidgets.QDesktopWidget().screenGeometry()
+        size = self.geometry()
+        self.move(int((screen.width() - size.width()) / 1.75),
+                  int((screen.height() - size.height()) / 0.4))
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.m_flag = True
+            self.m_moved = False  # 重置移动标志
+            self.m_Position = event.globalPos() - self.pos()  # 获取鼠标相对窗口的位置
+            event.accept()
+            self.setCursor(QCursor(Qt.OpenHandCursor))  # 更改鼠标图标
+
+    def mouseMoveEvent(self, event):
+        if Qt.LeftButton and self.m_flag:
+            self.setWindowState(Qt.WindowNoState)
+            self.move(event.globalPos() - self.m_Position)  # 更改窗口位置
+            self.m_moved = True  # 标记为移动过
+            event.accept()
+
+    def mouseReleaseEvent(self, event):
+        if self.m_flag and not self.m_moved:
+            if self.runflag == True:
+                self.qtimer(0)
+                today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                try:
+                    print(
+                        today,
+                        "沉梦课堂点名器%s" % dmversion,
+                        "幸运儿是： %s " % name,
+                        file=open("点名器中奖名单.txt", "a"),
+                    )
+                except:
+                    print("无法写入历史记录")
+                print(today, "幸运儿是： %s " % name)
+            else:
+                self.get_name_list()# 只有未移动时才输出消息
+            
+        self.m_flag = False
+        self.setCursor(QCursor(Qt.ArrowCursor))
+    def qtimer(self,start, time=None):
+        if start == 1:
+            self.timer = QTimer()
+            self.timer.start(time)
+            self.timer.timeout.connect(self.setname)
+            self.runflag = True
+
+        elif start == 0:
+            try:
+                self.timer.stop()
+                self.runflag = False
+                self.main_instance.update_list(1,"小窗：%s"%name)
+            except Exception as e:
+                print(f"无法停止计时器:{e}")
+
+    def setname(self):
+        global name
+        name = random.choice(name_list)
+        self.label_2.setText(name)
+
+    def get_name_list(self):
+            self.qtimer(1, 30)
+
+    def closeEvent(self, event):
+        print("子窗口被关闭")
+        self.main_instance.mini(2)
+        global small_window_flag
+        small_window_flag = 0
+        event.accept()  # 确保仅关闭子窗口，不影响主窗口
+
+    def close_window(self):
+        self.close() 
+
+    def run_small_window(mode = None):
+        small_Window = smallWindow(mainWindow)
+        if mode == 1:
+            small_Window.close_window()
+        else:
+            small_Window.show()
+            return small_Window
+    
 if __name__ == "__main__":
     if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
         QtWidgets.QApplication.setAttribute(
@@ -680,10 +792,8 @@ if __name__ == "__main__":
     if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
         QtWidgets.QApplication.setAttribute(
             QtCore.Qt.AA_UseHighDpiPixmaps, True)
-    # available_styles = QtWidgets.QStyleFactory.keys()
-    # # print(available_styles)
-    # QApplication.setStyle('windows')
     app = QtWidgets.QApplication(sys.argv)
     mainWindow = DraggableWindow()
     mainWindow.show()
+    small_window = smallWindow(mainWindow)#小窗类继承主窗口函数
     sys.exit(app.exec_())
