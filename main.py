@@ -14,11 +14,12 @@ import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QIcon, QPixmap
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QComboBox, QPushButton, QDesktopWidget, QMessageBox, QListView, QMainWindow, QGridLayout, QInputDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from datetime import datetime, timedelta
 from ui import Ui_Form  # 导入ui文件
 from smallwindow import Ui_smallwindow
+from settings import Ui_settings
 from Crypto.Cipher import ARC4
 import webbrowser as web
 
@@ -31,6 +32,7 @@ running = False
 default_name_list = "默认名单"
 name_list = ""
 small_window_flag = 0
+settings_flag = 0
 mdcd = 0
 pygame.init()
 pygame.mixer.init()
@@ -57,11 +59,10 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         self.progressBar.hide()
 
         self.pushButton_2.clicked.connect(self.start)
+        self.pushButton_4.clicked.connect(self.run_settings)
         self.pushButton_5.clicked.connect(self.small_mode)
         self.pushButton.clicked.connect(lambda:self.mini(1))
 
-        # 将窗口移动到屏幕中央
-        # self.center()
         self.read_name_list()
         self.cs_sha256()
 
@@ -70,10 +71,14 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
     def small_mode(self):
         global small_window_flag
         # 保留对子窗口实例的引用
-        a = smallWindow(mainWindow)
         if small_window_flag == 0:
             self.showMinimized()
-            small_window_flag = a.run_small_window()
+            small_window_flag = smallWindow(mainWindow).run_small_window()
+
+    def run_settings(self):
+        global settings_flag
+        if settings_flag == 0:
+            settings_flag = settingsWindow(mainWindow).run_settings_window()        
 
     def closeEvent(self, event):
         # 关闭其他窗口的代码
@@ -81,12 +86,6 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             if isinstance(widget, QWidget) and widget != self:
                 widget.close()
         event.accept()
-
-    def center(self):
-        screen = QtWidgets.QDesktopWidget().screenGeometry()
-        size = self.geometry()
-        self.move(int((screen.width() - size.width()) / 1.75),
-                  int((screen.height() - size.height()) / 0.4))
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -686,6 +685,8 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
     def __init__(self,main_instance = None):
         super().__init__()
         self.setupUi(self)  # 初始化UI
+        self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
+
         self.setMinimumSize(QtCore.QSize(322, 191))
         # 设置半透明背景
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -693,23 +694,11 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
         self.label_2.setText("开始")
         self.m_moved = False  # 用于检测是否移动
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
-
+        self.setWindowTitle(QCoreApplication.translate(
+            "MainWindow", "点名器小窗模式"))
         self.timer = None
         self.runflag = None
         self.main_instance = main_instance
-
-    def closeEvent(self, event):
-        # 关闭其他窗口的代码
-        for widget in QApplication.topLevelWidgets():
-            if isinstance(widget, QWidget) and widget != self:
-                widget.close()
-        event.accept()
-
-    def center(self):
-        screen = QtWidgets.QDesktopWidget().screenGeometry()
-        size = self.geometry()
-        self.move(int((screen.width() - size.width()) / 1.75),
-                  int((screen.height() - size.height()) / 0.4))
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -786,7 +775,51 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
         else:
             small_Window.show()
             return small_Window
-    
+
+
+class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
+    def __init__(self, main_instance=None):
+        super().__init__()
+        central_widget = QtWidgets.QWidget(self)  # 创建一个中央小部件
+        self.setCentralWidget(central_widget)  # 设置中央小部件为QMainWindow的中心区域
+        self.setupUi(central_widget)  # 初始化UI到中央小部件上
+        self.setFixedSize(307, 363)
+        self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
+        self.groupBox_2.setTitle("名单设置")
+        self.pushButton_5.setText("编辑所选名单")
+        self.pushButton_4.setText("删除所选名单")
+        self.pushButton_3.setText("新建名单")
+        self.pushButton_2.setText("保存")
+        self.pushButton.setText("取消")
+        self.groupBox.setTitle("功能设置")
+        self.checkBox.setText("背景音乐")
+        self.checkBox_2.setText("语音播报")
+        self.radioButton.setText("正常模式")
+        self.radioButton_2.setText("听写模式(不说\"恭喜\")")
+        self.checkBox_3.setText("检查更新")
+        self.setWindowTitle(QCoreApplication.translate(
+            "MainWindow", "课堂点名器设置"))
+        self.main_instance = main_instance
+
+
+    def closeEvent(self, event):
+        print("设置被关闭")
+        self.main_instance.mini(2)
+        global settings_flag
+        settings_flag = 0
+        event.accept()  # 确保仅关闭子窗口，不影响主窗口
+
+    def close_window(self):
+        self.close() 
+
+    def run_settings_window(mode = None):
+        settings_window = settingsWindow(mainWindow)
+        if mode == 1:
+            settings_window.close_window()
+        else:
+            settings_window.show()
+            return settings_window
+
 if __name__ == "__main__":
     if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
         QtWidgets.QApplication.setAttribute(
@@ -798,5 +831,4 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     mainWindow = DraggableWindow()
     mainWindow.show()
-    small_window = smallWindow(mainWindow)#小窗类继承主窗口函数
     sys.exit(app.exec_())
