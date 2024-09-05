@@ -9,7 +9,7 @@ import hashlib
 import gettext
 import glob
 import ctypes
-# import ptvsd  # QThread断点工具
+import ptvsd  # QThread断点工具
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QIcon, QPixmap
@@ -31,8 +31,8 @@ mrunning = False
 running = False
 default_name_list = "默认名单"
 name_list = ""
-small_window_flag = 0
-settings_flag = 0
+small_window_flag = None
+settings_flag = None
 namelen = 0
 pygame.init()
 pygame.mixer.init()
@@ -52,7 +52,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             "MainWindow", "沉梦课堂点名器 6.0"))
         self.pushButton_2.setText(" 开始")
         self.pushButton_5.setText(" 小窗模式")
-        self.label_3.setText("辛运儿是:")
+        self.label_3.setText("幸运儿是:")
         self.spinBox.setValue(1)
         self.label_5.setText("当前名单：")
         self.label_4.setText("抽取人数：")
@@ -71,14 +71,16 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
     def small_mode(self):
         global small_window_flag
         # 保留对子窗口实例的引用
-        if small_window_flag == 0:
+        if small_window_flag is None:
             self.showMinimized()
-            small_window_flag = smallWindow(mainWindow).run_small_window()
+            small_Window = smallWindow(mainWindow)
+            small_window_flag = small_Window.run_small_window()
 
     def run_settings(self):
         global settings_flag
-        if settings_flag == 0:
-            settings_flag = settingsWindow(mainWindow).run_settings_window()        
+        if settings_flag is None:
+            settings_window = settingsWindow(mainWindow)
+            settings_flag = settings_window.run_settings_window()
 
     def closeEvent(self, event):
         # 关闭其他窗口的代码
@@ -626,7 +628,7 @@ class WorkerThread(QRunnable):
 
     def run(self):
         global running
-        # ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        ptvsd.debug_this_thread()  # 在此线程启动断点调试
 
         def ttsread(text):
             self.signals.enable_button.emit(3)
@@ -646,18 +648,22 @@ class WorkerThread(QRunnable):
             self.signals.show_progress.emit(0, 0, 100)
             running = False
             today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            try:
-                print(
-                    today,
-                    "沉梦课堂点名器%s" % dmversion,
-                    "幸运儿是： %s " % name,
-                    file=open("点名器中奖名单.txt", "a"),
-                )
-            except:
-                print("无法写入历史记录")
-            print(today, "幸运儿是： %s " % name)
+            if name != "":
+                try:
+                    print(
+                        today,
+                        "沉梦课堂点名器%s" % dmversion,
+                        "幸运儿是： %s " % name,
+                        file=open("点名器中奖名单.txt", "a"),
+                    )
+                except:
+                    print("无法写入历史记录")
+                print(today, "幸运儿是： %s " % name)
+            else:
+                print("名单为空!")
             try:
                 pygame.mixer.music.fadeout(800)
+                pygame.mixer.music.unload()
             except pygame.error as e:
                 print(f"停止音乐播放时发生错误：{str(e)}")
             if self.allownametts == 1:
@@ -690,9 +696,9 @@ class WorkerThread(QRunnable):
             # 生成完整的文件路径
             file_path = os.path.join(folder_path, random_file)
             try:
-                print("播放音乐：%s") % file_path
+                print("播放音乐：%s" % file_path)
                 pygame.mixer.music.load(file_path)
-                pygame.mixer.music.play()
+                pygame.mixer.music.play(1)
             except pygame.error as e:
                 print("无法播放音乐文件：%s，错误信息：{str(e)}") % file_path
 
@@ -761,32 +767,40 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
             try:
                 self.timer.stop()
                 self.runflag = False
-                self.main_instance.update_list(1,"小窗：%s"%name)
+                if name != "":
+                    self.main_instance.update_list(1,"小窗：%s"%name)
+                else:
+                    pass
             except Exception as e:
                 print(f"无法停止计时器:{e}")
 
     def setname(self):
         global name
-        name = random.choice(name_list)
-        self.label_2.setText(name)
+        if name_list == []:
+            name = ""
+            self.label_2.setText("名单为空!")
+            self.main_instance.mini(2)
+            self.qtimer(0)
+        else:
+            name = random.choice(name_list)
+            self.label_2.setText(name)
 
     def get_name_list(self):
             self.qtimer(1, 50)
 
     def closeEvent(self, event):
-        print("子窗口被关闭")
+        print("小窗被关闭")
         self.main_instance.mini(2)
         global small_window_flag
-        small_window_flag = 0
+        small_window_flag = None
         event.accept()  # 确保仅关闭子窗口，不影响主窗口
 
     def close_window(self):
         self.close() 
 
-    def run_small_window(mode = None):
-        small_Window = smallWindow(mainWindow)
-        small_Window.show()
-        return small_Window
+    def run_small_window(self):
+        self.show()
+        return self
 
 
 class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
@@ -795,13 +809,17 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         central_widget = QtWidgets.QWidget(self)  # 创建一个中央小部件
         self.setCentralWidget(central_widget)  # 设置中央小部件为QMainWindow的中心区域
         self.setupUi(central_widget)  # 初始化UI到中央小部件上
-        self.setFixedSize(307, 363)
+        self.setFixedSize(307, 419)
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
         self.groupBox_2.setTitle("名单设置")
         self.pushButton_5.setText("编辑所选名单")
         self.pushButton_4.setText("删除所选名单")
         self.pushButton_3.setText("新建名单")
         self.pushButton_2.setText("保存")
+        self.checkBox_4.setText("背景图片")
+        self.radioButton_3.setText("预设1")
+        self.radioButton_4.setText("预设2")
+        self.radioButton_5.setText("无")
         self.pushButton.setText("取消")
         self.groupBox.setTitle("功能设置")
         self.checkBox.setText("背景音乐")
@@ -815,6 +833,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.read_name_list()
 
         self.window = QWidget()
+        self.window.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
         self.pushButton_3.clicked.connect(self.add_new_list)
         self.pushButton_4.clicked.connect(self.delete_list)
         self.pushButton_5.clicked.connect(self.edit_list)
@@ -832,7 +851,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         return txt_files_name
     def add_new_list(self):
         newfilename, ok_pressed = QInputDialog.getText(
-            self.window, "新增名单", "请输入名单名称:(文件名即可，无需输入.txt)")
+            self.window, "新增名单", "请输入名单名称:")
         if ok_pressed and newfilename:
             print("新增名单名称是: %s" % newfilename)
             newnamepath = os.path.join(
@@ -852,7 +871,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
 
     def delete_list(self):
         target_filename, ok_pressed = QInputDialog.getText(
-            self.window, "删除名单", "请输入要删除的名单名称:(文件名即可，无需输入.txt)")
+            self.window, "删除名单", "再次输入名单名称将删除此名单！")
         if ok_pressed and target_filename:
             target_filepath = os.path.join(
                 "name", f"{target_filename}.txt")
@@ -883,12 +902,12 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.main_instance.mini(2)
         self.main_instance.read_name_list(2)
         global settings_flag
-        settings_flag = 0
+        settings_flag = None
         event.accept()  # 确保仅关闭子窗口，不影响主窗口
-    def run_settings_window(mode = None):
-        settings_window = settingsWindow(mainWindow)
-        settings_window.show()
-        return settings_window
+        
+    def run_settings_window(self):
+        self.show()
+        return self
 
 if __name__ == "__main__":
     if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
