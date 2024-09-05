@@ -4,7 +4,7 @@ import random
 import difflib
 import os
 import requests
-import pygame
+#import pygame
 import hashlib
 import gettext
 import glob
@@ -22,8 +22,14 @@ from smallwindow import Ui_smallwindow
 from settings import Ui_settings
 from Crypto.Cipher import ARC4
 import webbrowser as web
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+from PyQt5.QtCore import QUrl
 
 dmversion = 6.0
+
+# 创建QMediaPlayer对象
+player = QMediaPlayer()
+player.setVolume(100)  # 设置音量为100%
 
 name = None
 allownametts = None
@@ -34,8 +40,8 @@ name_list = ""
 small_window_flag = 0
 settings_flag = 0
 namelen = 0
-pygame.init()
-pygame.mixer.init()
+# pygame.init()
+# pygame.mixer.init()
 
 
 class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
@@ -52,7 +58,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             "MainWindow", "沉梦课堂点名器 6.0"))
         self.pushButton_2.setText(" 开始")
         self.pushButton_5.setText(" 小窗模式")
-        self.label_3.setText("辛运儿是:")
+        self.label_3.setText("幸运儿是:")
         self.spinBox.setValue(1)
         self.label_5.setText("当前名单：")
         self.label_4.setText("抽取人数：")
@@ -642,6 +648,7 @@ class WorkerThread(QRunnable):
             # 向主线程发送终止信号
 
         if running:  # 结束按钮
+            player.stop()
             self.signals.qtimer.emit(0, 0)
             self.signals.show_progress.emit(0, 0, 100)
             running = False
@@ -656,10 +663,10 @@ class WorkerThread(QRunnable):
             except:
                 print("无法写入历史记录")
             print(today, "幸运儿是： %s " % name)
-            try:
-                pygame.mixer.music.fadeout(800)
-            except pygame.error as e:
-                print(f"停止音乐播放时发生错误：{str(e)}")
+            # try:
+            #     pygame.mixer.music.fadeout(800)
+            # except pygame.error as e:
+            #     print(f"停止音乐播放时发生错误：{str(e)}")
             if self.allownametts == 1:
                 ttsread(text="恭喜 %s" % name)
             elif self.allownametts == 2:
@@ -689,12 +696,34 @@ class WorkerThread(QRunnable):
             random_file = random.choice(file_list)
             # 生成完整的文件路径
             file_path = os.path.join(folder_path, random_file)
-            try:
-                print("播放音乐：%s") % file_path
-                pygame.mixer.music.load(file_path)
-                pygame.mixer.music.play()
-            except pygame.error as e:
-                print("无法播放音乐文件：%s，错误信息：{str(e)}") % file_path
+            #规范化文件路径
+            file_path = os.path.normpath(file_path)
+            print("随机选择的文件：%s" % file_path)
+
+
+        try:
+            #pygame.mixer.music.load(file_path)
+            #pygame.mixer.music.play()
+########################################################################################################################################
+            # 检查文件路径是否存在
+            if not os.path.exists(file_path):
+                print(f"文件路径不存在: {file_path}")
+                sys.exit(1)
+            
+            # 设置播放内容
+            content = QMediaContent(QUrl.fromLocalFile(file_path))
+            player.setMedia(content)
+
+            # 播放音频
+            print("准备播放音乐：%s" % file_path)
+            player.play()
+            print("音乐播放命令已发送")
+            
+########################################################################################################################################
+        except Exception as e:
+            print(f"无法播放音乐文件：{e}，错误信息：{str(e)}")
+
+
 
 class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
     def __init__(self,main_instance = None):
