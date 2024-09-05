@@ -9,12 +9,12 @@ import hashlib
 import gettext
 import glob
 import ctypes
-import ptvsd  # QThread断点工具
+# import ptvsd  # QThread断点工具
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QIcon, QPixmap
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication
-from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from datetime import datetime, timedelta
 from ui import Ui_Form  # 导入ui文件
@@ -33,7 +33,7 @@ default_name_list = "默认名单"
 name_list = ""
 small_window_flag = 0
 settings_flag = 0
-mdcd = 0
+namelen = 0
 pygame.init()
 pygame.mixer.init()
 
@@ -123,7 +123,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                 f.write(i)
                 f.write("\n")
 
-    def read_name_list(self):
+    def read_name_list(self,mode = None):
         folder_name = "name"
         os.makedirs("name", exist_ok=True)
         if not os.path.exists(folder_name) or not os.listdir(folder_name):
@@ -140,12 +140,18 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         txt_files_name = [os.path.splitext(
             filename)[0] for filename in txt_name]
         # 去除扩展名
-        self.comboBox.addItems(txt_files_name)  # 添加文件名到下拉框
-        self.comboBox.currentIndexChanged.connect(
-            lambda: self.get_selected_file(0))
-        self.get_selected_file()
+        if mode == 1:
+            return txt_files_name
+        else:
+            self.comboBox.disconnect()
+            self.comboBox.clear()
+            self.comboBox.addItems(txt_files_name)  # 添加文件名到下拉框
+            self.comboBox.currentIndexChanged.connect(
+                lambda: self.get_selected_file(0))
+            self.get_selected_file()
 
     def get_selected_file(self, first=None):
+        global file_path
         # 获取当前选中的文件名
         selected_file = self.comboBox.currentText()
         file_path = os.path.join("name", selected_file+".txt")
@@ -160,7 +166,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             print(f"所选文件的路径为: {file_path}\n")
         self.process_name_file(file_path)
         if first == 0:
-            self.listWidget.addItem("已切换至->\'%s\'" % selected_file)
+            self.listWidget.addItem("切换至>\'%s\' 共 %s 人" % (selected_file,namelen))
             self.listWidget.setCurrentRow(self.listWidget.count() - 1)
 
     def cs_sha256(self):
@@ -345,15 +351,15 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             print(f"生成了一个随机截止日期: {result_time}。写入文件。")
 
     def process_name_file(self, file_path):
-        global name_list, mdcd
+        global name_list, namelen
         with open(file_path, encoding='utf8') as f:
             # 读取每一行，去除行尾换行符，过滤掉空行和仅包含空格的行
             name_list = [line.strip()
                          for line in f.readlines() if line.strip()]
 
         print("\n", name_list)
-        mdcd = len(name_list)
-        print("读取到的有效名单长度:", mdcd)
+        namelen = len(name_list)
+        print("读取到的有效名单长度:", namelen)
 
     def ttsinitialize(self):
         global allownametts
@@ -427,7 +433,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
 
     def start_mulit(self):
         num = self.spinBox.value()
-        if num > mdcd:
+        if num > namelen:
             self.show_message("连抽人数大于名单人数!", "错误")
         else:
             if mrunning == False:
@@ -555,8 +561,11 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
 
     def update_list(self, mode, value):
         if mode == 1:
-            self.listWidget.addItem(value)
-            self.listWidget.setCurrentRow(self.listWidget.count() - 1)
+            if value == "":
+                pass
+            else:
+                self.listWidget.addItem(value)
+                self.listWidget.setCurrentRow(self.listWidget.count() - 1)
         elif mode == 0:
             self.label_3.setText(value)
 
@@ -576,11 +585,17 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
     def setname(self):
         global name
         if len(name_list) == 0:
-            self.init_name(self.make_name_list())
-            self.show_message("名单文件为空，请输入名字（一行一个）后再重新打开本软件！", "警告")
-            sys.exit()
-        name = random.choice(name_list)
-        self.label_3.setText(name)
+            self.show_message("名单文件为空，请输入名字（一行一个）后再重新点名！", "警告")
+            self.qtimer(0)
+            self.label_3.setText("名单文件为空！")
+            name = ""
+            try:
+                self.opentext(file_path)
+            except Exception as e:
+                self.show_message("选择的名单文件%s不存在！" % file_path,"\n%s" % e)
+        else:
+            name = random.choice(name_list)
+            self.label_3.setText(name)
 
     def show_message(self, message, title):
         msgBox = QMessageBox()
@@ -611,7 +626,7 @@ class WorkerThread(QRunnable):
 
     def run(self):
         global running
-        ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        # ptvsd.debug_this_thread()  # 在此线程启动断点调试
 
         def ttsread(text):
             self.signals.enable_button.emit(3)
@@ -770,11 +785,8 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
 
     def run_small_window(mode = None):
         small_Window = smallWindow(mainWindow)
-        if mode == 1:
-            small_Window.close_window()
-        else:
-            small_Window.show()
-            return small_Window
+        small_Window.show()
+        return small_Window
 
 
 class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
@@ -800,25 +812,83 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.setWindowTitle(QCoreApplication.translate(
             "MainWindow", "课堂点名器设置"))
         self.main_instance = main_instance
+        self.read_name_list()
 
+        self.window = QWidget()
+        self.pushButton_3.clicked.connect(self.add_new_list)
+        self.pushButton_4.clicked.connect(self.delete_list)
+        self.pushButton_5.clicked.connect(self.edit_list)
+
+    def read_name_list(self):
+        txt_files_name = self.main_instance.read_name_list(1)
+        self.comboBox_1.addItems(txt_files_name)  # 添加文件名到下拉框
+
+    def refresh_name_list(self):
+        txt_name = [filename for filename in os.listdir(
+            "name") if filename.endswith(".txt")]
+        txt_files_name = [os.path.splitext(
+            filename)[0] for filename in txt_name]
+
+        return txt_files_name
+    def add_new_list(self):
+        newfilename, ok_pressed = QInputDialog.getText(
+            self.window, "新增名单", "请输入名单名称:(文件名即可，无需输入.txt)")
+        if ok_pressed and newfilename:
+            print("新增名单名称是: %s" % newfilename)
+            newnamepath = os.path.join(
+                "name", f"{newfilename}.txt")  # 打开文件并写入内容
+            with open(newnamepath, "w", encoding="utf8") as f:
+                pass
+            message = ("已创建名为 '%s.txt' 的文件，路径为: %s" %
+                        (newfilename, newnamepath))
+
+            QMessageBox.information(
+                self.window, "新建成功", message, QMessageBox.Ok)
+            self.main_instance.opentext(newnamepath)
+            txt_name = self.refresh_name_list()
+            self.comboBox_1.clear()  # 清空下拉框的选项
+            self.comboBox_1.addItems(txt_name)  # 添加新的文件名到下拉框
+        
+
+    def delete_list(self):
+        target_filename, ok_pressed = QInputDialog.getText(
+            self.window, "删除名单", "请输入要删除的名单名称:(文件名即可，无需输入.txt)")
+        if ok_pressed and target_filename:
+            target_filepath = os.path.join(
+                "name", f"{target_filename}.txt")
+            if os.path.exists(target_filepath):
+                os.remove(target_filepath)  # 删除文件
+                message = ("已成功删除名为 '%s.txt' 的文件。" % target_filename)
+                QMessageBox.information(
+                    self.window, "删除成功", message, QMessageBox.Ok)
+                txt_name = self.refresh_name_list()
+                self.comboBox_1.clear()  # 清空下拉框的选项
+                self.comboBox_1.addItems(txt_name)  # 添加新的文件名到下拉框
+            else:
+                QMessageBox.warning(
+                    self.window, '警告', '名单文件不存在', QMessageBox.Ok)
+
+    def edit_list(self):
+        target_filename = self.comboBox_1.currentText()
+        target_filepath = os.path.join(
+                "name", f"{target_filename}"+".txt")
+        if os.path.exists(target_filepath):
+            self.main_instance.opentext(target_filepath)
+        else:
+            QMessageBox.warning(
+                self.window, '警告', '名单文件不存在', QMessageBox.Ok) 
 
     def closeEvent(self, event):
         print("设置被关闭")
         self.main_instance.mini(2)
+        self.main_instance.read_name_list(2)
         global settings_flag
         settings_flag = 0
         event.accept()  # 确保仅关闭子窗口，不影响主窗口
-
-    def close_window(self):
-        self.close() 
-
     def run_settings_window(mode = None):
         settings_window = settingsWindow(mainWindow)
-        if mode == 1:
-            settings_window.close_window()
-        else:
-            settings_window.show()
-            return settings_window
+        settings_window.show()
+        return settings_window
 
 if __name__ == "__main__":
     if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
