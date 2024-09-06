@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>703</width>
-    <height>406</height>
+    <width>704</width>
+    <height>408</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -155,113 +155,143 @@ QPushButton:hover{
    <property name="geometry">
     <rect>
      <x>60</x>
-     <y>210</y>
-     <width>241</width>
+     <y>213</y>
+     <width>244</width>
      <height>151</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">         QListWidget{background-color:#2B2B2B;color:white}
-         QScrollBar:vertical{
-             width:12px;
-             border:1px solid #2B2B2B;
-             margin:0px,0px,0px,0px;
-             padding-top:0px;
-             padding-bottom:0px;
-         }
-         QScrollBar::handle:vertical{
-             width:3px;
-             background:#4B4B4B;
-             min-height:3;
-         }
-         QScrollBar::handle:vertical:hover{
-             background:#3F3F3F;
-             border:0px #3F3F3F;
-         }
-         QScrollBar::sub-line:vertical{
-             width:0px;
-             border-image:url(:/Res/scroll_left.png);
-             subcontrol-position:left;
-         }
-         QScrollBar::sub-line:vertical:hover{
-             height:0px;
-             background:#323232;
-             subcontrol-position:top;
-         }
-         QScrollBar::add-line:vertical{
-             height:0px;
-             border-image:url(:/Res/scroll_down.png);
-             subcontrol-position:bottom;
-         }
-         QScrollBar::add-line:vertical:hover{
-             height:0px;
-             background:#3F3F3F;
-             subcontrol-position:bottom;
-         }
-         QScrollBar::add-page:vertical{
-             background:#2B2B2B;
-         }
-         QScrollBar::sub-page:vertical{
-             background:#2B2B2B;
-         }
-         QScrollBar::up-arrow:vertical{
-             border-style:outset;
-             border-width:0px;
-         }
-         QScrollBar::down-arrow:vertical{
-             border-style:outset;
-             border-width:0px;
-         }
+    <string notr="true">QListWidget {
+    background-color: #2B2B2B;
+    color: white;
+}
 
-         QScrollBar:horizontal{
-             height:12px;
-             border:1px #2B2B2B;
-             margin:0px,0px,0px,0px;
-             padding-left:0px;
-             padding-right:0px;
-         }
-         QScrollBar::handle:horizontal{
-             height:16px;
-             background:#4B4B4B;
-             min-width:20;
-         }
-         QScrollBar::handle:horizontal:hover{
-             background:#3F3F3F;
-             border:0px #3F3F3F;
-         }
-         QScrollBar::sub-line:horizontal{
-             width:0px;
-             border-image:url(:/Res/scroll_left.png);
-             subcontrol-position:left;
-         }
-         QScrollBar::sub-line:horizontal:hover{
-             width:0px;
-             background:#2B2B2B;
-             subcontrol-position:left;
-         }
-         QScrollBar::add-line:horizontal{
-             width:0px;
-             border-image:url(:/Res/scroll_right.png);
-             subcontrol-position:right;
-         }
-         QScrollBar::add-line:horizontal:hover{
-             width:0px;
-             background::#2B2B2B;
-             subcontrol-position:right;
-         }
-         QScrollBar::add-page:horizontal{
-                    background:#2B2B2B;
-         }
-         QScrollBar::sub-page:horizontal{
-                     background:#2B2B2B;
-         }
-*{font-size:18px;}</string>
+QScrollBar:vertical {
+    width: 12px;
+    border: 1px solid #2B2B2B;
+    margin: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+QScrollBar::handle:vertical {
+    width: 3px;
+    background: #4B4B4B;
+    min-height: 20px; /* 设置最小长度为20px */
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #3F3F3F;
+    border: 0px #3F3F3F;
+}
+
+QScrollBar::sub-line:vertical {
+    width: 0px;
+    subcontrol-position: left;
+}
+
+QScrollBar::sub-line:vertical:hover {
+    height: 0px;
+    background: #323232;
+    subcontrol-position: top;
+}
+
+QScrollBar::add-line:vertical {
+    height: 0px;
+    subcontrol-position: bottom;
+}
+
+QScrollBar::add-line:vertical:hover {
+    height: 0px;
+    background: #3F3F3F;
+    subcontrol-position: bottom;
+}
+
+QScrollBar::add-page:vertical {
+    background: #2B2B2B;
+}
+
+QScrollBar::sub-page:vertical {
+    background: #2B2B2B;
+}
+
+QScrollBar:horizontal {
+    height: 12px;
+    border: 1px #2B2B2B;
+    margin: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+QScrollBar::handle:horizontal {
+    height: 16px;
+    background: #4B4B4B;
+    min-width: 20px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background: #3F3F3F;
+    border: 0px #3F3F3F;
+}
+
+QScrollBar::sub-line:horizontal {
+    width: 0px;
+    subcontrol-position: left;
+}
+
+QScrollBar::sub-line:horizontal:hover {
+    width: 0px;
+    background: #2B2B2B;
+    subcontrol-position: left;
+}
+
+QScrollBar::add-line:horizontal {
+    width: 0px;
+    subcontrol-position: right;
+}
+
+QScrollBar::add-line:horizontal:hover {
+    width: 0px;
+    background: #2B2B2B;
+    subcontrol-position: right;
+}
+
+QScrollBar::add-page:horizontal,
+QScrollBar::sub-page:horizontal {
+    background: #2B2B2B;
+}
+
+* {
+    font-size: 18px;
+}
+</string>
+   </property>
+   <property name="verticalScrollBarPolicy">
+    <enum>Qt::ScrollBarAsNeeded</enum>
    </property>
    <property name="horizontalScrollBarPolicy">
     <enum>Qt::ScrollBarAsNeeded</enum>
    </property>
-   <property name="sizeAdjustPolicy">
-    <enum>QAbstractScrollArea::AdjustIgnored</enum>
+   <property name="showDropIndicator" stdset="0">
+    <bool>false</bool>
+   </property>
+   <property name="dragEnabled">
+    <bool>false</bool>
+   </property>
+   <property name="defaultDropAction">
+    <enum>Qt::IgnoreAction</enum>
+   </property>
+   <property name="selectionMode">
+    <enum>QAbstractItemView::NoSelection</enum>
+   </property>
+   <property name="selectionBehavior">
+    <enum>QAbstractItemView::SelectItems</enum>
+   </property>
+   <property name="verticalScrollMode">
+    <enum>QAbstractItemView::ScrollPerPixel</enum>
+   </property>
+   <property name="horizontalScrollMode">
+    <enum>QAbstractItemView::ScrollPerPixel</enum>
    </property>
    <property name="movement">
     <enum>QListView::Static</enum>
@@ -271,9 +301,9 @@ QPushButton:hover{
    <property name="geometry">
     <rect>
      <x>337</x>
-     <y>211</y>
+     <y>207</y>
      <width>131</width>
-     <height>141</height>
+     <height>142</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -467,7 +497,7 @@ QPushButton:hover{
    <property name="geometry">
     <rect>
      <x>490</x>
-     <y>210</y>
+     <y>207</y>
      <width>161</width>
      <height>181</height>
     </rect>

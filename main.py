@@ -9,12 +9,12 @@ import hashlib
 import gettext
 import glob
 import ctypes
-#import ptvsd  # QThread断点工具
+# import ptvsd  # QThread断点工具
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QIcon, QPixmap
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication
-from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QScrollerProperties
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from datetime import datetime, timedelta
 from ui import Ui_Form  # 导入ui文件
@@ -63,9 +63,12 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         self.pushButton_5.clicked.connect(self.small_mode)
         self.pushButton.clicked.connect(lambda:self.mini(1))
 
+        # 启用触摸手势滚动
+        scroller = QScroller.scroller(self.listWidget)
+        scroller.grabGesture(self.listWidget.viewport(), QScroller.LeftMouseButtonGesture)
+
         self.read_name_list()
         self.cs_sha256()
-
         self.timer = None
 
     def small_mode(self):
@@ -467,7 +470,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                 for name in name_set:
                     self.listWidget.addItem(name)
                 self.listWidget.addItem("----------------------------")
-                self.listWidget.setCurrentRow(self.listWidget.count() - num+1)
+                self.listWidget.setCurrentRow(self.listWidget.count() - num+2)
             else:
                 print("连抽中...")
 
@@ -628,7 +631,7 @@ class WorkerThread(QRunnable):
 
     def run(self):
         global running
-        #ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        # ptvsd.debug_this_thread()  # 在此线程启动断点调试
 
         def ttsread(text):
             self.signals.enable_button.emit(3)
@@ -811,7 +814,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.setupUi(central_widget)  # 初始化UI到中央小部件上
         self.setFixedSize(307, 419)
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
-        self.groupBox_2.setTitle("名单设置")
+        self.groupBox_2.setTitle("名单管理")
         self.pushButton_5.setText("编辑所选名单")
         self.pushButton_4.setText("删除所选名单")
         self.pushButton_3.setText("新建名单")
