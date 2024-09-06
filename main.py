@@ -94,7 +94,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            if event.pos().y() <= self.height() // 2.3:  # 只允许在上半部分拖动
+            if event.pos().y() <= self.height() // 2.0:  # 只允许在上半部分拖动
                 self.m_flag = True
                 self.m_Position = event.globalPos() - self.pos()  # 获取鼠标相对窗口的位置
                 event.accept()
@@ -529,6 +529,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
 
     def enable_button(self, value):
         if value == 1:
+            self.pushButton_5.setEnabled(True)
             self.pushButton_2.setEnabled(True)
             icon = QtGui.QIcon()
             icon.addPixmap(QtGui.QPixmap(":/icons/swindow.png"),
@@ -562,10 +563,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
 
         elif value == 3:
             self.pushButton_5.setEnabled(False)
-
-        elif value == 4:
-            self.pushButton_5.setEnabled(True)
-
+            
     def update_list(self, mode, value):
         if mode == 1:
             if value == "":
@@ -636,10 +634,8 @@ class WorkerThread(QRunnable):
         # ptvsd.debug_this_thread()  # 在此线程启动断点调试
 
         def ttsread(text):
-            self.signals.enable_button.emit(3)
             speaker = win32com.client.Dispatch("SAPI.SpVoice")
             speaker.Speak(text)
-            self.signals.enable_button.emit(4)
 
         def stop():
             self.signals.update_list.emit(1, name)
@@ -651,6 +647,7 @@ class WorkerThread(QRunnable):
         if running:  # 结束按钮
             self.signals.qtimer.emit(0, 0)
             self.signals.show_progress.emit(0, 0, 100)
+            self.signals.enable_button.emit(3)
             running = False
             today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             if name != "":
