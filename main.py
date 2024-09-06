@@ -94,10 +94,11 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            self.m_flag = True
-            self.m_Position = event.globalPos() - self.pos()  # 获取鼠标相对窗口的位置
-            event.accept()
-            self.setCursor(QCursor(Qt.OpenHandCursor))  # 更改鼠标图标
+            if event.pos().y() <= self.height() // 2.3:  # 只允许在上半部分拖动
+                self.m_flag = True
+                self.m_Position = event.globalPos() - self.pos()  # 获取鼠标相对窗口的位置
+                event.accept()
+                self.setCursor(QCursor(Qt.OpenHandCursor))  # 更改鼠标图标
 
     def mouseMoveEvent(self, event):
         if Qt.LeftButton and self.m_flag:
@@ -107,7 +108,8 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
 
     def mouseReleaseEvent(self, event):
         self.m_flag = False
-        self.setCursor(QCursor(Qt.ArrowCursor))
+        self.setCursor(QCursor(Qt.ArrowCursor))  # 恢复默认鼠标图标
+
 
     def mini(self,mode):
         if mode == 1:
