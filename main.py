@@ -9,7 +9,7 @@ import hashlib
 import gettext
 import glob
 import ctypes
-import ptvsd  # QThread断点工具
+#import ptvsd  # QThread断点工具
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QIcon, QPixmap
@@ -672,7 +672,7 @@ class WorkerThread(QRunnable):
 
     def run(self):
         global running
-        ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        #ptvsd.debug_this_thread()  # 在此线程启动断点调试
 
         def ttsread(text):
             speaker = win32com.client.Dispatch("SAPI.SpVoice")
