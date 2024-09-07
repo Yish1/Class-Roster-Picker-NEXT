@@ -22,6 +22,7 @@ from smallwindow import Ui_smallwindow
 from settings import Ui_settings
 from Crypto.Cipher import ARC4
 import webbrowser as web
+import platform
 
 dmversion = 6.0
 
@@ -36,6 +37,21 @@ settings_flag = None
 namelen = 0
 pygame.init()
 pygame.mixer.init()
+
+# 日志记录
+with open('latest.log', 'w', encoding='utf-8') as log:
+    log.write(f"操作系统：{platform.system()}\n")
+    log.write(f"版本号：{platform.release()}\n")
+    log.write(f"系统类型：{platform.machine()}\n")
+    log.write(f"启动时间：{datetime.now()}\n")
+
+def write_log(message):
+    try:
+        with open('latest.log', 'a', encoding='utf-8') as log:
+            log.write(f"[{datetime.now()}]:    {message}\n")
+    except:
+        pass
+
 
 
 class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
@@ -136,6 +152,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         if not os.path.exists(folder_name) or not os.listdir(folder_name):
             self.init_name(self.make_name_list())
             print("first_run")
+            write_log("first_run")
         txt_name = [filename for filename in os.listdir(
             folder_name) if filename.endswith(".txt")]
         # 获取所有txt文件
@@ -144,6 +161,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             self.show_message("名单文件不存在，且默认名单无法生成，请反馈给我们！", "名单生成异常！")
             sys.exit()
         print("共读取到 %d 个名单" % mdnum)
+        write_log("共读取到 %d 个名单" % mdnum)
         txt_files_name = [os.path.splitext(
             filename)[0] for filename in txt_name]
         # 去除扩展名
@@ -163,14 +181,17 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         selected_file = self.comboBox.currentText()
         file_path = os.path.join("name", selected_file+".txt")
         print(file_path)
+        write_log(f"当前选中的文件为：{selected_file}")
         if not os.path.exists(file_path):
             self.show_message("所选名单文件已被移动或删除！", "找不到文件！")
             try:
                 self.comboBox.setCurrentIndex(0)
             except:
                 print("first_run")
+                write_log("first_run")
         else:
             print(f"所选文件的路径为: {file_path}\n")
+            write_log(f"所选文件的路径为: {file_path}\n")
         self.process_name_file(file_path)
         if first == 0:
             self.listWidget.addItem("切换至>\'%s\' 共 %s 人" % (selected_file,namelen))
@@ -193,6 +214,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                     with open(output_file_path, 'w') as f:
                         f.write(sha256_value)
                     print(f'已保存标识符值：{output_file_path}')
+                    write_log(f'已保存标识符值：{output_file_path}')
                     self.fileoperation('name', filename1, 'encrypt')
                 else:
                     sha256_value = self.calculate_sha256(file_path)
@@ -201,10 +223,12 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
 
                     if sha256_value == saved_sha256_value:
                         print(f'{filename1} 的标识符值与记录一致。')
+                        write_log(f'{filename1} 的标识符值与记录一致。')
                         self.fileoperation('name', filename1, 'encrypt')
 
                     else:
                         print(f'警告：{filename1} 的标识符值与记录不一致。')
+                        write_log(f'警告：{filename1} 的标识符值与记录不一致。')
                         self.fileoperation('bak', filename1, 'decrypt')
                         with open(file_path, 'r', encoding='utf-8', errors='ignore') as original_file, open(processed_file_path, 'r', encoding='utf-8', errors='ignore') as bak_file:
                             original_content = original_file.read()
@@ -212,8 +236,10 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
 
                             if original_content == bak_content:
                                 print('文件内容一致。')
+                                write_log('文件内容一致。')
                             else:
                                 print('文件内容不一致。以下是修改的内容：')
+                                write_log('文件内容不一致。以下是修改的内容：')
                                 # 去除内容中的空行
                                 bak_lines = [
                                     line for line in bak_content.splitlines() if line.strip()]
@@ -266,9 +292,11 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                     'bak', os.path.basename(file_path) + '.cmxz')
                 if os.path.exists(processed_file_path):
                     print(f'加密文件已存在: {processed_file_path}')
+                    write_log(f'加密文件已存在: {processed_file_path}')
                     return processed_file_path
             except:
                 print("加密文件不存在")
+                write_log("加密文件不存在")
 
         elif operation == 'decrypt':
             try:
@@ -277,12 +305,14 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                 processed_file_path = os.path.join('bak', original_filename)
             except:
                 print("解密文件不存在")
+                write_log("解密文件不存在")
 
         try:
             with open(processed_file_path, 'wb') as f:
                 f.write(processed_data)
 
             print(f'文件{operation}成功: {processed_file_path}')
+            write_log(f'文件{operation}成功: {processed_file_path}')
             return processed_file_path
         except:
             self.manage_deadline("1")
@@ -303,6 +333,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                 os.remove(timefile_path)
             else:
                 print("名单校验已重置")
+                write_log("名单校验已重置")
 
         def read_from_file():
             # 从文件中读取截止日期
@@ -324,8 +355,10 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                 try:
                     os.remove(file_path)
                     print(f"Deleted: {file_path}")
+                    write_log(f"Deleted: {file_path}")
                 except OSError as e:
                     print(f"Error: {e.filename} - {e.strerror}")
+                    write_log(f"Error: {e.filename} - {e.strerror}")
 
         deadline_date = read_from_file()
 
@@ -333,15 +366,19 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             # 如果截止日期已过，删除数据文件夹
             if current_date > deadline_date:
                 print(f"截止日期({deadline_date})已过。删除数据文件夹。")
+                write_log(f"截止日期({deadline_date})已过。删除数据文件夹。")
                 try:
                     # 递归删除目录及其内容
                     remove_directory("data")
                     remove_directory("bak")
                     print("数据文件夹已删除。")
+                    write_log("数据文件夹已删除。")
                 except OSError as e:
                     print(f"删除数据文件夹时发生错误: {e}")
+                    write_log(f"删除数据文件夹时发生错误: {e}")
             else:
                 print(f"截止日期是{deadline_date}。尚未过期。暂不重置校验")
+                write_log(f"截止日期是{deadline_date}。尚未过期。暂不重置校验")
                 if now == "1":
                     remove_directory("data")  # 异常处理
                     remove_directory("bak")
@@ -356,6 +393,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                 remove_directory("bak")
             write_to_file()
             print(f"生成了一个随机截止日期: {result_time}。写入文件。")
+            write_log(f"生成了一个随机截止日期: {result_time}。写入文件。")
 
     def process_name_file(self, file_path):
         global name_list, namelen
@@ -365,8 +403,10 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                          for line in f.readlines() if line.strip()]
 
         print("\n", name_list)
+        write_log("\n" + str(name_list))
         namelen = len(name_list)
         print("读取到的有效名单长度:", namelen)
+        write_log("读取到的有效名单长度:" + str(namelen))
 
     def ttsinitialize(self):
         global allownametts
@@ -434,6 +474,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             self.thread.signals.enable_button.connect(self.enable_button)
             self.thread.signals.qtimer.connect(self.qtimer)
             self.thread.signals.finished.connect(lambda: print("结束点名"))
+            write_log("结束点名")
 
             self.threadpool.start(self.thread)
             self.ttsinitialize()
@@ -451,6 +492,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                 self.value = 0
                 self.ptimer.start(5)
                 print("连抽：%d 人" % num)
+                write_log("连抽：%d 人" % num)
                 name_set = set()
                 while len(name_set) != num:
                     name_set.add(random.choice(name_list))
@@ -464,9 +506,16 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                         "幸运儿是： %s " % name_set,
                         file=open("点名器中奖名单.txt", "a"),
                     )
+                    write_log(
+                        today,
+                        "沉梦课堂点名器%s" % dmversion,
+                        "幸运儿是： %s " % name_set,
+                    )
                 except:
                     print("无法写入历史记录")
+                    write_log("无法写入历史记录")
                 print(today, "幸运儿是： %s " % name_set)
+                write_log(f"幸运儿是： {name_set}")
                 self.listWidget.addItem("----------------------------")
                 self.listWidget.addItem("连抽：%d 人" % num)
                 for name in name_set:
@@ -475,6 +524,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                 self.listWidget.setCurrentRow(self.listWidget.count() - num+2)
             else:
                 print("连抽中...")
+                write_log("连抽中...")
 
 
     def update_progress_bar_mulit(self):
@@ -580,12 +630,14 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             self.timer.start(time)
             self.timer.timeout.connect(self.setname)
             print("计时器启动")
+            print("计时器时间")
 
         elif start == 0:
             try:
                 self.timer.stop()
             except Exception as e:
                 print(f"无法停止计时器:{e}")
+                write_log(f"无法停止计时器:{e}")
 
     def setname(self):
         global name
@@ -658,16 +710,21 @@ class WorkerThread(QRunnable):
                         "幸运儿是： %s " % name,
                         file=open("点名器中奖名单.txt", "a"),
                     )
+                    write_log("打开点名器中奖名单.txt")
                 except:
                     print("无法写入历史记录")
+                    write_log("无法写入历史记录")
                 print(today, "幸运儿是： %s " % name)
+                write_log(f"幸运儿是： {name}")
             else:
                 print("名单为空!")
+                write_log("名单为空!")
             try:
                 pygame.mixer.music.fadeout(800)
                 pygame.mixer.music.unload()
             except pygame.error as e:
                 print(f"停止音乐播放时发生错误：{str(e)}")
+                write_log(f"停止音乐播放时发生错误：{str(e)}")
             if self.allownametts == 1:
                 ttsread(text="恭喜 %s" % name)
             elif self.allownametts == 2:
@@ -681,6 +738,7 @@ class WorkerThread(QRunnable):
             running = True
             self.signals.qtimer.emit(1, 50)
             print("开始点名")
+            write_log("开始点名")
             self.signals.show_progress.emit(1, 0, 0)
             self.signals.update_pushbotton.emit(" 结束")
             self.signals.enable_button.emit(0)
@@ -692,6 +750,7 @@ class WorkerThread(QRunnable):
             file_list = os.listdir(folder_path)
             if not file_list:
                 print("要使用背景音乐功能，请在 %s 中放入mp3格式的音乐" % folder_path)
+                write_log("要使用背景音乐功能，请在 %s 中放入mp3格式的音乐" % folder_path)
                 return
             # 从列表中随机选择一个文件
             random_file = random.choice(file_list)
@@ -699,10 +758,12 @@ class WorkerThread(QRunnable):
             file_path = os.path.join(folder_path, random_file)
             try:
                 print("播放音乐：%s" % file_path)
+                write_log("播放音乐：%s" % file_path)
                 pygame.mixer.music.load(file_path)
                 pygame.mixer.music.play(1)
             except pygame.error as e:
                 print("无法播放音乐文件：%s，错误信息：{str(e)}") % file_path
+                write_log("无法播放音乐文件：%s，错误信息：{str(e)}") % file_path
 
 class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
     def __init__(self,main_instance = None):
@@ -750,9 +811,12 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
                         "幸运儿是： %s " % name,
                         file=open("点名器中奖名单.txt", "a"),
                     )
+                    write_log("打开点名器中奖名单.txt")
                 except:
                     print("无法写入历史记录")
+                    write_log("无法写入历史记录")
                 print(today, "幸运儿是： %s " % name)
+                write_log("幸运儿是： %s " % name)
             else:
                 self.get_name_list()# 只有未移动时才输出消息
             
@@ -775,6 +839,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
                     pass
             except Exception as e:
                 print(f"无法停止计时器:{e}")
+                write_log(f"无法停止计时器:{e}")
 
     def setname(self):
         global name
@@ -792,6 +857,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
 
     def closeEvent(self, event):
         print("小窗被关闭")
+        write_log("小窗被关闭")
         self.main_instance.mini(2)
         global small_window_flag
         small_window_flag = None
@@ -856,6 +922,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             self.window, "新增名单", "请输入名单名称:")
         if ok_pressed and newfilename:
             print("新增名单名称是: %s" % newfilename)
+            write_log("新增名单名称是: %s" % newfilename)
             newnamepath = os.path.join(
                 "name", f"{newfilename}.txt")  # 打开文件并写入内容
             with open(newnamepath, "w", encoding="utf8") as f:
@@ -901,6 +968,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
 
     def closeEvent(self, event):
         print("设置被关闭")
+        write_log("设置被关闭")
         self.main_instance.mini(2)
         self.main_instance.read_name_list(2)
         global settings_flag
