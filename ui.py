@@ -325,15 +325,8 @@ class Ui_Form(object):
         self.progressBar.raise_()
         self.frame_3.raise_()
 
-        self.retranslateUi(Form)
         self.comboBox.setCurrentIndex(-1)
         self.pushButton_3.clicked.connect(Form.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Form)
 
-    def retranslateUi(self, Form):
-        _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
-        self.label_3.setText(_translate("Form", "恭喜 XXXXX!"))
-        self.label_5.setText(_translate("Form", "当前名单："))
-        self.label_4.setText(_translate("Form", "抽取人数："))
 import res

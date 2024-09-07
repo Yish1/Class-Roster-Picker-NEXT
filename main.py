@@ -9,7 +9,7 @@ import hashlib
 import gettext
 import glob
 import ctypes
-# import ptvsd  # QThread断点工具
+import ptvsd  # QThread断点工具
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QIcon, QPixmap
@@ -25,8 +25,10 @@ import webbrowser as web
 
 dmversion = 6.0
 
-name = None
 allownametts = None
+checkupdate = None
+bgimg = None
+name = None
 mrunning = False
 running = False
 default_name_list = "默认名单"
@@ -67,9 +69,32 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         scroller = QScroller.scroller(self.listWidget)
         scroller.grabGesture(self.listWidget.viewport(), QScroller.LeftMouseButtonGesture)
 
+        self.read_config()
         self.read_name_list()
+        self.set_bgimg()
         self.cs_sha256()
+        
         self.timer = None
+
+    def set_bgimg(self):
+        if bgimg == 2:
+            self.label_2.setStyleSheet("border-image: url(:/images/(1070).webp);\n"
+    "border-top-left-radius :28px;\n"
+    "border-bottom-left-radius :28px;\n"
+    "border-top-right-radius :28px;\n"
+    "border-bottom-right-radius :28px;")
+        elif bgimg == 1:
+            self.label_2.setStyleSheet("border-image: url(:/images/bg.webp);\n"
+    "border-top-left-radius :28px;\n"
+    "border-bottom-left-radius :28px;\n"
+    "border-top-right-radius :28px;\n"
+    "border-bottom-right-radius :28px;")
+        elif bgimg == 3:
+            self.label_2.setStyleSheet("background-color: rgba(42, 45, 47, 0.92);\n"
+    "border-top-left-radius :28px;\n"
+    "border-bottom-left-radius :28px;\n"
+    "border-top-right-radius :28px;\n"
+    "border-bottom-right-radius :28px;")
 
     def small_mode(self):
         global small_window_flag
@@ -176,6 +201,32 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             self.listWidget.addItem("切换至>\'%s\' 共 %s 人" % (selected_file,namelen))
             self.listWidget.setCurrentRow(self.listWidget.count() - 1)
 
+    def read_config(self):
+        global allownametts, checkupdate, bgimg
+        config = {}
+        if not os.path.exists('config.ini'):
+            with open('config.ini', 'w', encoding='utf-8') as file:
+                file.write('[allownametts]=0\n[checkupdate]=0\n[bgimg]=0\n')
+        with open('config.ini', 'r', encoding='utf-8') as file:
+            for line in file:
+                if '=' in line:
+                    key, value = line.strip().split('=', 1)
+                    config[key.strip('[]')] = value.strip()
+        allownametts = int(config.get('allownametts'))
+        checkupdate = int(config.get('checkupdate'))
+        bgimg = int(config.get('bgimg'))
+        return config
+
+    def update_config(self, variable, new_value):
+        config = self.read_config()
+        config[variable] = new_value
+        with open('config.ini', 'w', encoding='utf-8') as file:
+            for key, value in config.items():
+                file.write(f"[{key}]={value}\n")
+        self.read_config()
+        if variable == 'bgimg':
+            self.set_bgimg()
+        else:pass
     def cs_sha256(self):
         delrecordfile = 0
         os.makedirs('data', exist_ok=True)
@@ -370,10 +421,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
 
     def ttsinitialize(self):
         global allownametts
-        try:
-            with open('allownametts.ini', 'r') as file:
-                allownametts = int(file.read())
-        except FileNotFoundError:
+        if allownametts == None or allownametts == 0:
             # 语音播报开关
             ifvoice = QMessageBox()
             ifvoice.setWindowTitle("语音播报")
@@ -388,31 +436,25 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             ifvoice.exec_()
             if ifvoice.clickedButton() == allow_button:
                 # 同意
-                allownametts = 1
-                with open('allownametts.ini', "w", encoding='utf-8') as f:
-                    f.write("1")
+                self.update_config('allownametts', 2)
                 QMessageBox.information(
-                    None, "语音播报", "语音播报已经开启，您可以删除目录下的allownametts.ini重新设置此功能。")
+                    None, "语音播报", "语音播报已经开启，您可以设置界面重新设置此功能。")
             elif ifvoice.clickedButton() == cancel_button:
-                allownametts = 0
                 # 不同意
-                with open('allownametts.ini', "w", encoding='utf-8') as f:
-                    f.write("0")
+                self.update_config('allownametts', 1)
                 QMessageBox.information(
-                    None, "语音播报", "语音播报已禁用，您可以删除目录下的allownametts.ini重新设置此功能。")
+                    None, "语音播报", "语音播报已禁用，您可以设置界面重新设置此功能。")
             elif ifvoice.clickedButton() == dictation_button:
-                allownametts = 2
                 # 听写模式
-                with open('allownametts.ini', "w", encoding='utf-8') as f:
-                    f.write("2")
+                self.update_config('allownametts', 3)
                 QMessageBox.information(
-                    None, "语音播报", "语音播报（听写模式）已启用，您可以删除目录下的allownametts.ini重新设置此功能。")
-        except ValueError:
-            QMessageBox.information(
-                None, "语音播报", "目录下的allownametts.ini中不是一个有效的值")
-            if os.path.exists("allownametts.ini"):
-                os.remove("allownametts.ini")
-                self.ttsinitialize()
+                    None, "语音播报", "语音播报（听写模式）已启用，您可以设置界面重新设置此功能。")
+        if allownametts == 2:
+            print("语音播报(正常模式)")
+        elif allownametts == 3:
+            print("语音播报(听写模式)")
+        elif allownametts == 1:
+            print("语音播报已禁用")
 
     def opentext(self, path):
         if sys.platform == "win32":
@@ -579,7 +621,6 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             self.timer = QTimer(self)
             self.timer.start(time)
             self.timer.timeout.connect(self.setname)
-            print("计时器启动")
 
         elif start == 0:
             try:
@@ -631,7 +672,7 @@ class WorkerThread(QRunnable):
 
     def run(self):
         global running
-        # ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        ptvsd.debug_this_thread()  # 在此线程启动断点调试
 
         def ttsread(text):
             speaker = win32com.client.Dispatch("SAPI.SpVoice")
@@ -668,11 +709,11 @@ class WorkerThread(QRunnable):
                 pygame.mixer.music.unload()
             except pygame.error as e:
                 print(f"停止音乐播放时发生错误：{str(e)}")
-            if self.allownametts == 1:
+            if self.allownametts == 2:
                 ttsread(text="恭喜 %s" % name)
-            elif self.allownametts == 2:
+            elif self.allownametts == 3:
                 ttsread(text=name)
-            elif self.allownametts == 0:
+            elif self.allownametts == 1:
                 pass
 
             stop()
@@ -818,27 +859,42 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.pushButton_4.setText("删除所选名单")
         self.pushButton_3.setText("新建名单")
         self.pushButton_2.setText("保存")
-        self.checkBox_4.setText("背景图片")
+        self.label.setText("背景图片")
         self.radioButton_3.setText("预设1")
         self.radioButton_4.setText("预设2")
         self.radioButton_5.setText("无")
         self.pushButton.setText("取消")
         self.groupBox.setTitle("功能设置")
-        self.checkBox.setText("背景音乐")
         self.checkBox_2.setText("语音播报")
         self.radioButton.setText("正常模式")
         self.radioButton_2.setText("听写模式(不说\"恭喜\")")
         self.checkBox_3.setText("检查更新")
         self.setWindowTitle(QCoreApplication.translate(
             "MainWindow", "课堂点名器设置"))
+        
         self.main_instance = main_instance
         self.read_name_list()
+        self.read_config()
+
+        self.enable_tts = None
+        self.enable_update = None
+        self.enable_bgimg = None
 
         self.window = QWidget()
         self.window.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
+        self.pushButton.clicked.connect(self.close)
         self.pushButton_3.clicked.connect(self.add_new_list)
         self.pushButton_4.clicked.connect(self.delete_list)
         self.pushButton_5.clicked.connect(self.edit_list)
+        self.pushButton_2.clicked.connect(self.save_settings)
+
+        self.checkBox_2.toggled.connect(lambda checked: self.process_config("enable_tts", checked))
+        self.radioButton.toggled.connect(lambda checked: self.process_config("enable_tts", checked))
+        self.radioButton_2.toggled.connect(lambda checked: self.process_config("enable_tts", checked))
+        self.checkBox_3.toggled.connect(lambda checked: self.process_config("enable_update", checked))
+        self.radioButton_3.toggled.connect(lambda checked: self.process_config("enable_bgimg", checked))
+        self.radioButton_4.toggled.connect(lambda checked: self.process_config("enable_bgimg", checked))
+        self.radioButton_5.toggled.connect(lambda checked: self.process_config("enable_bgimg", checked))
 
     def read_name_list(self):
         txt_files_name = self.main_instance.read_name_list(1)
@@ -910,6 +966,100 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
     def run_settings_window(self):
         self.show()
         return self
+
+    def read_config(self):
+        if allownametts == 2:
+            self.checkBox_2.setChecked(True)
+            self.radioButton.setChecked(True)
+            self.radioButton_2.setChecked(False)
+        elif allownametts == 3:
+            self.checkBox_2.setChecked(True)
+            self.radioButton.setChecked(False)
+            self.radioButton_2.setChecked(True)
+        elif allownametts == 1:
+            self.checkBox_2.setChecked(False)
+            self.radioButton.setEnabled(False)
+            self.radioButton_2.setEnabled(False)
+        
+        if checkupdate == 2:
+            self.checkBox_3.setChecked(True)
+        else:
+            self.checkBox_3.setChecked(False)
+
+        if bgimg == 1:
+            self.radioButton_3.setChecked(True)
+            self.radioButton_4.setChecked(False)
+            self.radioButton_5.setChecked(False)
+        elif bgimg == 2:
+            self.radioButton_3.setChecked(False)
+            self.radioButton_4.setChecked(True)
+            self.radioButton_5.setChecked(False)
+        elif bgimg == 3:
+            self.radioButton_3.setChecked(False)
+            self.radioButton_4.setChecked(False)
+            self.radioButton_5.setChecked(True)
+
+    def process_config(self, key, checked):
+        if key == "enable_tts":
+            if checked and self.checkBox_2.isChecked():
+                # 启用 radioButton 和 radioButton_2
+                self.radioButton.setEnabled(True)
+                self.radioButton_2.setEnabled(True)
+
+                # 如果两个 radioButton 都没有被选中，默认选中 radioButton
+                if checked and not self.radioButton.isChecked() and not self.radioButton_2.isChecked():
+                    self.radioButton.setChecked(True)
+
+                # 检查选中的情况并设置 enable_tts
+                if checked and self.radioButton.isChecked() and not self.radioButton_2.isChecked():
+                    print("正在开启播报1")
+                    self.enable_tts = 1
+                elif checked and not self.radioButton.isChecked() and self.radioButton_2.isChecked():
+                    print("正在开启播报2")
+                    self.enable_tts = 2
+
+            elif not self.checkBox_2.isChecked():
+                self.radioButton.setEnabled(False)
+                self.radioButton_2.setEnabled(False)
+                print("正在关闭播报")
+                self.enable_tts = 0
+
+        elif key == "enable_update":
+            self.enable_update = 2 if checked else 1
+
+        elif key == "enable_bgimg":
+            if checked:
+                if self.radioButton_3.isChecked():
+                    self.enable_bgimg = 1
+                    print("背景1")
+                elif self.radioButton_4.isChecked():
+                    self.enable_bgimg = 2
+                    print("背景2")
+                elif self.radioButton_5.isChecked():
+                    self.enable_bgimg = 3
+                    print("背景无")
+
+    def save_settings(self):
+        if self.enable_tts == 1:
+            self.main_instance.update_config("allownametts", 2)
+        elif self.enable_tts == 2:
+            self.main_instance.update_config("allownametts", 3)
+        elif self.enable_tts == 0:
+            self.main_instance.update_config("allownametts", 1)
+        
+        if self.enable_update == 2:
+            self.main_instance.update_config("checkupdate", 2)
+        else:
+            self.main_instance.update_config("checkupdate", 1)
+
+        if self.enable_bgimg == 1:
+            self.main_instance.update_config("bgimg", 1)
+        elif self.enable_bgimg == 2:
+            self.main_instance.update_config("bgimg", 2)
+        elif self.enable_bgimg == 3:
+            self.main_instance.update_config("bgimg", 3)
+        self.close()
+
 
 if __name__ == "__main__":
     if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
