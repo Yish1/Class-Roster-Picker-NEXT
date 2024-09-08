@@ -1,0 +1,327 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2024-09-09 00:30+0800\n"
+"PO-Revision-Date: 2024-09-09 00:37+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 3.5\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: E:\class roster picker\main.py:61
+msgid "默认名单"
+msgstr ""
+
+#: E:\class roster picker\main.py:85
+msgid "沉梦课堂点名器 6.0"
+msgstr ""
+
+#: E:\class roster picker\main.py:86
+msgid " 开始"
+msgstr ""
+
+#: E:\class roster picker\main.py:87 picker\main.py:769
+msgid " 小窗模式"
+msgstr ""
+
+#: E:\class roster picker\main.py:88 picker\main.py:601
+msgid "幸运儿是:"
+msgstr ""
+
+#: E:\class roster picker\main.py:90
+msgid "当前名单："
+msgstr ""
+
+#: E:\class roster picker\main.py:91
+msgid "抽取人数："
+msgstr ""
+
+#: E:\class roster picker\main.py:202
+msgid "名单文件不存在，且默认名单无法生成，请反馈给我们！"
+msgstr ""
+
+#: E:\class roster picker\main.py:202
+msgid "名单生成异常！"
+msgstr ""
+
+#: E:\class roster picker\main.py:233
+msgid "所选名单文件已被移动或删除！"
+msgstr ""
+
+#: E:\class roster picker\main.py:233
+msgid "找不到文件！"
+msgstr ""
+
+#: E:\class roster picker\main.py:331
+msgid ""
+"警告：%s 最近被修改，加号是新增的，减号是减少的\n"
+"\n"
+"此记录会在 2天后 不再展示。\n"
+"%s"
+msgstr ""
+
+#: E:\class roster picker\main.py:332 picker\main.py:365 picker\main.py:717
+#: picker\main.py:1090 picker\main.py:1102
+msgid "警告"
+msgstr ""
+
+#: E:\class roster picker\main.py:483
+msgid ""
+"需要开启语音播报功能吗？\n"
+"单抽后会播报抽取结果。\n"
+msgstr ""
+
+#: E:\class roster picker\main.py:484
+msgid "好的"
+msgstr ""
+
+#: E:\class roster picker\main.py:485
+msgid "下次一定"
+msgstr ""
+
+#: E:\class roster picker\main.py:487
+msgid "听写模式(不会读\"恭喜\")"
+msgstr ""
+
+#: E:\class roster picker\main.py:488 picker\main.py:989
+msgid "取消"
+msgstr ""
+
+#: E:\class roster picker\main.py:495
+msgid "语音播报已经开启，您可以设置界面重新设置此功能。"
+msgstr ""
+
+#: E:\class roster picker\main.py:495 picker\main.py:500 picker\main.py:505
+#: picker\main.py:983
+msgid "语音播报"
+msgstr ""
+
+#: E:\class roster picker\main.py:500
+msgid "语音播报已禁用，您可以设置界面重新设置此功能。"
+msgstr ""
+
+#: E:\class roster picker\main.py:505
+msgid "语音播报（听写模式）已启用，您可以设置界面重新设置此功能。"
+msgstr ""
+
+#: E:\class roster picker\main.py:574
+msgid "连抽人数大于名单人数!"
+msgstr ""
+
+#: E:\class roster picker\main.py:574 picker\main.py:1092 picker\main.py:1256
+msgid "错误"
+msgstr ""
+
+#: E:\class roster picker\main.py:717
+msgid "名单文件为空，请输入名字（一行一个）后再重新点名！"
+msgstr ""
+
+#: E:\class roster picker\main.py:719
+msgid "名单文件为空！"
+msgstr ""
+
+#: E:\class roster picker\main.py:724
+msgid "选择的名单文件%s不存在！"
+msgstr ""
+
+#: E:\class roster picker\main.py:734
+msgid "未知错误"
+msgstr ""
+
+#: E:\class roster picker\main.py:783
+msgid "无法写入历史记录"
+msgstr ""
+
+#: E:\class roster picker\main.py:793
+msgid "恭喜 %s"
+msgstr ""
+
+#: E:\class roster picker\main.py:806
+msgid " 结束"
+msgstr ""
+
+#: E:\class roster picker\main.py:844
+msgid "检测到新版本！"
+msgstr ""
+
+#: E:\class roster picker\main.py:850
+msgid ""
+"云端最新版本为%s，要现在下载新版本吗？<br>您也可以稍后访问沉梦小站官网获取最"
+"新版本。<br><br>%s"
+msgstr ""
+
+#: E:\class roster picker\main.py:851
+msgid "云端最新版本为%s，请及时更新以获得更佳体验！"
+msgstr ""
+
+#: E:\class roster picker\main.py:851
+msgid "检测到版本更新"
+msgstr ""
+
+#: E:\class roster picker\main.py:856
+msgid "网络连接异常，检查更新失败"
+msgstr ""
+
+#: E:\class roster picker\main.py:868
+msgid "沉梦课堂点名器"
+msgstr ""
+
+#: E:\class roster picker\main.py:883
+msgid "开始"
+msgstr ""
+
+#: E:\class roster picker\main.py:888
+msgid "点名器小窗模式"
+msgstr ""
+
+#: E:\class roster picker\main.py:945
+msgid "名单为空!"
+msgstr ""
+
+#: E:\class roster picker\main.py:978
+msgid "功能设置"
+msgstr ""
+
+#: E:\class roster picker\main.py:979
+msgid "预设1"
+msgstr ""
+
+#: E:\class roster picker\main.py:980
+msgid "预设2"
+msgstr ""
+
+#: E:\class roster picker\main.py:981
+msgid "无"
+msgstr ""
+
+#: E:\class roster picker\main.py:982
+msgid "检查更新"
+msgstr ""
+
+#: E:\class roster picker\main.py:984
+msgid "背景图片"
+msgstr ""
+
+#: E:\class roster picker\main.py:985
+msgid "正常模式"
+msgstr ""
+
+#: E:\class roster picker\main.py:986
+msgid "听写模式(不说\"恭喜\")"
+msgstr ""
+
+#: E:\class roster picker\main.py:987
+msgid "语言设置"
+msgstr ""
+
+#: E:\class roster picker\main.py:988
+msgid "保存"
+msgstr ""
+
+#: E:\class roster picker\main.py:990
+msgid "名单管理"
+msgstr ""
+
+#: E:\class roster picker\main.py:991
+msgid "删除所选名单"
+msgstr ""
+
+#: E:\class roster picker\main.py:992
+msgid "统计所选名单"
+msgstr ""
+
+#: E:\class roster picker\main.py:993
+msgid "新建名单"
+msgstr ""
+
+#: E:\class roster picker\main.py:994
+msgid "编辑所选名单"
+msgstr ""
+
+#: E:\class roster picker\main.py:995
+msgid "其他"
+msgstr ""
+
+#: E:\class roster picker\main.py:996
+msgid "打开背景音乐目录"
+msgstr ""
+
+#: E:\class roster picker\main.py:997
+msgid "打开名单文件目录"
+msgstr ""
+
+#: E:\class roster picker\main.py:998
+msgid "关于"
+msgstr ""
+
+#: E:\class roster picker\main.py:999
+msgid "沉梦课堂点名器 V6.0"
+msgstr ""
+
+#: E:\class roster picker\main.py:1000
+msgid ""
+"<html><head/><body><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具"
+"<br/></p><p align=\"center\"><a href=\"https://cmxz.top/ktdmq\"><span "
+"style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></"
+"p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-"
+"NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/"
+"Class-Roster-Picker-NEXT: 课堂点名器</span></a></p></body></html>"
+msgstr ""
+
+#: E:\class roster picker\main.py:1002
+msgid "课堂点名器设置"
+msgstr ""
+
+#: E:\class roster picker\main.py:1056
+msgid "新增名单"
+msgstr ""
+
+#: E:\class roster picker\main.py:1056
+msgid "请输入名单名称:"
+msgstr ""
+
+#: E:\class roster picker\main.py:1067
+msgid "新建成功"
+msgstr ""
+
+#: E:\class roster picker\main.py:1075
+msgid "再次输入名单名称将删除此名单！"
+msgstr ""
+
+#: E:\class roster picker\main.py:1075
+msgid "删除名单"
+msgstr ""
+
+#: E:\class roster picker\main.py:1084
+msgid "删除成功"
+msgstr ""
+
+#: E:\class roster picker\main.py:1090 picker\main.py:1102
+msgid "名单文件不存在，或已被删除！"
+msgstr ""
+
+#: E:\class roster picker\main.py:1092
+msgid "名单名称输入错误！"
+msgstr ""
+
+#: E:\class roster picker\main.py:1247
+msgid "中奖名单统计(统计会覆盖上一次结果):\n"
+msgstr ""
+
+#: E:\class roster picker\main.py:1252
+msgid "保存结果"
+msgstr ""
+
+#: E:\class roster picker\main.py:1252
+msgid "统计结果已保存到'中奖统计.txt'"
+msgstr ""

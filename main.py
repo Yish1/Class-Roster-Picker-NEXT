@@ -9,42 +9,69 @@ import hashlib
 import gettext
 import glob
 import ctypes
-import ptvsd  # QThread断点工具
+# import ptvsd  # QThread断点工具
 import win32com.client
+import webbrowser as web
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QCursor, QIcon, QPixmap
+from plyer import notification
+from PyQt5.QtGui import QCursor
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication
-from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QScrollerProperties
+from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from datetime import datetime, timedelta
 from ui import Ui_Form  # 导入ui文件
 from smallwindow import Ui_smallwindow
 from settings import Ui_settings
 from Crypto.Cipher import ARC4
-import webbrowser as web
 
-dmversion = 6.0
+try:
+    config = {}
+    with open('config.ini', 'r', encoding='utf-8') as file:
+        for line in file:
+            if '=' in line:
+                key, value = line.strip().split('=', 1)
+                config[key.strip('[]')] = value.strip()
+    try:
+        language_value = config.get('language')
+    except:
+        language_value = "zh_CN"
+    localedir1 = os.path.join(os.path.abspath(
+        os.path.dirname(__file__)), 'locale')
+    translate = gettext.translation(
+        domain=f"{language_value}", localedir=localedir1, languages=[f"{language_value}"])
+    _ = translate.gettext
+except:
+    localedir1 = os.path.join(os.path.abspath(
+        os.path.dirname(__file__)), 'locale')
+    translate = gettext.translation(
+        domain="zh_CN", localedir=localedir1, languages=["zh_CN"])
+    _ = translate.gettext
 
+dmversion = 5.9
+
+# config变量
 allownametts = None
 checkupdate = None
 bgimg = None
 last_name_list = None
-
+# 全局变量
 name = None
 mrunning = False
 running = False
-default_name_list = "默认名单"
+default_name_list = _("默认名单")
 name_list = ""
 history_file = ""
+namelen = 0
+# 窗口标识符
 small_window_flag = None
 settings_flag = None
-namelen = 0
+# 初始化
 today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 pygame.init()
 pygame.mixer.init()
 
 
-class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
+class MainWindow(QtWidgets.QMainWindow, Ui_Form):
     def __init__(self):
         super().__init__()
         self.setupUi(self)  # 初始化UI
@@ -55,13 +82,13 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         self.m_flag = False
         self.setMinimumSize(QtCore.QSize(700, 409))
         self.setWindowTitle(QCoreApplication.translate(
-            "MainWindow", "沉梦课堂点名器 6.0"))
-        self.pushButton_2.setText(" 开始")
-        self.pushButton_5.setText(" 小窗模式")
-        self.label_3.setText("幸运儿是:")
+            "MainWindow", _("沉梦课堂点名器 6.0")))
+        self.pushButton_2.setText(_(" 开始"))
+        self.pushButton_5.setText(_(" 小窗模式"))
+        self.label_3.setText(_("幸运儿是:"))
         self.spinBox.setValue(1)
-        self.label_5.setText("当前名单：")
-        self.label_4.setText("抽取人数：")
+        self.label_5.setText(_("当前名单："))
+        self.label_4.setText(_("抽取人数："))
         self.progressBar.hide()
 
         self.pushButton_2.clicked.connect(self.start)
@@ -75,9 +102,10 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                              QScroller.LeftMouseButtonGesture)
 
         self.read_config()
-        self.read_name_list()
+        self.read_name_list(2)
         self.set_bgimg()
         self.cs_sha256()
+        self.check_new_version()
 
         self.timer = None
 
@@ -171,9 +199,9 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         # 获取所有txt文件
         mdnum = len(txt_name)
         if mdnum == 0:
-            self.show_message("名单文件不存在，且默认名单无法生成，请反馈给我们！", "名单生成异常！")
+            self.show_message(_("名单文件不存在，且默认名单无法生成，请反馈给我们！"), _("名单生成异常！"))
             sys.exit()
-        print("共读取到 %d 个名单" % mdnum)
+        print(_("共读取到 %d 个名单" % mdnum))
         txt_files_name = [os.path.splitext(
             filename)[0] for filename in txt_name]
         # 去除扩展名
@@ -189,8 +217,10 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                 pass
             self.comboBox.currentIndexChanged.connect(
                 lambda: self.get_selected_file(0))
-
-            self.get_selected_file()
+            if mode == 2:
+                self.get_selected_file(1)
+            else:
+                pass
 
     def get_selected_file(self, first=None):
         global file_path, selected_file, history_file
@@ -200,7 +230,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         file_path = os.path.join("name", selected_file+".txt")
         history_file = "history/%s中奖记录.txt" % selected_file
         if not os.path.exists(file_path):
-            self.show_message("所选名单文件已被移动或删除！", "找不到文件！")
+            self.show_message(_("所选名单文件已被移动或删除！"), _("找不到文件！"))
             try:
                 self.comboBox.setCurrentIndex(0)
             except:
@@ -208,23 +238,28 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         else:
             print(f"所选文件的路径为: {file_path}\n")
         self.process_name_file(file_path)
+        if first == 1:
+            self.listWidget.addItem(_("\'%s'，共 %s 人") %
+                                    (selected_file, namelen))
         if first == 0:
-            self.listWidget.addItem("切换至>\'%s\' 共 %s 人" %
+            self.listWidget.addItem(_("切换至>\'%s\' 共 %s 人") %
                                     (selected_file, namelen))
             self.listWidget.setCurrentRow(self.listWidget.count() - 1)
 
     def read_config(self):
-        global allownametts, checkupdate, bgimg, last_name_list
+        global allownametts, checkupdate, bgimg, last_name_list, language_value
         config = {}
         if not os.path.exists('config.ini'):
             with open('config.ini', 'w', encoding='utf-8') as file:
-                file.write('[allownametts]=0\n[checkupdate]=2\n[bgimg]=1\n')
+                file.write(
+                    '[language]=zh_CN\n[allownametts]=0\n[checkupdate]=2\n[bgimg]=1\n')
         with open('config.ini', 'r', encoding='utf-8') as file:
             for line in file:
                 if '=' in line:
                     key, value = line.strip().split('=', 1)
                     config[key.strip('[]')] = value.strip()
         try:
+            language_value = config.get('language')
             allownametts = int(config.get('allownametts'))
             checkupdate = int(config.get('checkupdate'))
             bgimg = int(config.get('bgimg'))
@@ -294,8 +329,8 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                                     bak_lines, original_lines)
                                 diff_str = '\n'.join(diff)
                                 diff_str = diff_str[11:]
-                                self.show_message("警告：%s 最近被修改，加号是新增的，减号是减少的\n\n此记录会在 2天后 不再展示。\n%s" % (
-                                    filename1, diff_str), "警告")
+                                self.show_message(_("警告：%s 最近被修改，加号是新增的，减号是减少的\n\n此记录会在 2天后 不再展示。\n%s") % (
+                                    filename1, diff_str), _("警告"))
                                 # 确保在最后一次循环才执行manage_deadline(filename1)
                                 delrecordfile = delrecordfile + 1
 
@@ -328,7 +363,8 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                 data = f.read()
         except FileNotFoundError:
             # 文件不存在时弹窗提示
-            self.show_message("警告：%s 的备份被删除，此名单可能已经被修改！" % file_path, "警告")
+            self.show_message(_("警告：%s 的备份被删除，此名单可能已经被修改！" %
+                              file_path), _("警告"))
         cipher = ARC4.new(b'cmxztopktdmq')
         if operation == 'encrypt':
             try:
@@ -446,29 +482,30 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             ifvoice = QMessageBox()
             ifvoice.setWindowTitle("语音播报")
             ifvoice.setText(
-                "需要开启语音播报功能吗？\n单抽后会播报抽取结果。\n")
-            allow_button = ifvoice.addButton("好的", QMessageBox.ActionRole)
-            cancel_button = ifvoice.addButton("下次一定", QMessageBox.ActionRole)
+                _("需要开启语音播报功能吗？\n单抽后会播报抽取结果。\n"))
+            allow_button = ifvoice.addButton(_("好的"), QMessageBox.ActionRole)
+            cancel_button = ifvoice.addButton(
+                _("下次一定"), QMessageBox.ActionRole)
             dictation_button = ifvoice.addButton(
-                "听写模式(不会读\"恭喜\")", QMessageBox.ActionRole)
-            button = ifvoice.addButton("取消", QMessageBox.NoRole)
+                _("听写模式(不会读\"恭喜\")"), QMessageBox.ActionRole)
+            button = ifvoice.addButton(_("取消"), QMessageBox.NoRole)
             button.setVisible(False)
             ifvoice.exec_()
             if ifvoice.clickedButton() == allow_button:
                 # 同意
                 self.update_config('allownametts', 2)
                 QMessageBox.information(
-                    None, "语音播报", "语音播报已经开启，您可以设置界面重新设置此功能。")
+                    None, _("语音播报"), _("语音播报已经开启，您可以设置界面重新设置此功能。"))
             elif ifvoice.clickedButton() == cancel_button:
                 # 不同意
                 self.update_config('allownametts', 1)
                 QMessageBox.information(
-                    None, "语音播报", "语音播报已禁用，您可以设置界面重新设置此功能。")
+                    None, _("语音播报"), _("语音播报已禁用，您可以设置界面重新设置此功能。"))
             elif ifvoice.clickedButton() == dictation_button:
                 # 听写模式
                 self.update_config('allownametts', 3)
                 QMessageBox.information(
-                    None, "语音播报", "语音播报（听写模式）已启用，您可以设置界面重新设置此功能。")
+                    None, _("语音播报"), _("语音播报（听写模式）已启用，您可以设置界面重新设置此功能。"))
         if allownametts == 2:
             print("语音播报(正常模式)")
         elif allownametts == 3:
@@ -515,10 +552,32 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             self.threadpool.start(self.thread)
             self.ttsinitialize()
 
+    def check_new_version(self):
+        self.threadpool = QThreadPool()
+        self.update_thread = UpdateThread()
+        self.threadpool.start(self.update_thread)
+        self.update_thread.signals.find_new_version.connect(
+            self.update_message)
+        self.update_thread.signals.finished.connect(
+            lambda: print("检查更新线程结束"))
+
+    def update_message(self, message, title):
+        msgBox = QMessageBox()
+        msgBox.setWindowTitle(title)
+        msgBox.setText(message)
+        msgBox.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
+        msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.No)
+        reply = msgBox.exec_()
+        if reply == QMessageBox.Ok:
+            web.open_new("https://cmxz.top/ktdmq")
+            self.update_list(1, title)
+        else:
+            self.update_list(1, title)
+
     def start_mulit(self):
         num = self.spinBox.value()
         if num > namelen:
-            self.show_message("连抽人数大于名单人数!", "错误")
+            self.show_message(_("连抽人数大于名单人数!"), _("错误"))
         else:
             if mrunning == False:
                 self.ptimer = QTimer(self)
@@ -539,13 +598,14 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                     print("无法写入历史记录")
                 print(today, "幸运儿是： %s " % name_set)
                 self.listWidget.addItem("----------------------------")
-                self.listWidget.addItem("连抽：%d 人" % num)
+                self.listWidget.addItem(_("连抽：%d 人") % num)
                 for name in name_set:
                     self.listWidget.addItem(name)
                 self.listWidget.addItem("----------------------------")
                 target_line = num - 2 if num > 2 else num - 1
-                self.listWidget.setCurrentRow(self.listWidget.count() - target_line)
-                self.label_3.setText("幸运儿是:")
+                self.listWidget.setCurrentRow(
+                    self.listWidget.count() - target_line)
+                self.label_3.setText(_("幸运儿是:"))
             else:
                 print("连抽中...")
 
@@ -661,14 +721,14 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
     def setname(self):
         global name
         if len(name_list) == 0:
-            self.show_message("名单文件为空，请输入名字（一行一个）后再重新点名！", "警告")
+            self.show_message(_("名单文件为空，请输入名字（一行一个）后再重新点名！"), _("警告"))
             self.qtimer(0)
-            self.label_3.setText("名单文件为空！")
+            self.label_3.setText(_("名单文件为空！"))
             name = ""
             try:
                 self.opentext(file_path)
             except Exception as e:
-                self.show_message("选择的名单文件%s不存在！" % file_path, "\n%s" % e)
+                self.show_message(_("选择的名单文件%s不存在！") % file_path, "\n%s" % e)
         else:
             name = random.choice(name_list)
             self.label_3.setText(name)
@@ -676,8 +736,9 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
     def show_message(self, message, title):
         msgBox = QMessageBox()
         msgBox.setWindowTitle(title)
+        msgBox.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
         if message is None:
-            message = "未知错误"
+            message = _("未知错误")
         message = str(message)
         msgBox.setText(message)
         msgBox.exec_()
@@ -688,6 +749,7 @@ class WorkerSignals(QObject):
     show_progress = pyqtSignal(int, int, int)
     update_list = pyqtSignal(int, str)
     update_pushbotton = pyqtSignal(str)
+    find_new_version = pyqtSignal(str, str)
     enable_button = pyqtSignal(int)
     save_history = pyqtSignal()
     finished = pyqtSignal()
@@ -703,7 +765,7 @@ class WorkerThread(QRunnable):
 
     def run(self):
         global running
-        ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        # ptvsd.debug_this_thread()  # 在此线程启动断点调试
 
         def ttsread(text):
             speaker = win32com.client.Dispatch("SAPI.SpVoice")
@@ -711,7 +773,7 @@ class WorkerThread(QRunnable):
 
         def stop():
             self.signals.update_list.emit(1, name)
-            self.signals.update_pushbotton.emit(" 小窗模式")
+            self.signals.update_pushbotton.emit(_(" 小窗模式"))
             self.signals.enable_button.emit(1)
             self.signals.finished.emit()
             # 向主线程发送终止信号
@@ -725,7 +787,7 @@ class WorkerThread(QRunnable):
                 try:
                     self.signals.save_history.emit()
                 except:
-                    print("无法写入历史记录")
+                    print(_("无法写入历史记录"))
                 print(today, "幸运儿是： %s " % name)
             else:
                 print("名单为空!")
@@ -735,7 +797,7 @@ class WorkerThread(QRunnable):
             except pygame.error as e:
                 print(f"停止音乐播放时发生错误：{str(e)}")
             if self.allownametts == 2:
-                ttsread(text="恭喜 %s" % name)
+                ttsread(text=_("恭喜 %s") % name)
             elif self.allownametts == 3:
                 ttsread(text=name)
             elif self.allownametts == 1:
@@ -748,7 +810,7 @@ class WorkerThread(QRunnable):
             self.signals.qtimer.emit(1, 50)
             print("开始点名")
             self.signals.show_progress.emit(1, 0, 0)
-            self.signals.update_pushbotton.emit(" 结束")
+            self.signals.update_pushbotton.emit(_(" 结束"))
             self.signals.enable_button.emit(0)
             folder_name = "dmmusic"
             current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -771,6 +833,55 @@ class WorkerThread(QRunnable):
                 print("无法播放音乐文件：%s，错误信息：{str(e)}") % file_path
 
 
+class UpdateThread(QRunnable):
+    def __init__(self):
+        super().__init__()
+        self.signals = WorkerSignals()
+
+    def run(self):
+        # ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        if checkupdate == 2:
+            try:
+                headers = {
+                    'User-Agent': 'CMXZ-CRP_%s' % dmversion
+                }
+                updatecheck = "https://cmxz.top/programs/dm/check.php"
+                page = requests.get(updatecheck, timeout=3, headers=headers)
+                newversion = float(page.text)
+                print("云端版本号为:", newversion)
+                findnewversion = _("检测到新版本！")
+                if newversion > dmversion:
+                    print("检测到新版本:", newversion,
+                          "当前版本为:", dmversion)
+                    new_version_detail = requests.get(
+                        updatecheck + "?detail", timeout=3, headers=headers)
+                    new_version_detail = new_version_detail.text
+                    self.signals.find_new_version.emit(_("云端最新版本为%s，要现在下载新版本吗？<br>您也可以稍后访问沉梦小站官网获取最新版本。<br><br>%s") % (
+                        newversion, new_version_detail), findnewversion)
+                    self.send_notification(_("检测到版本更新"), _(
+                        "云端最新版本为%s，请及时更新以获得更佳体验！") % newversion)
+                else:
+                    print("当前已经是最新版本")
+            except:
+                print("网络异常,无法检测更新")
+                noconnect = _("网络连接异常，检查更新失败")
+                self.signals.update_list.emit(1, noconnect)
+
+        elif checkupdate == 1:
+            print("检查更新已关闭")
+
+        self.signals.finished.emit()
+
+    def send_notification(self, title, message):
+        notification.notify(
+            title=title,
+            message=message,
+            app_name=_("沉梦课堂点名器"),
+            app_icon="picker.ico",
+            timeout=10
+        )
+
+
 class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
     def __init__(self, main_instance=None):
         super().__init__()
@@ -781,12 +892,12 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         # 设置半透明背景
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.m_flag = False
-        self.label_2.setText("开始")
+        self.label_2.setText(_("开始"))
         self.m_moved = False  # 用于检测是否移动
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint |
                             QtCore.Qt.WindowStaysOnTopHint)
         self.setWindowTitle(QCoreApplication.translate(
-            "MainWindow", "点名器小窗模式"))
+            "MainWindow", _("点名器小窗模式")))
         self.timer = None
         self.runflag = None
         self.main_instance = main_instance
@@ -833,7 +944,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
                 self.timer.stop()
                 self.runflag = False
                 if name != "":
-                    self.main_instance.update_list(1, "小窗：%s" % name)
+                    self.main_instance.update_list(1, _("小窗：%s" % name))
                 else:
                     pass
             except Exception as e:
@@ -843,7 +954,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         global name
         if name_list == []:
             name = ""
-            self.label_2.setText("名单为空!")
+            self.label_2.setText(_("名单为空!"))
             self.main_instance.mini(2)
             self.qtimer(0)
         else:
@@ -876,39 +987,41 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.setupUi(central_widget)  # 初始化UI到中央小部件上
         self.setFixedSize(684, 500)
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
-        self.groupBox.setTitle("功能设置")
-        self.radioButton_3.setText("预设1")
-        self.radioButton_4.setText("预设2")
-        self.radioButton_5.setText("无")
-        self.checkBox_3.setText("检查更新")
-        self.checkBox_2.setText("语音播报")
-        self.label.setText("背景图片")
-        self.radioButton.setText("正常模式")
-        self.radioButton_2.setText("听写模式(不说\"恭喜\")")
-        self.groupBox_3.setTitle("语言设置")
-        self.pushButton_2.setText("保存")
-        self.pushButton.setText("取消")
-        self.groupBox_2.setTitle("名单管理")
-        self.pushButton_4.setText("删除所选名单")
-        self.pushButton_6.setText("统计所选名单")
-        self.pushButton_3.setText("新建名单")
-        self.pushButton_5.setText("编辑所选名单")
-        self.groupBox_6.setTitle("其他")
-        self.pushButton_10.setText("打开背景音乐目录")
-        self.pushButton_12.setText("打开名单文件目录")
-        self.groupBox_5.setTitle("关于")
-        self.label_2.setText("沉梦课堂点名器 V6.0")
-        self.label_3.setText("<html><head/><body><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具<br/></p><p align=\"center\"><a href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p></body></html>")
+        self.groupBox.setTitle(_("功能设置"))
+        self.radioButton_3.setText(_("预设1"))
+        self.radioButton_4.setText(_("预设2"))
+        self.radioButton_5.setText(_("无"))
+        self.checkBox_3.setText(_("检查更新"))
+        self.checkBox_2.setText(_("语音播报"))
+        self.label.setText(_("背景图片"))
+        self.radioButton.setText(_("正常模式"))
+        self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
+        self.groupBox_3.setTitle(_("语言设置"))
+        self.pushButton_2.setText(_("保存"))
+        self.pushButton.setText(_("取消"))
+        self.groupBox_2.setTitle(_("名单管理"))
+        self.pushButton_4.setText(_("删除所选名单"))
+        self.pushButton_6.setText(_("统计所选名单"))
+        self.pushButton_3.setText(_("新建名单"))
+        self.pushButton_5.setText(_("编辑所选名单"))
+        self.groupBox_6.setTitle(_("其他"))
+        self.pushButton_10.setText(_("打开背景音乐目录"))
+        self.pushButton_12.setText(_("打开名单文件目录"))
+        self.groupBox_5.setTitle(_("关于"))
+        self.label_2.setText(_("沉梦课堂点名器 V6.0"))
+        self.label_3.setText(_("<html><head/><body><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具<br/></p><p align=\"center\"><a href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p></body></html>"))
         self.setWindowTitle(QCoreApplication.translate(
-            "MainWindow", "课堂点名器设置"))
+            "MainWindow", _("课堂点名器设置")))
 
         self.main_instance = main_instance
         self.read_name_list()
         self.read_config()
+        self.find_langluge()
 
         self.enable_tts = None
         self.enable_update = None
         self.enable_bgimg = None
+        self.language_value = None
 
         self.window = QWidget()
         self.window.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
@@ -918,8 +1031,9 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.pushButton_5.clicked.connect(self.edit_list)
         self.pushButton_2.clicked.connect(self.save_settings)
         self.pushButton_6.clicked.connect(self.count_name)
-        self.pushButton_12.clicked.connect(lambda:self.open_fold("name"))
-        self.pushButton_10.clicked.connect(lambda:self.open_fold("dmmusic"))
+        self.comboBox_2.currentIndexChanged.connect(self.change_langluge)
+        self.pushButton_12.clicked.connect(lambda: self.open_fold("name"))
+        self.pushButton_10.clicked.connect(lambda: self.open_fold("dmmusic"))
 
         self.checkBox_2.toggled.connect(
             lambda checked: self.process_config("enable_tts", checked))
@@ -950,18 +1064,18 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
 
     def add_new_list(self):
         newfilename, ok_pressed = QInputDialog.getText(
-            self.window, "新增名单", "请输入名单名称:")
+            self.window, _("新增名单"), _("请输入名单名称:"))
         if ok_pressed and newfilename:
             print("新增名单名称是: %s" % newfilename)
             newnamepath = os.path.join(
                 "name", f"{newfilename}.txt")  # 打开文件并写入内容
             with open(newnamepath, "w", encoding="utf8") as f:
                 pass
-            message = ("已创建名为 '%s.txt' 的文件，路径为: %s" %
-                       (newfilename, newnamepath))
+            message = (_("已创建名为 '%s.txt' 的文件)，_(路径为: %s" %
+                       (newfilename, newnamepath)))
 
             QMessageBox.information(
-                self.window, "新建成功", message, QMessageBox.Ok)
+                self.window, _("新建成功"), message, QMessageBox.Ok)
             self.main_instance.opentext(newnamepath)
             txt_name = self.refresh_name_list()
             self.comboBox_1.clear()  # 清空下拉框的选项
@@ -969,24 +1083,24 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
 
     def delete_list(self):
         target_filename, ok_pressed = QInputDialog.getText(
-            self.window, "删除名单", "再次输入名单名称将删除此名单！")
+            self.window, _("删除名单"), _("再次输入名单名称将删除此名单！"))
         if ok_pressed and target_filename:
             if target_filename == self.comboBox_1.currentText():
                 target_filepath = os.path.join(
                     "name", f"{target_filename}.txt")
                 if os.path.exists(target_filepath):
                     os.remove(target_filepath)  # 删除文件
-                    message = ("已成功删除名单： '%s.txt' " % target_filename)
+                    message = (_("已成功删除名单： '%s.txt' " % target_filename))
                     QMessageBox.information(
-                        self.window, "删除成功", message, QMessageBox.Ok)
+                        self.window, _("删除成功"), message, QMessageBox.Ok)
                     txt_name = self.refresh_name_list()
                     self.comboBox_1.clear()  # 清空下拉框的选项
                     self.comboBox_1.addItems(txt_name)  # 添加新的文件名到下拉框
                 else:
                     QMessageBox.warning(
-                        self.window, '警告', '名单文件不存在，或已被删除！', QMessageBox.Ok)
+                        self.window, _('警告'), _('名单文件不存在，或已被删除！'), QMessageBox.Ok)
             else:
-                self.main_instance.show_message("名单名称输入错误！", "错误")
+                self.main_instance.show_message(_("名单名称输入错误！"), _("错误"))
 
     def edit_list(self):
         target_filename = self.comboBox_1.currentText()
@@ -996,12 +1110,27 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             self.main_instance.opentext(target_filepath)
         else:
             QMessageBox.warning(
-                self.window, '警告', '名单文件不存在，或已被删除！', QMessageBox.Ok)
+                self.window, _('警告'), _('名单文件不存在，或已被删除！'), QMessageBox.Ok)
+
+    def find_langluge(self):
+        # 读取指定目录下的文件夹名
+        locale_dir = "./locale"
+        try:
+            if os.path.exists(locale_dir) and os.path.isdir(locale_dir):
+                folders = [folder for folder in os.listdir(
+                    locale_dir) if os.path.isdir(os.path.join(locale_dir, folder))]
+                self.comboBox_2.addItems(folders)
+                self.comboBox_2.setCurrentText(language_value)
+        except Exception as e:
+            print(f"读取语言失败:{e}")
+
+    def change_langluge(self):
+        self.language_value = self.comboBox_2.currentText()
 
     def closeEvent(self, event):
         print("设置被关闭")
         self.main_instance.mini(2)
-        self.main_instance.read_name_list(2)
+        self.main_instance.read_name_list()
         global settings_flag
         settings_flag = None
         event.accept()  # 确保仅关闭子窗口，不影响主窗口
@@ -1041,9 +1170,11 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             self.radioButton_3.setChecked(False)
             self.radioButton_4.setChecked(False)
             self.radioButton_5.setChecked(True)
-    def open_fold(self,value):
+
+    def open_fold(self, value):
         os.makedirs(value, exist_ok=True)
         self.main_instance.opentext(value)
+
     def process_config(self, key, checked):
         if key == "enable_tts":
             if checked and self.checkBox_2.isChecked():
@@ -1103,6 +1234,9 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             self.main_instance.update_config("bgimg", 2)
         elif self.enable_bgimg == 3:
             self.main_instance.update_config("bgimg", 3)
+
+        if self.language_value is not None:
+            self.main_instance.update_config("language", self.language_value)
         self.close()
 
     def count_name(self):
@@ -1120,19 +1254,21 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                             else:
                                 name_counts[cname] += 1
             sorted_counts = sorted(name_counts.items(),
-                                key=lambda x: x[1], reverse=True)
+                                   key=lambda x: x[1], reverse=True)
             # 保存文本
             print("正在保存为文本")
-            cresult = "中奖名单统计(统计会覆盖上一次结果):\n"
+            cresult = _("中奖名单统计(统计会覆盖上一次结果):\n")
             for name, count in sorted_counts:
                 cresult += "%s 出现了 %s 次\n" % (name, count)
                 with open('中奖统计.txt', 'w', encoding="utf-8") as file:
                     file.write(cresult)
-            QMessageBox.information(self, "保存结果", "统计结果已保存到'中奖统计.txt'")
+            QMessageBox.information(self, _("保存结果"), _("统计结果已保存到'中奖统计.txt'"))
             self.main_instance.opentext('中奖统计.txt')
         except Exception as e:
             print("读取文件时发生错误:", e)
-            self.main_instance.show_message("历史记录文件不存在，无法统计次数！\n%s" % e, "错误")
+            self.main_instance.show_message(
+                _("历史记录文件不存在，无法统计次数！\n%s" % e), _("错误"))
+
 
 if __name__ == "__main__":
     if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
@@ -1143,6 +1279,6 @@ if __name__ == "__main__":
         QtWidgets.QApplication.setAttribute(
             QtCore.Qt.AA_UseHighDpiPixmaps, True)
     app = QtWidgets.QApplication(sys.argv)
-    mainWindow = DraggableWindow()
+    mainWindow = MainWindow()
     mainWindow.show()
     sys.exit(app.exec_())
