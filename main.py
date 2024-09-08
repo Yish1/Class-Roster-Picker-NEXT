@@ -9,7 +9,7 @@ import hashlib
 import gettext
 import glob
 import ctypes
-#import ptvsd  # QThread断点工具
+import ptvsd  # QThread断点工具
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QIcon, QPixmap
@@ -28,14 +28,18 @@ dmversion = 6.0
 allownametts = None
 checkupdate = None
 bgimg = None
+last_name_list = None
+
 name = None
 mrunning = False
 running = False
 default_name_list = "默认名单"
 name_list = ""
+history_file = ""
 small_window_flag = None
 settings_flag = None
 namelen = 0
+today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 pygame.init()
 pygame.mixer.init()
 
@@ -63,38 +67,39 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         self.pushButton_2.clicked.connect(self.start)
         self.pushButton_4.clicked.connect(self.run_settings)
         self.pushButton_5.clicked.connect(self.small_mode)
-        self.pushButton.clicked.connect(lambda:self.mini(1))
+        self.pushButton.clicked.connect(lambda: self.mini(1))
 
         # 启用触摸手势滚动
         scroller = QScroller.scroller(self.listWidget)
-        scroller.grabGesture(self.listWidget.viewport(), QScroller.LeftMouseButtonGesture)
+        scroller.grabGesture(self.listWidget.viewport(),
+                             QScroller.LeftMouseButtonGesture)
 
         self.read_config()
         self.read_name_list()
         self.set_bgimg()
         self.cs_sha256()
-        
+
         self.timer = None
 
     def set_bgimg(self):
         if bgimg == 2:
             self.label_2.setStyleSheet("border-image: url(:/images/(1070).webp);\n"
-    "border-top-left-radius :28px;\n"
-    "border-bottom-left-radius :28px;\n"
-    "border-top-right-radius :28px;\n"
-    "border-bottom-right-radius :28px;")
-        elif bgimg == 1:
+                                       "border-top-left-radius :28px;\n"
+                                       "border-bottom-left-radius :28px;\n"
+                                       "border-top-right-radius :28px;\n"
+                                       "border-bottom-right-radius :28px;")
+        elif bgimg == 1 or bgimg == 0:
             self.label_2.setStyleSheet("border-image: url(:/images/bg.webp);\n"
-    "border-top-left-radius :28px;\n"
-    "border-bottom-left-radius :28px;\n"
-    "border-top-right-radius :28px;\n"
-    "border-bottom-right-radius :28px;")
+                                       "border-top-left-radius :28px;\n"
+                                       "border-bottom-left-radius :28px;\n"
+                                       "border-top-right-radius :28px;\n"
+                                       "border-bottom-right-radius :28px;")
         elif bgimg == 3:
             self.label_2.setStyleSheet("background-color: rgba(42, 45, 47, 0.92);\n"
-    "border-top-left-radius :28px;\n"
-    "border-bottom-left-radius :28px;\n"
-    "border-top-right-radius :28px;\n"
-    "border-bottom-right-radius :28px;")
+                                       "border-top-left-radius :28px;\n"
+                                       "border-bottom-left-radius :28px;\n"
+                                       "border-top-right-radius :28px;\n"
+                                       "border-bottom-right-radius :28px;")
 
     def small_mode(self):
         global small_window_flag
@@ -135,13 +140,13 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         self.m_flag = False
         self.setCursor(QCursor(Qt.ArrowCursor))  # 恢复默认鼠标图标
 
-
-    def mini(self,mode):
+    def mini(self, mode):
         if mode == 1:
             self.showMinimized()
         elif mode == 2:
-            self.showNormal() 
+            self.showNormal()
     # 功能实现代码
+
     def make_name_list(self):
         for i in range(1, 21):
             yield str(i).rjust(2, "0")
@@ -155,7 +160,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                 f.write(i)
                 f.write("\n")
 
-    def read_name_list(self,mode = None):
+    def read_name_list(self, mode=None):
         folder_name = "name"
         os.makedirs("name", exist_ok=True)
         if not os.path.exists(folder_name) or not os.listdir(folder_name):
@@ -178,16 +183,22 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             self.comboBox.disconnect()
             self.comboBox.clear()
             self.comboBox.addItems(txt_files_name)  # 添加文件名到下拉框
+            try:
+                self.comboBox.setCurrentText(last_name_list)
+            except:
+                pass
             self.comboBox.currentIndexChanged.connect(
                 lambda: self.get_selected_file(0))
+
             self.get_selected_file()
 
     def get_selected_file(self, first=None):
-        global file_path
+        global file_path, selected_file, history_file
         # 获取当前选中的文件名
         selected_file = self.comboBox.currentText()
+        self.update_config("last_name_list", selected_file)
         file_path = os.path.join("name", selected_file+".txt")
-        print(file_path)
+        history_file = "history/%s中奖记录.txt" % selected_file
         if not os.path.exists(file_path):
             self.show_message("所选名单文件已被移动或删除！", "找不到文件！")
             try:
@@ -198,23 +209,30 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             print(f"所选文件的路径为: {file_path}\n")
         self.process_name_file(file_path)
         if first == 0:
-            self.listWidget.addItem("切换至>\'%s\' 共 %s 人" % (selected_file,namelen))
+            self.listWidget.addItem("切换至>\'%s\' 共 %s 人" %
+                                    (selected_file, namelen))
             self.listWidget.setCurrentRow(self.listWidget.count() - 1)
 
     def read_config(self):
-        global allownametts, checkupdate, bgimg
+        global allownametts, checkupdate, bgimg, last_name_list
         config = {}
         if not os.path.exists('config.ini'):
             with open('config.ini', 'w', encoding='utf-8') as file:
-                file.write('[allownametts]=0\n[checkupdate]=0\n[bgimg]=0\n')
+                file.write('[allownametts]=0\n[checkupdate]=2\n[bgimg]=1\n')
         with open('config.ini', 'r', encoding='utf-8') as file:
             for line in file:
                 if '=' in line:
                     key, value = line.strip().split('=', 1)
                     config[key.strip('[]')] = value.strip()
-        allownametts = int(config.get('allownametts'))
-        checkupdate = int(config.get('checkupdate'))
-        bgimg = int(config.get('bgimg'))
+        try:
+            allownametts = int(config.get('allownametts'))
+            checkupdate = int(config.get('checkupdate'))
+            bgimg = int(config.get('bgimg'))
+            last_name_list = config.get('last_name_list')
+        except:
+            print("配置文件读取失败，已重置为默认值！")
+            os.remove("config.ini")
+            self.read_config()
         return config
 
     def update_config(self, variable, new_value):
@@ -226,7 +244,9 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         self.read_config()
         if variable == 'bgimg':
             self.set_bgimg()
-        else:pass
+        else:
+            pass
+
     def cs_sha256(self):
         delrecordfile = 0
         os.makedirs('data', exist_ok=True)
@@ -462,6 +482,20 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
         else:
             os.system("vim %s" % path)
 
+    def save_history(self, mode=None, name_set=None):
+        global history_file
+        os.makedirs('history', exist_ok=True)
+        history_file = "history/%s中奖记录.txt" % selected_file
+        if mode == 1:
+            with open(history_file, "a", encoding="utf-8") as file:
+                content = "%s 沉梦课堂点名器%s 幸运儿是：%s\n" % (
+                    today, dmversion, name_set)
+                file.write(content)
+        else:
+            with open(history_file, "a", encoding="utf-8") as file:
+                content = "%s 沉梦课堂点名器%s 幸运儿是：%s\n" % (today, dmversion, name)
+                file.write(content)
+
     def start(self):
         num = self.spinBox.value()
         if num > 1:
@@ -475,6 +509,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             self.thread.signals.update_list.connect(self.update_list)
             self.thread.signals.enable_button.connect(self.enable_button)
             self.thread.signals.qtimer.connect(self.qtimer)
+            self.thread.signals.save_history.connect(self.save_history)
             self.thread.signals.finished.connect(lambda: print("结束点名"))
 
             self.threadpool.start(self.thread)
@@ -498,14 +533,8 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                     name_set.add(random.choice(name_list))
                 name_set = list(name_set)
                 random.shuffle(name_set)
-                today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 try:
-                    print(
-                        today,
-                        "沉梦课堂点名器%s" % dmversion,
-                        "幸运儿是： %s " % name_set,
-                        file=open("点名器中奖名单.txt", "a"),
-                    )
+                    self.save_history(1, name_set)
                 except:
                     print("无法写入历史记录")
                 print(today, "幸运儿是： %s " % name_set)
@@ -514,26 +543,27 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
                 for name in name_set:
                     self.listWidget.addItem(name)
                 self.listWidget.addItem("----------------------------")
-                self.listWidget.setCurrentRow(self.listWidget.count() - num+2)
+                target_line = num - 2 if num > 2 else num - 1
+                self.listWidget.setCurrentRow(self.listWidget.count() - target_line)
+                self.label_3.setText("幸运儿是:")
             else:
                 print("连抽中...")
-
 
     def update_progress_bar_mulit(self):
         global mrunning
         mrunning = True
         self.progressBar.setStyleSheet(" QProgressBar {\n"
-        "        border: 2px solid rgba(88, 88, 88, 0.81);\n"
-        "        border-radius: 2px;\n"
-        "        background-color: rgba(0, 0, 0, 0);\n"
-        "    }\n"
-        "\n"
-        "    QProgressBar::chunk {\n"
-        "        background-color: QLinearGradient(\n"
-        "            x1: 0, y1: 0, x2: 1, y2: 1,\n"
-        "            stop: 0 #ffda95, stop: 1 #FF9800\n"
-        "        );\n"
-        "    }")
+                                       "        border: 2px solid rgba(88, 88, 88, 0.81);\n"
+                                       "        border-radius: 2px;\n"
+                                       "        background-color: rgba(0, 0, 0, 0);\n"
+                                       "    }\n"
+                                       "\n"
+                                       "    QProgressBar::chunk {\n"
+                                       "        background-color: QLinearGradient(\n"
+                                       "            x1: 0, y1: 0, x2: 1, y2: 1,\n"
+                                       "            stop: 0 #ffda95, stop: 1 #FF9800\n"
+                                       "        );\n"
+                                       "    }")
         if self.progressBar.value() < 100:
             self.value += 1
             self.progressBar.setValue(self.value)
@@ -545,19 +575,19 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             self.progressBar.hide()
             self.ptimer.stop()  # 停止定时器
             self.progressBar.setStyleSheet(" QProgressBar {\n"
-            "        border: 2px solid rgba(88, 88, 88, 0.81);\n"
-            "        border-radius: 2px;\n"
-            "        background-color: rgba(0, 0, 0, 0);\n"
-            "    }\n"
-            "\n"
-            "    QProgressBar::chunk {\n"
-            "        background-color: QLinearGradient(\n"
-            "            x1: 0, y1: 0, x2: 1, y2: 1,\n"
-            "            stop: 0 #00BCD4, stop: 1 #8BC34A\n"
-            "        );\n"
-            "        border-radius: 8px;\n"
-            "    }")
-            
+                                           "        border: 2px solid rgba(88, 88, 88, 0.81);\n"
+                                           "        border-radius: 2px;\n"
+                                           "        background-color: rgba(0, 0, 0, 0);\n"
+                                           "    }\n"
+                                           "\n"
+                                           "    QProgressBar::chunk {\n"
+                                           "        background-color: QLinearGradient(\n"
+                                           "            x1: 0, y1: 0, x2: 1, y2: 1,\n"
+                                           "            stop: 0 #00BCD4, stop: 1 #8BC34A\n"
+                                           "        );\n"
+                                           "        border-radius: 8px;\n"
+                                           "    }")
+
     def update_progress_bar(self, mode, value, value2):
         self.progressBar.setValue(value)
         self.progressBar.setMaximum(value2)
@@ -605,7 +635,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
 
         elif value == 3:
             self.pushButton_5.setEnabled(False)
-            
+
     def update_list(self, mode, value):
         if mode == 1:
             if value == "":
@@ -638,7 +668,7 @@ class DraggableWindow(QtWidgets.QMainWindow, Ui_Form):
             try:
                 self.opentext(file_path)
             except Exception as e:
-                self.show_message("选择的名单文件%s不存在！" % file_path,"\n%s" % e)
+                self.show_message("选择的名单文件%s不存在！" % file_path, "\n%s" % e)
         else:
             name = random.choice(name_list)
             self.label_3.setText(name)
@@ -659,6 +689,7 @@ class WorkerSignals(QObject):
     update_list = pyqtSignal(int, str)
     update_pushbotton = pyqtSignal(str)
     enable_button = pyqtSignal(int)
+    save_history = pyqtSignal()
     finished = pyqtSignal()
     qtimer = pyqtSignal(int, int)
 
@@ -672,7 +703,7 @@ class WorkerThread(QRunnable):
 
     def run(self):
         global running
-        #ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        ptvsd.debug_this_thread()  # 在此线程启动断点调试
 
         def ttsread(text):
             speaker = win32com.client.Dispatch("SAPI.SpVoice")
@@ -690,15 +721,9 @@ class WorkerThread(QRunnable):
             self.signals.show_progress.emit(0, 0, 100)
             self.signals.enable_button.emit(3)
             running = False
-            today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             if name != "":
                 try:
-                    print(
-                        today,
-                        "沉梦课堂点名器%s" % dmversion,
-                        "幸运儿是： %s " % name,
-                        file=open("点名器中奖名单.txt", "a"),
-                    )
+                    self.signals.save_history.emit()
                 except:
                     print("无法写入历史记录")
                 print(today, "幸运儿是： %s " % name)
@@ -745,8 +770,9 @@ class WorkerThread(QRunnable):
             except pygame.error as e:
                 print("无法播放音乐文件：%s，错误信息：{str(e)}") % file_path
 
-class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
-    def __init__(self,main_instance = None):
+
+class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
+    def __init__(self, main_instance=None):
         super().__init__()
         self.setupUi(self)  # 初始化UI
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
@@ -757,7 +783,8 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
         self.m_flag = False
         self.label_2.setText("开始")
         self.m_moved = False  # 用于检测是否移动
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint |
+                            QtCore.Qt.WindowStaysOnTopHint)
         self.setWindowTitle(QCoreApplication.translate(
             "MainWindow", "点名器小窗模式"))
         self.timer = None
@@ -783,23 +810,18 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
         if self.m_flag and not self.m_moved:
             if self.runflag == True:
                 self.qtimer(0)
-                today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 try:
-                    print(
-                        today,
-                        "沉梦课堂点名器%s" % dmversion,
-                        "幸运儿是： %s " % name,
-                        file=open("点名器中奖名单.txt", "a"),
-                    )
+                    self.main_instance.save_history()
                 except:
                     print("无法写入历史记录")
                 print(today, "幸运儿是： %s " % name)
             else:
-                self.get_name_list()# 只有未移动时才输出消息
-            
+                self.get_name_list()  # 只有未移动时才输出消息
+
         self.m_flag = False
         self.setCursor(QCursor(Qt.ArrowCursor))
-    def qtimer(self,start, time=None):
+
+    def qtimer(self, start, time=None):
         if start == 1:
             self.timer = QTimer()
             self.timer.start(time)
@@ -811,7 +833,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
                 self.timer.stop()
                 self.runflag = False
                 if name != "":
-                    self.main_instance.update_list(1,"小窗：%s"%name)
+                    self.main_instance.update_list(1, "小窗：%s" % name)
                 else:
                     pass
             except Exception as e:
@@ -829,7 +851,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
             self.label_2.setText(name)
 
     def get_name_list(self):
-            self.qtimer(1, 50)
+        self.qtimer(1, 50)
 
     def closeEvent(self, event):
         print("小窗被关闭")
@@ -839,7 +861,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):#小窗模式i
         event.accept()  # 确保仅关闭子窗口，不影响主窗口
 
     def close_window(self):
-        self.close() 
+        self.close()
 
     def run_small_window(self):
         self.show()
@@ -852,26 +874,34 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         central_widget = QtWidgets.QWidget(self)  # 创建一个中央小部件
         self.setCentralWidget(central_widget)  # 设置中央小部件为QMainWindow的中心区域
         self.setupUi(central_widget)  # 初始化UI到中央小部件上
-        self.setFixedSize(307, 419)
+        self.setFixedSize(684, 500)
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
-        self.groupBox_2.setTitle("名单管理")
-        self.pushButton_5.setText("编辑所选名单")
-        self.pushButton_4.setText("删除所选名单")
-        self.pushButton_3.setText("新建名单")
-        self.pushButton_2.setText("保存")
-        self.label.setText("背景图片")
+        self.groupBox.setTitle("功能设置")
         self.radioButton_3.setText("预设1")
         self.radioButton_4.setText("预设2")
         self.radioButton_5.setText("无")
-        self.pushButton.setText("取消")
-        self.groupBox.setTitle("功能设置")
+        self.checkBox_3.setText("检查更新")
         self.checkBox_2.setText("语音播报")
+        self.label.setText("背景图片")
         self.radioButton.setText("正常模式")
         self.radioButton_2.setText("听写模式(不说\"恭喜\")")
-        self.checkBox_3.setText("检查更新")
+        self.groupBox_3.setTitle("语言设置")
+        self.pushButton_2.setText("保存")
+        self.pushButton.setText("取消")
+        self.groupBox_2.setTitle("名单管理")
+        self.pushButton_4.setText("删除所选名单")
+        self.pushButton_6.setText("统计所选名单")
+        self.pushButton_3.setText("新建名单")
+        self.pushButton_5.setText("编辑所选名单")
+        self.groupBox_6.setTitle("其他")
+        self.pushButton_10.setText("打开背景音乐目录")
+        self.pushButton_12.setText("打开名单文件目录")
+        self.groupBox_5.setTitle("关于")
+        self.label_2.setText("沉梦课堂点名器 V6.0")
+        self.label_3.setText("<html><head/><body><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具<br/></p><p align=\"center\"><a href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p></body></html>")
         self.setWindowTitle(QCoreApplication.translate(
             "MainWindow", "课堂点名器设置"))
-        
+
         self.main_instance = main_instance
         self.read_name_list()
         self.read_config()
@@ -887,14 +917,24 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.pushButton_4.clicked.connect(self.delete_list)
         self.pushButton_5.clicked.connect(self.edit_list)
         self.pushButton_2.clicked.connect(self.save_settings)
+        self.pushButton_6.clicked.connect(self.count_name)
+        self.pushButton_12.clicked.connect(lambda:self.open_fold("name"))
+        self.pushButton_10.clicked.connect(lambda:self.open_fold("dmmusic"))
 
-        self.checkBox_2.toggled.connect(lambda checked: self.process_config("enable_tts", checked))
-        self.radioButton.toggled.connect(lambda checked: self.process_config("enable_tts", checked))
-        self.radioButton_2.toggled.connect(lambda checked: self.process_config("enable_tts", checked))
-        self.checkBox_3.toggled.connect(lambda checked: self.process_config("enable_update", checked))
-        self.radioButton_3.toggled.connect(lambda checked: self.process_config("enable_bgimg", checked))
-        self.radioButton_4.toggled.connect(lambda checked: self.process_config("enable_bgimg", checked))
-        self.radioButton_5.toggled.connect(lambda checked: self.process_config("enable_bgimg", checked))
+        self.checkBox_2.toggled.connect(
+            lambda checked: self.process_config("enable_tts", checked))
+        self.radioButton.toggled.connect(
+            lambda checked: self.process_config("enable_tts", checked))
+        self.radioButton_2.toggled.connect(
+            lambda checked: self.process_config("enable_tts", checked))
+        self.checkBox_3.toggled.connect(
+            lambda checked: self.process_config("enable_update", checked))
+        self.radioButton_3.toggled.connect(
+            lambda checked: self.process_config("enable_bgimg", checked))
+        self.radioButton_4.toggled.connect(
+            lambda checked: self.process_config("enable_bgimg", checked))
+        self.radioButton_5.toggled.connect(
+            lambda checked: self.process_config("enable_bgimg", checked))
 
     def read_name_list(self):
         txt_files_name = self.main_instance.read_name_list(1)
@@ -907,6 +947,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             filename)[0] for filename in txt_name]
 
         return txt_files_name
+
     def add_new_list(self):
         newfilename, ok_pressed = QInputDialog.getText(
             self.window, "新增名单", "请输入名单名称:")
@@ -917,7 +958,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             with open(newnamepath, "w", encoding="utf8") as f:
                 pass
             message = ("已创建名为 '%s.txt' 的文件，路径为: %s" %
-                        (newfilename, newnamepath))
+                       (newfilename, newnamepath))
 
             QMessageBox.information(
                 self.window, "新建成功", message, QMessageBox.Ok)
@@ -925,35 +966,37 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             txt_name = self.refresh_name_list()
             self.comboBox_1.clear()  # 清空下拉框的选项
             self.comboBox_1.addItems(txt_name)  # 添加新的文件名到下拉框
-        
 
     def delete_list(self):
         target_filename, ok_pressed = QInputDialog.getText(
             self.window, "删除名单", "再次输入名单名称将删除此名单！")
         if ok_pressed and target_filename:
-            target_filepath = os.path.join(
-                "name", f"{target_filename}.txt")
-            if os.path.exists(target_filepath):
-                os.remove(target_filepath)  # 删除文件
-                message = ("已成功删除名为 '%s.txt' 的文件。" % target_filename)
-                QMessageBox.information(
-                    self.window, "删除成功", message, QMessageBox.Ok)
-                txt_name = self.refresh_name_list()
-                self.comboBox_1.clear()  # 清空下拉框的选项
-                self.comboBox_1.addItems(txt_name)  # 添加新的文件名到下拉框
+            if target_filename == self.comboBox_1.currentText():
+                target_filepath = os.path.join(
+                    "name", f"{target_filename}.txt")
+                if os.path.exists(target_filepath):
+                    os.remove(target_filepath)  # 删除文件
+                    message = ("已成功删除名单： '%s.txt' " % target_filename)
+                    QMessageBox.information(
+                        self.window, "删除成功", message, QMessageBox.Ok)
+                    txt_name = self.refresh_name_list()
+                    self.comboBox_1.clear()  # 清空下拉框的选项
+                    self.comboBox_1.addItems(txt_name)  # 添加新的文件名到下拉框
+                else:
+                    QMessageBox.warning(
+                        self.window, '警告', '名单文件不存在，或已被删除！', QMessageBox.Ok)
             else:
-                QMessageBox.warning(
-                    self.window, '警告', '名单文件不存在', QMessageBox.Ok)
+                self.main_instance.show_message("名单名称输入错误！", "错误")
 
     def edit_list(self):
         target_filename = self.comboBox_1.currentText()
         target_filepath = os.path.join(
-                "name", f"{target_filename}"+".txt")
+            "name", f"{target_filename}"+".txt")
         if os.path.exists(target_filepath):
             self.main_instance.opentext(target_filepath)
         else:
             QMessageBox.warning(
-                self.window, '警告', '名单文件不存在', QMessageBox.Ok) 
+                self.window, '警告', '名单文件不存在，或已被删除！', QMessageBox.Ok)
 
     def closeEvent(self, event):
         print("设置被关闭")
@@ -962,7 +1005,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         global settings_flag
         settings_flag = None
         event.accept()  # 确保仅关闭子窗口，不影响主窗口
-        
+
     def run_settings_window(self):
         self.show()
         return self
@@ -980,7 +1023,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             self.checkBox_2.setChecked(False)
             self.radioButton.setEnabled(False)
             self.radioButton_2.setEnabled(False)
-        
+
         if checkupdate == 2:
             self.checkBox_3.setChecked(True)
         else:
@@ -998,7 +1041,9 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             self.radioButton_3.setChecked(False)
             self.radioButton_4.setChecked(False)
             self.radioButton_5.setChecked(True)
-
+    def open_fold(self,value):
+        os.makedirs(value, exist_ok=True)
+        self.main_instance.opentext(value)
     def process_config(self, key, checked):
         if key == "enable_tts":
             if checked and self.checkBox_2.isChecked():
@@ -1046,7 +1091,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             self.main_instance.update_config("allownametts", 3)
         elif self.enable_tts == 0:
             self.main_instance.update_config("allownametts", 1)
-        
+
         if self.enable_update == 2:
             self.main_instance.update_config("checkupdate", 2)
         else:
@@ -1060,6 +1105,34 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             self.main_instance.update_config("bgimg", 3)
         self.close()
 
+    def count_name(self):
+        name_counts = {}  # 存储名字出现次数的字典
+        file = "history/%s中奖记录.txt" % self.comboBox_1.currentText()
+        try:
+            with open(file, encoding="utf-8") as file:
+                for line in file:
+                    if "幸运儿是：" in line:
+                        cnames = line.split("幸运儿是：")[1].strip().strip("[]'")
+                        cnames = cnames.split("', '")
+                        for cname in cnames:
+                            if cname not in name_counts:
+                                name_counts[cname] = 1
+                            else:
+                                name_counts[cname] += 1
+            sorted_counts = sorted(name_counts.items(),
+                                key=lambda x: x[1], reverse=True)
+            # 保存文本
+            print("正在保存为文本")
+            cresult = "中奖名单统计(统计会覆盖上一次结果):\n"
+            for name, count in sorted_counts:
+                cresult += "%s 出现了 %s 次\n" % (name, count)
+                with open('中奖统计.txt', 'w', encoding="utf-8") as file:
+                    file.write(cresult)
+            QMessageBox.information(self, "保存结果", "统计结果已保存到'中奖统计.txt'")
+            self.main_instance.opentext('中奖统计.txt')
+        except Exception as e:
+            print("读取文件时发生错误:", e)
+            self.main_instance.show_message("历史记录文件不存在，无法统计次数！\n%s" % e, "错误")
 
 if __name__ == "__main__":
     if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
