@@ -13,7 +13,6 @@ import ctypes
 import win32com.client
 import webbrowser as web
 from PyQt5 import QtCore, QtGui, QtWidgets
-from plyer import notification
 from PyQt5.QtGui import QCursor
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller
@@ -858,8 +857,6 @@ class UpdateThread(QRunnable):
                     new_version_detail = new_version_detail.text
                     self.signals.find_new_version.emit(_("云端最新版本为%s，要现在下载新版本吗？<br>您也可以稍后访问沉梦小站官网获取最新版本。<br><br>%s") % (
                         newversion, new_version_detail), findnewversion)
-                    self.send_notification(_("检测到版本更新"), _(
-                        "云端最新版本为%s，请及时更新以获得更佳体验！") % newversion)
                 else:
                     print("当前已经是最新版本")
             except:
@@ -871,15 +868,6 @@ class UpdateThread(QRunnable):
             print("检查更新已关闭")
 
         self.signals.finished.emit()
-
-    def send_notification(self, title, message):
-        notification.notify(
-            title=title,
-            message=message,
-            app_name=_("沉梦课堂点名器"),
-            app_icon="picker.ico",
-            timeout=10
-        )
 
 
 class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
@@ -1129,8 +1117,11 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
 
     def closeEvent(self, event):
         print("设置被关闭")
-        self.main_instance.mini(2)
-        self.main_instance.read_name_list()
+        try:
+            self.main_instance.mini(2)
+            self.main_instance.read_name_list()
+        except Exception as e:
+            print(e)
         global settings_flag
         settings_flag = None
         event.accept()  # 确保仅关闭子窗口，不影响主窗口
@@ -1225,7 +1216,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
 
         if self.enable_update == 2:
             self.main_instance.update_config("checkupdate", 2)
-        else:
+        elif self.enable_update == 1:
             self.main_instance.update_config("checkupdate", 1)
 
         if self.enable_bgimg == 1:
