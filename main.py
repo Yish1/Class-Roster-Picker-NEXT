@@ -990,6 +990,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.pushButton_3.setText(_("新建名单"))
         self.pushButton_5.setText(_("编辑所选名单"))
         self.groupBox_6.setTitle(_("其他"))
+        self.pushButton_8.setText(_("打开历史记录目录"))
         self.pushButton_10.setText(_("打开背景音乐目录"))
         self.pushButton_12.setText(_("打开名单文件目录"))
         self.groupBox_5.setTitle(_("关于"))
@@ -1019,6 +1020,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.comboBox_2.currentIndexChanged.connect(self.change_langluge)
         self.pushButton_12.clicked.connect(lambda: self.open_fold("name"))
         self.pushButton_10.clicked.connect(lambda: self.open_fold("dmmusic"))
+        self.pushButton_8.clicked.connect(lambda: self.open_fold("history"))
 
         self.checkBox_2.toggled.connect(
             lambda checked: self.process_config("enable_tts", checked))
@@ -1259,7 +1261,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         except Exception as e:
             print("读取文件时发生错误:", e)
             self.main_instance.show_message(
-                _("历史记录文件不存在，无法统计次数！\n%s" % e), _("错误"))
+                _("历史记录文件不存在，无法统计次数！\n%s") % e, _("错误"))
 
 
 if __name__ == "__main__":
