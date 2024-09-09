@@ -465,51 +465,29 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
 
     def process_name_file(self, file_path):
         global name_list, namelen
-        with open(file_path, encoding='utf8') as f:
-            # 读取每一行，去除行尾换行符，过滤掉空行和仅包含空格的行
-            name_list = [line.strip()
-                         for line in f.readlines() if line.strip()]
-
+        try:
+            with open(file_path, encoding='utf8') as f:
+                # 读取每一行，去除行尾换行符，过滤掉空行和仅包含空格的行
+                name_list = [line.strip() for line in f.readlines() if line.strip()]
+        except:
+            print("utf8解码失败，尝试gbk")
+            try:
+                with open(file_path, encoding='gbk') as f:
+                    name_list = [line.strip() for line in f.readlines() if line.strip()]
+            except:
+                self.show_message(_("名单文件%s编码错误，请检查文件编码是否为utf8或gbk") % file_path, _("错误"))
+                self.label_3.setText(_("名单文件无效！"))
         print("\n", name_list)
         namelen = len(name_list)
         print("读取到的有效名单长度:", namelen)
 
     def ttsinitialize(self):
         global allownametts
-        if allownametts == None or allownametts == 0:
-            # 语音播报开关
-            ifvoice = QMessageBox()
-            ifvoice.setWindowTitle("语音播报")
-            ifvoice.setText(
-                _("需要开启语音播报功能吗？\n单抽后会播报抽取结果。\n"))
-            allow_button = ifvoice.addButton(_("好的"), QMessageBox.ActionRole)
-            cancel_button = ifvoice.addButton(
-                _("下次一定"), QMessageBox.ActionRole)
-            dictation_button = ifvoice.addButton(
-                _("听写模式(不会读\"恭喜\")"), QMessageBox.ActionRole)
-            button = ifvoice.addButton(_("取消"), QMessageBox.NoRole)
-            button.setVisible(False)
-            ifvoice.exec_()
-            if ifvoice.clickedButton() == allow_button:
-                # 同意
-                self.update_config('allownametts', 2)
-                QMessageBox.information(
-                    None, _("语音播报"), _("语音播报已经开启，您可以设置界面重新设置此功能。"))
-            elif ifvoice.clickedButton() == cancel_button:
-                # 不同意
-                self.update_config('allownametts', 1)
-                QMessageBox.information(
-                    None, _("语音播报"), _("语音播报已禁用，您可以设置界面重新设置此功能。"))
-            elif ifvoice.clickedButton() == dictation_button:
-                # 听写模式
-                self.update_config('allownametts', 3)
-                QMessageBox.information(
-                    None, _("语音播报"), _("语音播报（听写模式）已启用，您可以设置界面重新设置此功能。"))
         if allownametts == 2:
             print("语音播报(正常模式)")
         elif allownametts == 3:
             print("语音播报(听写模式)")
-        elif allownametts == 1:
+        elif allownametts == 1 or allownametts == 0:
             print("语音播报已禁用")
 
     def opentext(self, path):
