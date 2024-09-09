@@ -9,16 +9,11 @@
 </div>
 
 > [!WARNING]
-> 此项目仍在开发中，请移步至 https://github.com/Yish1/Class-Roster-Picker  
-
-<!--注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释
-
-
 > 更新时请备份名单，然后卸载旧版本重新安装，否则可能出现错误
 > 
 
 > [!TIP]
-> 提示：4.8起更换了打包方式，改成安装包的形式，因此你可以在安装4.8后删除4.7，也可以安装到u盘里面便携使用
+> 提示：打包参数：nuitka --standalone --lto=no --clang --msvc=latest --disable-ccache --windows-uac-admin --windows-console-mode=disable --enable-plugin=pyqt5,upx --upx-binary=E:\ctest\o\upx\upx.exe --output-dir=o --windows-icon-from-ico=picker.ico --nofollow-import-to=unittest main.py
 
 ## 使用方式
 
@@ -31,7 +26,7 @@
 - [x] 多名单功能： 用户可以创建多个名单并切换名单，实现在不同场景下使用不同名单的需求。
 - [x] 自动检查更新： 软件支持自动检查更新，用户可以通过配置文件关闭更新提示。
 - [x] UI优化和用户体验：软件界面经过多次优化，基本达到能看的程度...
-- [x] 导出功能： 用户可以将点名的历史记录导出为图表或文本，方便记录和分析。
+- [x] 导出功能： 用户可以将点名的历史记录导出为文本，方便记录和分析。
 - [x] 背景音乐：软件支持单抽时的背景音乐，用户可以在按照提示开启该功能。
 
 
@@ -39,9 +34,4 @@
 ## 下载链接
 > 最新版下载地址：[蓝奏云下载](https://yish.lanzouw.com/b038hjo8f) (密码：cmti)
 > 
-> 32位版本下载(支持旧版系统)：[蓝奏云下载](https://yish.lanzouw.com/iJRop1fncvzi) (密码：1zq5)
-> 
-> 下载通用版4.9（最后的单文件版）[蓝奏云下载](https://yish.lanzouw.com/izsZF0fv96jg) 
-
-
-注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注释注-->
+> 沉梦小站发布地址：[GO！](https://cmxz.top/ktdmq)
