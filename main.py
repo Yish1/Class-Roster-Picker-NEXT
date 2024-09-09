@@ -10,6 +10,7 @@ import hashlib
 import gettext
 import glob
 import ctypes
+import msvcrt
 # import ptvsd  # QThread断点工具
 import win32com.client
 import webbrowser as web
@@ -25,9 +26,12 @@ from settings import Ui_settings
 from Crypto.Cipher import ARC4
 
 rewrite_print = print
+
+
 def print(*arg):
    rewrite_print(*arg)
-   rewrite_print(*arg,file=open('log.txt',"a", encoding='utf-8'))
+   rewrite_print(*arg, file=open('log.txt', "a", encoding='utf-8'))
+
 
 with open('log.txt', 'w', encoding='utf-8') as log:
     log.write(f"OS：{platform.system()}\n")
@@ -480,14 +484,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         try:
             with open(file_path, encoding='utf8') as f:
                 # 读取每一行，去除行尾换行符，过滤掉空行和仅包含空格的行
-                name_list = [line.strip() for line in f.readlines() if line.strip()]
+                name_list = [line.strip()
+                             for line in f.readlines() if line.strip()]
         except:
             print("utf8解码失败，尝试gbk")
             try:
                 with open(file_path, encoding='gbk') as f:
-                    name_list = [line.strip() for line in f.readlines() if line.strip()]
+                    name_list = [line.strip()
+                                 for line in f.readlines() if line.strip()]
             except:
-                self.show_message(_("名单文件%s编码错误，请检查文件编码是否为utf8或gbk") % file_path, _("错误"))
+                self.show_message(
+                    _("名单文件%s编码错误，请检查文件编码是否为utf8或gbk") % file_path, _("错误"))
                 self.label_3.setText(_("名单文件无效！"))
         print("\n", name_list)
         namelen = len(name_list)
@@ -1256,6 +1263,16 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
 
 
 if __name__ == "__main__":
+    # 防止重复运行
+    lock_file = os.path.expanduser("~/.program_lock")
+    fd = os.open(lock_file, os.O_RDWR | os.O_CREAT)
+    try:
+        msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
+    except OSError:
+        os.close(fd)
+        print("另一个程序正在运行。")
+        sys.exit()
+
     if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
         QtWidgets.QApplication.setAttribute(
             QtCore.Qt.AA_EnableHighDpiScaling, True)
