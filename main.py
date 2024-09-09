@@ -5,6 +5,7 @@ import difflib
 import os
 import requests
 import pygame
+import platform
 import hashlib
 import gettext
 import glob
@@ -22,6 +23,17 @@ from ui import Ui_Form  # 导入ui文件
 from smallwindow import Ui_smallwindow
 from settings import Ui_settings
 from Crypto.Cipher import ARC4
+
+rewrite_print = print
+def print(*arg):
+   rewrite_print(*arg)
+   rewrite_print(*arg,file=open('log.txt',"a", encoding='utf-8'))
+
+with open('log.txt', 'w', encoding='utf-8') as log:
+    log.write(f"OS：{platform.system()}\n")
+    log.write(f"BUILD：{platform.release()}\n")
+    log.write(f"PLATFORM：{platform.machine()}\n")
+    log.write(f"TIME：{datetime.now()}\n\n")
 
 try:
     config = {}
@@ -46,7 +58,7 @@ except:
         domain="zh_CN", localedir=localedir1, languages=["zh_CN"])
     _ = translate.gettext
 
-dmversion = 5.9
+dmversion = 6.0
 
 # config变量
 allownametts = None
