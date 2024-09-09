@@ -1133,6 +1133,10 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             self.checkBox_2.setChecked(False)
             self.radioButton.setEnabled(False)
             self.radioButton_2.setEnabled(False)
+        elif allownametts == 0:
+            self.checkBox_2.setChecked(False)
+            self.radioButton.setEnabled(False)
+            self.radioButton_2.setEnabled(False)
 
         if checkupdate == 2:
             self.checkBox_3.setChecked(True)
