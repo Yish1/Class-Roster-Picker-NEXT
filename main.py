@@ -826,7 +826,7 @@ class WorkerThread(QRunnable):
                 pygame.mixer.music.load(file_path)
                 pygame.mixer.music.play(1)
             except pygame.error as e:
-                print("无法播放音乐文件：%s，错误信息：{str(e)}") % file_path
+                print("无法播放音乐文件：%s，错误信息：%s" % (file_path, e))
 
 
 class UpdateThread(QRunnable):
@@ -1058,8 +1058,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                 "name", f"{newfilename}.txt")  # 打开文件并写入内容
             with open(newnamepath, "w", encoding="utf8") as f:
                 pass
-            message = (_("已创建名为 '%s.txt' 的文件)，_(路径为: %s" %
-                       (newfilename, newnamepath)))
+            message = (_("已创建名为 '%s.txt' 的文件，路径为: %s") %
+                       (newfilename, newnamepath))
 
             QMessageBox.information(
                 self.window, _("新建成功"), message, QMessageBox.Ok)
