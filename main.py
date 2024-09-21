@@ -11,7 +11,7 @@ import gettext
 import glob
 import ctypes
 import msvcrt
-# import ptvsd  # QThread断点工具
+import ptvsd  # QThread断点工具
 import win32com.client
 import webbrowser as web
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -26,6 +26,7 @@ from settings import Ui_settings
 from Crypto.Cipher import ARC4
 
 rewrite_print = print
+
 
 def print(*arg):
    rewrite_print(*arg)
@@ -61,12 +62,13 @@ except:
         domain="zh_CN", localedir=localedir1, languages=["zh_CN"])
     _ = translate.gettext
 
-dmversion = 6.05
+dmversion = 5.9
 
 # config变量
 allownametts = None
 checkupdate = None
 bgimg = None
+latest_version = None
 last_name_list = None
 # 全局变量
 name = None
@@ -261,12 +263,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             self.listWidget.setCurrentRow(self.listWidget.count() - 1)
 
     def read_config(self):
-        global allownametts, checkupdate, bgimg, last_name_list, language_value
+        global allownametts, checkupdate, bgimg, last_name_list, language_value, latest_version
         config = {}
         if not os.path.exists('config.ini'):
             with open('config.ini', 'w', encoding='utf-8') as file:
                 file.write(
-                    '[language]=zh_CN\n[allownametts]=0\n[checkupdate]=2\n[bgimg]=1\n')
+                    '[language]=zh_CN\n[allownametts]=0\n[checkupdate]=2\n[bgimg]=1\n[last_name_list]=None\n[latest_version]=0')
         with open('config.ini', 'r', encoding='utf-8') as file:
             for line in file:
                 if '=' in line:
@@ -278,6 +280,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             checkupdate = int(config.get('checkupdate'))
             bgimg = int(config.get('bgimg'))
             last_name_list = config.get('last_name_list')
+            latest_version = config.get('latest_version')
         except:
             print("配置文件读取失败，已重置为默认值！")
             os.remove("config.ini")
@@ -556,16 +559,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         self.update_thread.signals.finished.connect(
             lambda: print("检查更新线程结束"))
 
-    def update_message(self, message, title):
+    def update_message(self, message, title):  # 更新弹窗
         msgBox = QMessageBox()
         msgBox.setWindowTitle(title)
         msgBox.setText(message)
         msgBox.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
-        msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.No)
-        reply = msgBox.exec_()
-        if reply == QMessageBox.Ok:
+        okButton = msgBox.addButton("立刻前往", QMessageBox.AcceptRole)
+        noButton = msgBox.addButton("下次一定", QMessageBox.RejectRole)
+        ignoreButton = msgBox.addButton("忽略本次更新", QMessageBox.RejectRole)
+        msgBox.exec_()
+        clickedButton = msgBox.clickedButton()
+        if clickedButton == okButton:
             web.open_new("https://cmxz.top/ktdmq")
             self.update_list(1, title)
+        elif clickedButton == ignoreButton:
+            self.update_list(1, title)
+            self.update_config("latest_version", newversion)
         else:
             self.update_list(1, title)
 
@@ -834,27 +843,38 @@ class UpdateThread(QRunnable):
         self.signals = WorkerSignals()
 
     def run(self):
-        # ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        global newversion, checkupdate, latest_version
+        ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        headers = {
+            'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s' % (dmversion, allownametts, bgimg, language_value)
+        }
+        updatecheck = "https://cmxz.top/programs/dm/check.php"
+        try:
+            check_mode = requests.get(
+                updatecheck + "?mode", timeout=5, headers=headers)
+            if int(check_mode.text) == 1:
+                print("检测到强制更新版本，这意味着当前版本有严重bug，请更新至最新版本！")
+                checkupdate = 2
+                latest_version = 0
+        except:
+            pass
         if checkupdate == 2:
             try:
-                headers = {
-                    'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s' % (dmversion,allownametts,bgimg,language_value)
-                }
-                updatecheck = "https://cmxz.top/programs/dm/check.php"
-                page = requests.get(updatecheck, timeout=3, headers=headers)
+                page = requests.get(updatecheck, timeout=5, headers=headers)
                 newversion = float(page.text)
                 print("云端版本号为:", newversion)
                 findnewversion = _("检测到新版本！")
-                if newversion > dmversion:
+                if newversion > dmversion and float(latest_version) < newversion:
                     print("检测到新版本:", newversion,
                           "当前版本为:", dmversion)
                     new_version_detail = requests.get(
-                        updatecheck + "?detail", timeout=3, headers=headers)
+                        updatecheck + "?detail", timeout=5, headers=headers)
                     new_version_detail = new_version_detail.text
                     self.signals.find_new_version.emit(_("云端最新版本为%s，要现在下载新版本吗？<br>您也可以稍后访问沉梦小站官网获取最新版本。<br><br>%s") % (
                         newversion, new_version_detail), findnewversion)
                 else:
-                    print("当前已经是最新版本")
+                    if float(latest_version) == newversion:
+                        print("\n已忽略%s版本更新,当前版本：%s" % (newversion,dmversion))
             except:
                 print("网络异常,无法检测更新")
                 noconnect = _("网络连接异常，检查更新失败")
