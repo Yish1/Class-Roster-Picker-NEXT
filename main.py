@@ -838,7 +838,7 @@ class UpdateThread(QRunnable):
         if checkupdate == 2:
             try:
                 headers = {
-                    'User-Agent': 'CMXZ-CRP_%s' % dmversion
+                    'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s' % (dmversion,allownametts,bgimg,language_value)
                 }
                 updatecheck = "https://cmxz.top/programs/dm/check.php"
                 page = requests.get(updatecheck, timeout=3, headers=headers)
