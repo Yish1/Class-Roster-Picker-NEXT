@@ -27,7 +27,6 @@ class Ui_smallwindow(object):
         self.label_2 = QtWidgets.QLabel(smallwindow)
         self.label_2.setGeometry(QtCore.QRect(27, 27, 231, 113))
         self.label_2.setStyleSheet("* {\n"
-"    font-size: 48px;\n"
 "    color: rgb(98, 105, 112);\n"
 "    font-family: \'Microsoft YaHei\';\n"
 "}\n"

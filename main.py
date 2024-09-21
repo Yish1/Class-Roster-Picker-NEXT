@@ -15,7 +15,7 @@ import msvcrt
 import win32com.client
 import webbrowser as web
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QCursor
+from PyQt5.QtGui import QCursor, QFontMetrics
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
@@ -26,7 +26,6 @@ from settings import Ui_settings
 from Crypto.Cipher import ARC4
 
 rewrite_print = print
-
 
 def print(*arg):
    rewrite_print(*arg)
@@ -62,7 +61,7 @@ except:
         domain="zh_CN", localedir=localedir1, languages=["zh_CN"])
     _ = translate.gettext
 
-dmversion = 6.0
+dmversion = 6.05
 
 # config变量
 allownametts = None
@@ -826,7 +825,7 @@ class WorkerThread(QRunnable):
                 pygame.mixer.music.load(file_path)
                 pygame.mixer.music.play(1)
             except pygame.error as e:
-                print("无法播放音乐文件：%s，错误信息：{str(e)}") % file_path
+                print("无法播放音乐文件：%s，错误信息：%s" % (file_path, e))
 
 
 class UpdateThread(QRunnable):
@@ -876,8 +875,13 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.setMinimumSize(QtCore.QSize(322, 191))
         # 设置半透明背景
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.m_flag = False
+
+        font = QtGui.QFont()
+        font.setPointSize(34)  # 字体大小
+        self.label_2.setFont(font)
+
         self.label_2.setText(_("开始"))
+        self.m_flag = False
         self.m_moved = False  # 用于检测是否移动
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint |
                             QtCore.Qt.WindowStaysOnTopHint)
@@ -937,6 +941,9 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
 
     def setname(self):
         global name
+        font = QtGui.QFont()
+        font.setPointSize(34)  # 字体大小
+        self.label_2.setFont(font)
         if name_list == []:
             name = ""
             self.label_2.setText(_("名单为空!"))
@@ -944,6 +951,16 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
             self.qtimer(0)
         else:
             name = random.choice(name_list)
+            font = self.label_2.font()
+            font_size = font.pointSize()
+            # 检测文本宽度
+            metrics = QFontMetrics(font)
+            while metrics.width(name) > 1.8*self.label_2.width() and font_size > 0:
+                font_size -= 1
+                font.setPointSize(font_size)
+                self.label_2.setFont(font)
+                metrics = QFontMetrics(font)
+
             self.label_2.setText(name)
 
     def get_name_list(self):
@@ -994,7 +1011,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.pushButton_10.setText(_("打开背景音乐目录"))
         self.pushButton_12.setText(_("打开名单文件目录"))
         self.groupBox_5.setTitle(_("关于"))
-        self.label_2.setText(_("沉梦课堂点名器 V6.0"))
+        self.label_2.setText(_("沉梦课堂点名器 %s") % dmversion)
         self.label_3.setText(_("<html><head/><body><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具<br/></p><p align=\"center\"><a href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p></body></html>"))
         self.setWindowTitle(QCoreApplication.translate(
             "MainWindow", _("课堂点名器设置")))
@@ -1058,8 +1075,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                 "name", f"{newfilename}.txt")  # 打开文件并写入内容
             with open(newnamepath, "w", encoding="utf8") as f:
                 pass
-            message = (_("已创建名为 '%s.txt' 的文件)，_(路径为: %s" %
-                       (newfilename, newnamepath)))
+            message = (_("已创建名为 '%s.txt' 的文件，路径为: %s") %
+                       (newfilename, newnamepath))
 
             QMessageBox.information(
                 self.window, _("新建成功"), message, QMessageBox.Ok)

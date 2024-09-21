@@ -132,7 +132,7 @@ QPushButton:hover{
     color: #FFFFFF;
 }
 * {
-    font-size: 60px;
+    font-size: 45pt;
 }</string>
    </property>
    <property name="frameShape">
@@ -262,7 +262,7 @@ QScrollBar::sub-page:horizontal {
 }
 
 * {
-    font-size: 18px;
+    font-size: 13.50pt;
 }
 </string>
    </property>
@@ -308,7 +308,7 @@ QScrollBar::sub-page:horizontal {
    </property>
    <property name="styleSheet">
     <string notr="true">* {
-    font-size: 11px;
+    font-size: 8.25pt;
 }</string>
    </property>
    <property name="frameShape">
@@ -504,7 +504,7 @@ QPushButton:hover{
    </property>
    <property name="styleSheet">
     <string notr="true">* {
-    font-size: 12px; 
+    font-size: 9pt; 
 }</string>
    </property>
    <property name="frameShape">

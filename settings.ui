@@ -31,6 +31,11 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">* {
+    font-size: 9pt;
+}</string>
+  </property>
   <widget class="QFrame" name="frame_5">
    <property name="geometry">
     <rect>
@@ -54,6 +59,9 @@
         <width>267</width>
         <height>173</height>
        </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
       </property>
       <property name="title">
        <string>功能设置</string>
@@ -370,6 +378,13 @@ QComboBox QAbstractItemView {
          </property>
         </widget>
        </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="pushButton_8">
+         <property name="text">
+          <string>打开历史记录目录</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -422,14 +437,17 @@ QPushButton{
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>109</x>
+         <x>40</x>
          <y>120</y>
-         <width>131</width>
+         <width>251</width>
          <height>21</height>
         </rect>
        </property>
        <property name="text">
         <string>沉梦课堂点名器 V6.0</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="label_3">
