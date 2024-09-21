@@ -11,7 +11,7 @@ import gettext
 import glob
 import ctypes
 import msvcrt
-import ptvsd  # QThread断点工具
+# import ptvsd  # QThread断点工具
 import win32com.client
 import webbrowser as web
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -62,7 +62,7 @@ except:
         domain="zh_CN", localedir=localedir1, languages=["zh_CN"])
     _ = translate.gettext
 
-dmversion = 5.9
+dmversion = 6.05
 
 # config变量
 allownametts = None
@@ -591,11 +591,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
                 self.value = 0
                 self.ptimer.start(5)
                 print("连抽：%d 人" % num)
-                name_set = set()
-                while len(name_set) != num:
-                    name_set.add(random.choice(name_list))
-                name_set = list(name_set)
-                random.shuffle(name_set)
+                name_set = random.sample(name_list, num)
+                print(name_set)
                 try:
                     self.save_history(1, name_set)
                 except:
@@ -844,7 +841,7 @@ class UpdateThread(QRunnable):
 
     def run(self):
         global newversion, checkupdate, latest_version
-        ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        # ptvsd.debug_this_thread()  # 在此线程启动断点调试
         headers = {
             'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s' % (dmversion, allownametts, bgimg, language_value)
         }
