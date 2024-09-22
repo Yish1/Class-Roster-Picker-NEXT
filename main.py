@@ -98,7 +98,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         self.m_flag = False
         self.setMinimumSize(QtCore.QSize(700, 409))
         self.setWindowTitle(QCoreApplication.translate(
-            "MainWindow", _("沉梦课堂点名器 6.0")))
+            "MainWindow", _("沉梦课堂点名器 %s") % dmversion))
         self.pushButton_2.setText(_(" 开始"))
         self.pushButton_5.setText(_(" 小窗模式"))
         self.label_3.setText(_("幸运儿是:"))
@@ -217,7 +217,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         if mdnum == 0:
             self.show_message(_("名单文件不存在，且默认名单无法生成，请反馈给我们！"), _("名单生成异常！"))
             sys.exit()
-        print(_("共读取到 %d 个名单" % mdnum))
+        print("共读取到 %d 个名单" % mdnum)
         txt_files_name = [os.path.splitext(
             filename)[0] for filename in txt_name]
         # 去除扩展名
@@ -380,8 +380,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
                 data = f.read()
         except FileNotFoundError:
             # 文件不存在时弹窗提示
-            self.show_message(_("警告：%s 的备份被删除，此名单可能已经被修改！" %
-                              file_path), _("警告"))
+            self.show_message(_("警告：%s 的备份被删除，此名单可能已经被修改！") %
+                              file_path, _("警告"))
         cipher = ARC4.new(b'cmxztopktdmq')
         if operation == 'encrypt':
             try:
@@ -871,7 +871,7 @@ class UpdateThread(QRunnable):
                         newversion, new_version_detail), findnewversion)
                 else:
                     if float(latest_version) == newversion:
-                        print("\n已忽略%s版本更新,当前版本：%s" % (newversion,dmversion))
+                        print("\n已忽略%s版本更新,当前版本：%s" % (newversion, dmversion))
             except:
                 print("网络异常,无法检测更新")
                 noconnect = _("网络连接异常，检查更新失败")
@@ -950,7 +950,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
                 self.timer.stop()
                 self.runflag = False
                 if name != "":
-                    self.main_instance.update_list(1, _("小窗：%s" % name))
+                    self.main_instance.update_list(1, _("小窗：%s") % name)
                 else:
                     pass
             except Exception as e:
@@ -1109,17 +1109,17 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             if target_filename == self.comboBox_1.currentText():
                 target_filepath = os.path.join(
                     "name", f"{target_filename}.txt")
-                if os.path.exists(target_filepath):
+                try:
                     os.remove(target_filepath)  # 删除文件
-                    message = (_("已成功删除名单： '%s.txt' " % target_filename))
+                    message = (_("已成功删除名单： '%s.txt' ") % target_filename)
                     QMessageBox.information(
                         self.window, _("删除成功"), message, QMessageBox.Ok)
                     txt_name = self.refresh_name_list()
                     self.comboBox_1.clear()  # 清空下拉框的选项
                     self.comboBox_1.addItems(txt_name)  # 添加新的文件名到下拉框
-                else:
+                except Exception as e:
                     QMessageBox.warning(
-                        self.window, _('警告'), _('名单文件不存在，或已被删除！'), QMessageBox.Ok)
+                        self.window, _('警告'), _('名单文件不存在，或已被删除！\n%s') % e, QMessageBox.Ok)
             else:
                 self.main_instance.show_message(_("名单名称输入错误！"), _("错误"))
 
@@ -1127,11 +1127,13 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         target_filename = self.comboBox_1.currentText()
         target_filepath = os.path.join(
             "name", f"{target_filename}"+".txt")
-        if os.path.exists(target_filepath):
-            self.main_instance.opentext(target_filepath)
-        else:
+        try:
+            self.main_instance.opentext(target_filepath)  # 自带错误处理
+        except Exception as e:
+            # 捕捉预料外的错误
+            print(f"名单文件不存在，无法编辑{e}")
             QMessageBox.warning(
-                self.window, _('警告'), _('名单文件不存在，或已被删除！'), QMessageBox.Ok)
+                self.window, _('警告'), _('名单文件不存在，或已被删除！\n%s') % e, QMessageBox.Ok)
 
     def find_langluge(self):
         # 读取指定目录下的文件夹名
@@ -1212,7 +1214,17 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
 
                 # 如果两个 radioButton 都没有被选中，默认选中 radioButton
                 if checked and not self.radioButton.isChecked() and not self.radioButton_2.isChecked():
-                    self.radioButton.setChecked(True)
+                    try:
+                        speaker1 = win32com.client.Dispatch("SAPI.SpVoice")
+                        speaker1.Volume = 0
+                        speaker1.Speak("1")
+                        self.radioButton.setChecked(True)
+                    except Exception as e:
+                        self.main_instance.show_message(
+                            _("语音播报无法在此设备上开启，可能是您使用的系统为精简版，删除了自带的语言库\n%s") % e, _("错误"))
+                        self.checkBox_2.setChecked(False)
+                        self.radioButton.setEnabled(False)
+                        self.radioButton_2.setEnabled(False)
 
                 # 检查选中的情况并设置 enable_tts
                 if checked and self.radioButton.isChecked() and not self.radioButton_2.isChecked():
@@ -1230,6 +1242,9 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
 
         elif key == "enable_update":
             self.enable_update = 2 if checked else 1
+            if not checked:
+                self.main_instance.show_message(
+                    _("您正在关闭检查更新功能！更新意味着带来 新功能、优化 以及修复错误，强烈建议您开启此功能！\n\n当您关闭此功能后，如果当前版本存在严重错误，仍会收到新版本推送！\n\n如需完全关闭联网功能，请获取定制版本。"), _("警告"))
 
         elif key == "enable_bgimg":
             if checked:
