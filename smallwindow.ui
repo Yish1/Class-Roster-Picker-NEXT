@@ -44,7 +44,6 @@ border-bottom-right-radius :28px;</string>
    </property>
    <property name="styleSheet">
     <string notr="true">* {
-    font-size: 48px;
     color: rgb(98, 105, 112);
     font-family: 'Microsoft YaHei';
 }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>704</width>
-    <height>409</height>
+    <width>700</width>
+    <height>410</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,10 +28,7 @@
    </property>
    <property name="styleSheet">
     <string notr="true">background-color: rgba(42, 45, 47, 0.81);
-border-top-left-radius :28px;
-border-bottom-left-radius :28px;
-border-top-right-radius :28px;
-border-bottom-right-radius :28px;</string>
+border-radius: 28px;</string>
    </property>
    <property name="text">
     <string/>
@@ -48,10 +45,7 @@ border-bottom-right-radius :28px;</string>
    </property>
    <property name="styleSheet">
     <string notr="true">border-image: url(:/images/(1070).webp);
-border-top-left-radius :28px;
-border-bottom-left-radius :28px;
-border-top-right-radius :28px;
-border-bottom-right-radius :28px;</string>
+border-radius: 28px;</string>
    </property>
    <property name="text">
     <string/>
@@ -130,9 +124,6 @@ QPushButton:hover{
    <property name="styleSheet">
     <string notr="true">QLabel {
     color: #FFFFFF;
-}
-* {
-    font-size: 60px;
 }</string>
    </property>
    <property name="frameShape">
@@ -162,13 +153,13 @@ QPushButton:hover{
    </property>
    <property name="styleSheet">
     <string notr="true">QListWidget {
-    background-color: #2B2B2B;
-    color: white;
+    background-color: rgba(43, 43, 43, 0.9);
+    color: rgba(255, 255, 255, 1);
 }
 
 QScrollBar:vertical {
     width: 12px;
-    border: 1px solid #2B2B2B;
+    border: 1px solid rgba(43, 43, 43, 0.9);
     margin: 0px;
     padding-top: 0px;
     padding-bottom: 0px;
@@ -176,48 +167,28 @@ QScrollBar:vertical {
 
 QScrollBar::handle:vertical {
     width: 3px;
-    background: #4B4B4B;
-    min-height: 20px; /* 设置最小长度为20px */
+    background: rgba(75, 75, 75, 0.9);
+    min-height: 20px;
 }
 
 QScrollBar::handle:vertical:hover {
-    background: #3F3F3F;
-    border: 0px #3F3F3F;
+    background: rgba(63, 63, 63, 1);
 }
 
-QScrollBar::sub-line:vertical {
-    width: 0px;
-    subcontrol-position: left;
-}
-
-QScrollBar::sub-line:vertical:hover {
-    height: 0px;
-    background: #323232;
-    subcontrol-position: top;
-}
-
+QScrollBar::sub-line:vertical,
 QScrollBar::add-line:vertical {
+    width: 0px;
     height: 0px;
-    subcontrol-position: bottom;
 }
 
-QScrollBar::add-line:vertical:hover {
-    height: 0px;
-    background: #3F3F3F;
-    subcontrol-position: bottom;
-}
-
-QScrollBar::add-page:vertical {
-    background: #2B2B2B;
-}
-
+QScrollBar::add-page:vertical,
 QScrollBar::sub-page:vertical {
-    background: #2B2B2B;
+    background: rgba(43, 43, 43, 0.9);
 }
 
 QScrollBar:horizontal {
     height: 12px;
-    border: 1px #2B2B2B;
+    border: 1px rgba(43, 43, 43, 0.9);
     margin: 0px;
     padding-left: 0px;
     padding-right: 0px;
@@ -225,44 +196,21 @@ QScrollBar:horizontal {
 
 QScrollBar::handle:horizontal {
     height: 16px;
-    background: #4B4B4B;
+    background: rgba(75, 75, 75, 0.9);
     min-width: 20px;
 }
 
 QScrollBar::handle:horizontal:hover {
-    background: #3F3F3F;
-    border: 0px #3F3F3F;
-}
-
-QScrollBar::sub-line:horizontal {
-    width: 0px;
-    subcontrol-position: left;
-}
-
-QScrollBar::sub-line:horizontal:hover {
-    width: 0px;
-    background: #2B2B2B;
-    subcontrol-position: left;
-}
-
-QScrollBar::add-line:horizontal {
-    width: 0px;
-    subcontrol-position: right;
-}
-
-QScrollBar::add-line:horizontal:hover {
-    width: 0px;
-    background: #2B2B2B;
-    subcontrol-position: right;
+    background: rgba(63, 63, 63, 1);
 }
 
 QScrollBar::add-page:horizontal,
 QScrollBar::sub-page:horizontal {
-    background: #2B2B2B;
+    background: rgba(43, 43, 43, 0.9);
 }
 
 * {
-    font-size: 18px;
+    font-size: 13.50pt;
 }
 </string>
    </property>
@@ -282,7 +230,7 @@ QScrollBar::sub-page:horizontal {
     <enum>Qt::IgnoreAction</enum>
    </property>
    <property name="selectionMode">
-    <enum>QAbstractItemView::NoSelection</enum>
+    <enum>QAbstractItemView::SingleSelection</enum>
    </property>
    <property name="selectionBehavior">
     <enum>QAbstractItemView::SelectItems</enum>
@@ -296,6 +244,9 @@ QScrollBar::sub-page:horizontal {
    <property name="movement">
     <enum>QListView::Static</enum>
    </property>
+   <property name="resizeMode">
+    <enum>QListView::Fixed</enum>
+   </property>
   </widget>
   <widget class="QFrame" name="frame_2">
    <property name="geometry">
@@ -308,7 +259,7 @@ QScrollBar::sub-page:horizontal {
    </property>
    <property name="styleSheet">
     <string notr="true">* {
-    font-size: 11px;
+    font-size: 8.25pt;
 }</string>
    </property>
    <property name="frameShape">
@@ -504,7 +455,7 @@ QPushButton:hover{
    </property>
    <property name="styleSheet">
     <string notr="true">* {
-    font-size: 12px; 
+    font-size: 9pt; 
 }</string>
    </property>
    <property name="frameShape">
@@ -571,6 +522,25 @@ QPushButton{background:rgba(118, 218, 96, 1);border-radius:5px;}QPushButton:hove
     </item>
    </layout>
   </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>370</y>
+     <width>191</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>自定义背景</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="textInteractionFlags">
+    <set>Qt::NoTextInteraction</set>
+   </property>
+  </widget>
   <zorder>label_2</zorder>
   <zorder>label</zorder>
   <zorder>frame</zorder>
@@ -580,6 +550,7 @@ QPushButton{background:rgba(118, 218, 96, 1);border-radius:5px;}QPushButton:hove
   <zorder>pushButton_4</zorder>
   <zorder>progressBar</zorder>
   <zorder>frame_3</zorder>
+  <zorder>label_6</zorder>
  </widget>
  <resources>
   <include location="res/ui1.qrc"/>
