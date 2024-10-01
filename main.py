@@ -538,6 +538,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             with open(history_file, "a", encoding="utf-8") as file:
                 content = "%s 沉梦课堂点名器%s 幸运儿是：%s\n" % (today, dmversion, name)
                 file.write(content)
+            print(today, "幸运儿是： %s " % name)
 
     def start(self):
         num = self.spinBox.value()
@@ -549,7 +550,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             self.thread.signals.show_progress.connect(self.update_progress_bar)
             self.thread.signals.update_pushbotton.connect(
                 self.update_pushbotton)
-            # self.thread.signals.update_list.connect(self.update_list)
+            self.thread.signals.update_list.connect(self.update_list)
             self.thread.signals.enable_button.connect(self.enable_button)
             self.thread.signals.qtimer.connect(self.qtimer)
             self.thread.signals.save_history.connect(self.save_history)
@@ -705,7 +706,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         elif value == 3:
             self.pushButton_5.setEnabled(False)
 
+        elif value == 4:
+            self.pushButton_5.setEnabled(True)
     def update_list(self, mode, value):
+        if mode == 2:
+            mode = 1
+            value = name
         if mode == 1:
             if value == "":
                 pass
@@ -736,6 +742,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
                                 self.update_pushbotton)
                             self.check_speaker.signals.enable_button.connect(
                                 self.enable_button)
+                            self.check_speaker.signals.save_history.connect(
+                                self.save_history)
                             self.threadpool2.start(self.check_speaker)
                         else:
                             print("名单文件为空！")
@@ -817,31 +825,35 @@ class WorkerThread(QRunnable):
 
         def stop():
             if allownametts == 1:
-                self.signals.update_list.emit(1, name)
+                self.signals.update_list.emit(2,"")
                 self.signals.update_pushbotton.emit(_(" 小窗模式"))
                 self.signals.enable_button.emit(1)
-            self.signals.finished.emit()
-            # 向主线程发送终止信号
+                try:
+                    self.signals.save_history.emit()
+                except:
+                    print(_("无法写入历史记录"))
+
 
         if running:  # 结束按钮
             self.signals.qtimer.emit(0)
             self.signals.show_progress.emit(0, 0, 100)
             self.signals.enable_button.emit(3)
             running = False
+            stop()
             try:
-                pygame.mixer.music.fadeout(800)
+                pygame.mixer.music.fadeout(600)
                 pygame.mixer.music.unload()
             except pygame.error as e:
                 print(f"停止音乐播放时发生错误：{str(e)}")
-
-            stop()
+            self.signals.finished.emit()
+            # 向主线程发送终止信号
+            
 
         else:  # 开始按钮
             running = True
             self.signals.qtimer.emit(1)
             print("开始点名")
             self.signals.show_progress.emit(1, 0, 0)
-            self.signals.update_pushbotton.emit(_(" 结束"))
             self.signals.enable_button.emit(0)
             folder_name = "dmmusic"
             current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -850,9 +862,12 @@ class WorkerThread(QRunnable):
             # 获取文件夹中的文件列表
             file_list = os.listdir(folder_path)
             if not file_list:
+                self.signals.update_pushbotton.emit(_(" 结束"))
                 print("要使用背景音乐功能，请在 %s 中放入mp3格式的音乐" % folder_path)
                 return
             try:
+                self.signals.update_pushbotton.emit(_(" 请稍后."))
+                self.signals.enable_button.emit(3)
                 random_file = random.choice(file_list)
                 file_path = os.path.join(folder_path, random_file)
                 print("播放音乐：%s" % file_path)
@@ -861,21 +876,26 @@ class WorkerThread(QRunnable):
                 music_length = sound.get_length()
                 random_play = round(random.uniform(2, 4), 1)
                 start_time = round(music_length / random_play, 1)
-
+                self.signals.update_pushbotton.emit(_(" 请稍后.."))
                 self.volume = 0.0
                 pygame.mixer.music.set_volume(self.volume)
                 pygame.mixer.music.play(1, start=start_time)
                 print(f"音频时长：{music_length},随机数：{random_play},播放降落伞：{start_time}")
+                
                 # 使用 for 循环进行音量淡入
-                for i in range(35):  # 50 次循环，每次增加0.02的音量
-                    if self.volume < 0.7:
+                for i in range(33):  # 50 次循环，每次增加0.02的音量
+                    if self.volume < 0.66:
                         self.volume += 0.02
-                        if self.volume > 0.7:
-                            self.volume = 0.7
+                        if i == 10:
+                            self.signals.update_pushbotton.emit(_(" 请稍后..."))
+                        if self.volume >= 0.66:
+                            self.volume = 0.66
                         pygame.mixer.music.set_volume(self.volume)
-                        pygame.time.delay(30)
+                        pygame.time.delay(15)
 
                 print("音量淡入完成。")
+                self.signals.update_pushbotton.emit(_(" 结束"))
+                self.signals.enable_button.emit(4)
 
             except pygame.error as e:
                 print("无法播放音乐文件：%s，错误信息：%s" % (file_path, e))
@@ -1416,7 +1436,6 @@ class CheckSpeakerThread(QRunnable):
                 self.signals.save_history.emit()
             except:
                 print(_("无法写入历史记录"))
-            print(today, "幸运儿是： %s " % name)
             # 终止信号
 
         self.signals.finished.emit()
