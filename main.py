@@ -11,7 +11,7 @@ import gettext
 import glob
 import ctypes
 import msvcrt
-import ptvsd  # QThread断点工具
+# import ptvsd  # QThread断点工具
 import win32com.client
 import webbrowser as web
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -145,7 +145,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             random_file = random.choice(file_list)
             print(random_file)
             self.label_2.setStyleSheet(f"border-image: url('./images/{random_file}');"
-                                       "border-radius: 28px;")
+                                       "border-radius: 30px;")
         elif bgimg == 1 or bgimg == 0:
             self.label_2.setStyleSheet("border-image: url(:/images/bg.webp);"
                                        "border-radius: 28px;")
@@ -802,15 +802,24 @@ class WorkerThread(QRunnable):
         super().__init__()
         self.signals = WorkerSignals()
         self.name = name
-
+        
+    def set_volume(self):
+        if self.volume < 1.0:
+            self.volume += 0.02  # 每次增加0.02
+            if self.volume > 1.0:
+                self.volume = 1.0  # 确保音量不超过1.0
+            pygame.mixer.music.set_volume(self.volume)
+        else:
+            self.timer.stop()  # 停止定时器
     def run(self):
         global running
         # ptvsd.debug_this_thread()  # 在此线程启动断点调试
 
         def stop():
-            # self.signals.update_list.emit(1, name)
-            # self.signals.update_pushbotton.emit(_(" 小窗模式"))
-            # self.signals.enable_button.emit(1)
+            if allownametts == 1:
+                self.signals.update_list.emit(1, name)
+                self.signals.update_pushbotton.emit(_(" 小窗模式"))
+                self.signals.enable_button.emit(1)
             self.signals.finished.emit()
             # 向主线程发送终止信号
 
@@ -843,16 +852,34 @@ class WorkerThread(QRunnable):
             if not file_list:
                 print("要使用背景音乐功能，请在 %s 中放入mp3格式的音乐" % folder_path)
                 return
-            # 从列表中随机选择一个文件
-            random_file = random.choice(file_list)
-            # 生成完整的文件路径
-            file_path = os.path.join(folder_path, random_file)
             try:
+                random_file = random.choice(file_list)
+                file_path = os.path.join(folder_path, random_file)
                 print("播放音乐：%s" % file_path)
                 pygame.mixer.music.load(file_path)
-                pygame.mixer.music.play(1)
+                sound = pygame.mixer.Sound(file_path)
+                music_length = sound.get_length()
+                random_play = round(random.uniform(2, 4), 1)
+                start_time = round(music_length / random_play, 1)
+
+                self.volume = 0.0
+                pygame.mixer.music.set_volume(self.volume)
+                pygame.mixer.music.play(1, start=start_time)
+                print(f"音频时长：{music_length},随机数：{random_play},播放降落伞：{start_time}")
+                # 使用 for 循环进行音量淡入
+                for i in range(35):  # 50 次循环，每次增加0.02的音量
+                    if self.volume < 0.7:
+                        self.volume += 0.02
+                        if self.volume > 0.7:
+                            self.volume = 0.7
+                        pygame.mixer.music.set_volume(self.volume)
+                        pygame.time.delay(30)
+
+                print("音量淡入完成。")
+
             except pygame.error as e:
                 print("无法播放音乐文件：%s，错误信息：%s" % (file_path, e))
+
 
 
 class UpdateThread(QRunnable):
@@ -1353,7 +1380,6 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
 
 class CheckSpeakerThread(QRunnable):
     def __init__(self, mode=None, name=None):
-        ptvsd.debug_this_thread()  # 在此线程启动断点调试
         super().__init__()
         self.signals = WorkerSignals()
         self.name = name
@@ -1365,7 +1391,7 @@ class CheckSpeakerThread(QRunnable):
         speaker.Speak(text)
 
     def run(self):
-        ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        # ptvsd.debug_this_thread()  # 在此线程启动断点调试
         if self.mode != 1:
             try:
                 speaker = win32com.client.Dispatch("SAPI.SpVoice")
