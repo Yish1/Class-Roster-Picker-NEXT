@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'e:\class roster picker\picker.ui'
+# Form implementation generated from reading ui file 'picker.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -14,26 +14,20 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(704, 409)
+        Form.resize(700, 410)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/picker.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Form.setWindowIcon(icon)
         self.label = QtWidgets.QLabel(Form)
         self.label.setGeometry(QtCore.QRect(10, 10, 681, 391))
         self.label.setStyleSheet("background-color: rgba(42, 45, 47, 0.81);\n"
-"border-top-left-radius :28px;\n"
-"border-bottom-left-radius :28px;\n"
-"border-top-right-radius :28px;\n"
-"border-bottom-right-radius :28px;")
+"border-radius: 28px;")
         self.label.setText("")
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(Form)
         self.label_2.setGeometry(QtCore.QRect(10, 10, 681, 391))
         self.label_2.setStyleSheet("border-image: url(:/images/(1070).webp);\n"
-"border-top-left-radius :28px;\n"
-"border-bottom-left-radius :28px;\n"
-"border-top-right-radius :28px;\n"
-"border-bottom-right-radius :28px;")
+"border-radius: 28px;")
         self.label_2.setText("")
         self.label_2.setObjectName("label_2")
         self.frame = QtWidgets.QFrame(Form)
@@ -70,9 +64,6 @@ class Ui_Form(object):
         self.label_3.setGeometry(QtCore.QRect(60, 70, 591, 121))
         self.label_3.setStyleSheet("QLabel {\n"
 "    color: #FFFFFF;\n"
-"}\n"
-"* {\n"
-"    font-size: 45pt;\n"
 "}")
         self.label_3.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
@@ -81,13 +72,13 @@ class Ui_Form(object):
         self.listWidget = QtWidgets.QListWidget(Form)
         self.listWidget.setGeometry(QtCore.QRect(60, 213, 244, 151))
         self.listWidget.setStyleSheet("QListWidget {\n"
-"    background-color: #2B2B2B;\n"
-"    color: white;\n"
+"    background-color: rgba(43, 43, 43, 0.9);\n"
+"    color: rgba(255, 255, 255, 1);\n"
 "}\n"
 "\n"
 "QScrollBar:vertical {\n"
 "    width: 12px;\n"
-"    border: 1px solid #2B2B2B;\n"
+"    border: 1px solid rgba(43, 43, 43, 0.9);\n"
 "    margin: 0px;\n"
 "    padding-top: 0px;\n"
 "    padding-bottom: 0px;\n"
@@ -95,48 +86,28 @@ class Ui_Form(object):
 "\n"
 "QScrollBar::handle:vertical {\n"
 "    width: 3px;\n"
-"    background: #4B4B4B;\n"
-"    min-height: 20px; /* 设置最小长度为20px */\n"
+"    background: rgba(75, 75, 75, 0.9);\n"
+"    min-height: 20px;\n"
 "}\n"
 "\n"
 "QScrollBar::handle:vertical:hover {\n"
-"    background: #3F3F3F;\n"
-"    border: 0px #3F3F3F;\n"
+"    background: rgba(63, 63, 63, 1);\n"
 "}\n"
 "\n"
-"QScrollBar::sub-line:vertical {\n"
-"    width: 0px;\n"
-"    subcontrol-position: left;\n"
-"}\n"
-"\n"
-"QScrollBar::sub-line:vertical:hover {\n"
-"    height: 0px;\n"
-"    background: #323232;\n"
-"    subcontrol-position: top;\n"
-"}\n"
-"\n"
+"QScrollBar::sub-line:vertical,\n"
 "QScrollBar::add-line:vertical {\n"
+"    width: 0px;\n"
 "    height: 0px;\n"
-"    subcontrol-position: bottom;\n"
 "}\n"
 "\n"
-"QScrollBar::add-line:vertical:hover {\n"
-"    height: 0px;\n"
-"    background: #3F3F3F;\n"
-"    subcontrol-position: bottom;\n"
-"}\n"
-"\n"
-"QScrollBar::add-page:vertical {\n"
-"    background: #2B2B2B;\n"
-"}\n"
-"\n"
+"QScrollBar::add-page:vertical,\n"
 "QScrollBar::sub-page:vertical {\n"
-"    background: #2B2B2B;\n"
+"    background: rgba(43, 43, 43, 0.9);\n"
 "}\n"
 "\n"
 "QScrollBar:horizontal {\n"
 "    height: 12px;\n"
-"    border: 1px #2B2B2B;\n"
+"    border: 1px rgba(43, 43, 43, 0.9);\n"
 "    margin: 0px;\n"
 "    padding-left: 0px;\n"
 "    padding-right: 0px;\n"
@@ -144,40 +115,17 @@ class Ui_Form(object):
 "\n"
 "QScrollBar::handle:horizontal {\n"
 "    height: 16px;\n"
-"    background: #4B4B4B;\n"
+"    background: rgba(75, 75, 75, 0.9);\n"
 "    min-width: 20px;\n"
 "}\n"
 "\n"
 "QScrollBar::handle:horizontal:hover {\n"
-"    background: #3F3F3F;\n"
-"    border: 0px #3F3F3F;\n"
-"}\n"
-"\n"
-"QScrollBar::sub-line:horizontal {\n"
-"    width: 0px;\n"
-"    subcontrol-position: left;\n"
-"}\n"
-"\n"
-"QScrollBar::sub-line:horizontal:hover {\n"
-"    width: 0px;\n"
-"    background: #2B2B2B;\n"
-"    subcontrol-position: left;\n"
-"}\n"
-"\n"
-"QScrollBar::add-line:horizontal {\n"
-"    width: 0px;\n"
-"    subcontrol-position: right;\n"
-"}\n"
-"\n"
-"QScrollBar::add-line:horizontal:hover {\n"
-"    width: 0px;\n"
-"    background: #2B2B2B;\n"
-"    subcontrol-position: right;\n"
+"    background: rgba(63, 63, 63, 1);\n"
 "}\n"
 "\n"
 "QScrollBar::add-page:horizontal,\n"
 "QScrollBar::sub-page:horizontal {\n"
-"    background: #2B2B2B;\n"
+"    background: rgba(43, 43, 43, 0.9);\n"
 "}\n"
 "\n"
 "* {\n"
@@ -189,11 +137,12 @@ class Ui_Form(object):
         self.listWidget.setProperty("showDropIndicator", False)
         self.listWidget.setDragEnabled(False)
         self.listWidget.setDefaultDropAction(QtCore.Qt.IgnoreAction)
-        self.listWidget.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.listWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.listWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
         self.listWidget.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.listWidget.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
         self.listWidget.setMovement(QtWidgets.QListView.Static)
+        self.listWidget.setResizeMode(QtWidgets.QListView.Fixed)
         self.listWidget.setObjectName("listWidget")
         self.frame_2 = QtWidgets.QFrame(Form)
         self.frame_2.setGeometry(QtCore.QRect(337, 207, 131, 142))
@@ -316,6 +265,11 @@ class Ui_Form(object):
         self.pushButton_2.setIconSize(QtCore.QSize(19, 19))
         self.pushButton_2.setObjectName("pushButton_2")
         self.verticalLayout_2.addWidget(self.pushButton_2)
+        self.label_6 = QtWidgets.QLabel(Form)
+        self.label_6.setGeometry(QtCore.QRect(270, 370, 191, 20))
+        self.label_6.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_6.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.label_6.setObjectName("label_6")
         self.label_2.raise_()
         self.label.raise_()
         self.frame.raise_()
@@ -325,8 +279,10 @@ class Ui_Form(object):
         self.pushButton_4.raise_()
         self.progressBar.raise_()
         self.frame_3.raise_()
+        self.label_6.raise_()
 
         self.comboBox.setCurrentIndex(-1)
         self.pushButton_3.clicked.connect(Form.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Form)
+
 import res

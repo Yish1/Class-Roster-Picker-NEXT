@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'e:\class roster picker\settings.ui'
+# Form implementation generated from reading ui file 'settings.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -204,6 +204,7 @@ class Ui_settings(object):
         self.label_3.setOpenExternalLinks(True)
         self.label_3.setObjectName("label_3")
         self.gridLayout_5.addWidget(self.groupBox_5, 2, 0, 1, 2)
+
         QtCore.QMetaObject.connectSlotsByName(settings)
 
 import res

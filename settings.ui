@@ -85,14 +85,14 @@
           <item>
            <widget class="QRadioButton" name="radioButton_3">
             <property name="text">
-             <string>预设1</string>
+             <string>默认背景</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QRadioButton" name="radioButton_4">
             <property name="text">
-             <string>预设2</string>
+             <string>自定义</string>
             </property>
            </widget>
           </item>

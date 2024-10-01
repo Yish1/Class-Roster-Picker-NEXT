@@ -11,7 +11,7 @@ import gettext
 import glob
 import ctypes
 import msvcrt
-# import ptvsd  # QThread断点工具
+import ptvsd  # QThread断点工具
 import win32com.client
 import webbrowser as web
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -62,7 +62,7 @@ except:
         domain="zh_CN", localedir=localedir1, languages=["zh_CN"])
     _ = translate.gettext
 
-dmversion = 6.05
+dmversion = 6.1
 
 # config变量
 allownametts = None
@@ -101,6 +101,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             "MainWindow", _("沉梦课堂点名器 %s") % dmversion))
         self.pushButton_2.setText(_(" 开始"))
         self.pushButton_5.setText(_(" 小窗模式"))
+        font = QtGui.QFont()
+        font.setPointSize(45)  # 字体大小
+        self.label_3.setFont(font)
         self.label_3.setText(_("幸运儿是:"))
         self.spinBox.setValue(1)
         self.label_5.setText(_("当前名单："))
@@ -126,24 +129,29 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         self.timer = None
 
     def set_bgimg(self):
+        self.label_6.setText("")
         if bgimg == 2:
-            self.label_2.setStyleSheet("border-image: url(:/images/(1070).webp);\n"
-                                       "border-top-left-radius :28px;\n"
-                                       "border-bottom-left-radius :28px;\n"
-                                       "border-top-right-radius :28px;\n"
-                                       "border-bottom-right-radius :28px;")
+            folder_name = "images"
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            folder_path = os.path.join(current_dir, folder_name)
+            os.makedirs(folder_name, exist_ok=True)
+            file_list = os.listdir(folder_path)
+            if not file_list:
+                print("要使用自定义背景功能，请在 %s 中放入图片文件" % folder_path)
+                self.label_2.setStyleSheet("border-image: url(:/images/(1070).webp);"
+                                           "border-radius: 28px;")
+                return
+            self.label_6.setText(_("自定义背景"))
+            random_file = random.choice(file_list)
+            print(random_file)
+            self.label_2.setStyleSheet(f"border-image: url('./images/{random_file}');"
+                                       "border-radius: 28px;")
         elif bgimg == 1 or bgimg == 0:
-            self.label_2.setStyleSheet("border-image: url(:/images/bg.webp);\n"
-                                       "border-top-left-radius :28px;\n"
-                                       "border-bottom-left-radius :28px;\n"
-                                       "border-top-right-radius :28px;\n"
-                                       "border-bottom-right-radius :28px;")
+            self.label_2.setStyleSheet("border-image: url(:/images/bg.webp);"
+                                       "border-radius: 28px;")
         elif bgimg == 3:
             self.label_2.setStyleSheet("background-color: rgba(42, 45, 47, 0.92);\n"
-                                       "border-top-left-radius :28px;\n"
-                                       "border-bottom-left-radius :28px;\n"
-                                       "border-top-right-radius :28px;\n"
-                                       "border-bottom-right-radius :28px;")
+                                       "border-radius: 28px;")
 
     def small_mode(self):
         global small_window_flag
@@ -541,7 +549,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             self.thread.signals.show_progress.connect(self.update_progress_bar)
             self.thread.signals.update_pushbotton.connect(
                 self.update_pushbotton)
-            self.thread.signals.update_list.connect(self.update_list)
+            # self.thread.signals.update_list.connect(self.update_list)
             self.thread.signals.enable_button.connect(self.enable_button)
             self.thread.signals.qtimer.connect(self.qtimer)
             self.thread.signals.save_history.connect(self.save_history)
@@ -551,9 +559,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             self.ttsinitialize()
 
     def check_new_version(self):
-        self.threadpool = QThreadPool()
+        self.threadpool1 = QThreadPool()
         self.update_thread = UpdateThread()
-        self.threadpool.start(self.update_thread)
+        self.threadpool1.start(self.update_thread)
         self.update_thread.signals.find_new_version.connect(
             self.update_message)
         self.update_thread.signals.finished.connect(
@@ -707,20 +715,40 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         elif mode == 0:
             self.label_3.setText(value)
 
-    def qtimer(self, start, time=None):
+    def qtimer(self, start):
         if start == 1:
             self.timer = QTimer(self)
+            time = random.randint(30, 40)
             self.timer.start(time)
             self.timer.timeout.connect(self.setname)
 
         elif start == 0:
             try:
                 self.timer.stop()
+                if allownametts != 1:
+                    try:
+                        if name != "":
+                            self.threadpool2 = QThreadPool()
+                            self.check_speaker = CheckSpeakerThread(1, name)
+                            self.check_speaker.signals.update_list.connect(
+                                self.update_list)
+                            self.check_speaker.signals.update_pushbotton.connect(
+                                self.update_pushbotton)
+                            self.check_speaker.signals.enable_button.connect(
+                                self.enable_button)
+                            self.threadpool2.start(self.check_speaker)
+                        else:
+                            print("名单文件为空！")
+                    except Exception as e:
+                        print(f"语音播报失败，原因：{e}")
             except Exception as e:
-                print(f"无法停止计时器:{e}")
+                print(f"停止计时器失败:{e}")
 
     def setname(self):
         global name
+        font = QtGui.QFont()
+        font.setPointSize(45)  # 字体大小
+        self.label_3.setFont(font)
         if len(name_list) == 0:
             self.show_message(_("名单文件为空，请输入名字（一行一个）后再重新点名！"), _("警告"))
             self.qtimer(0)
@@ -732,6 +760,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
                 self.show_message(_("选择的名单文件%s不存在！") % file_path, "\n%s" % e)
         else:
             name = random.choice(name_list)
+            font = self.label_3.font()
+            font_size = font.pointSize()
+            # 检测文本宽度
+            metrics = QFontMetrics(font)
+            while metrics.width(name) > 1.8*self.label_3.width() and font_size > 0:
+                font_size -= 1
+                font.setPointSize(font_size)
+                self.label_3.setFont(font)
+                metrics = QFontMetrics(font)
+            font = self.label_3.font()
+            font_size = font.pointSize()
             self.label_3.setText(name)
 
     def show_message(self, message, title):
@@ -754,7 +793,8 @@ class WorkerSignals(QObject):
     enable_button = pyqtSignal(int)
     save_history = pyqtSignal()
     finished = pyqtSignal()
-    qtimer = pyqtSignal(int, int)
+    qtimer = pyqtSignal(int)
+    speakertest = pyqtSignal(int, str)
 
 
 class WorkerThread(QRunnable):
@@ -762,53 +802,34 @@ class WorkerThread(QRunnable):
         super().__init__()
         self.signals = WorkerSignals()
         self.name = name
-        self.allownametts = allownametts
 
     def run(self):
         global running
         # ptvsd.debug_this_thread()  # 在此线程启动断点调试
 
-        def ttsread(text):
-            speaker = win32com.client.Dispatch("SAPI.SpVoice")
-            speaker.Speak(text)
-
         def stop():
-            self.signals.update_list.emit(1, name)
-            self.signals.update_pushbotton.emit(_(" 小窗模式"))
-            self.signals.enable_button.emit(1)
+            # self.signals.update_list.emit(1, name)
+            # self.signals.update_pushbotton.emit(_(" 小窗模式"))
+            # self.signals.enable_button.emit(1)
             self.signals.finished.emit()
             # 向主线程发送终止信号
 
         if running:  # 结束按钮
-            self.signals.qtimer.emit(0, 0)
+            self.signals.qtimer.emit(0)
             self.signals.show_progress.emit(0, 0, 100)
             self.signals.enable_button.emit(3)
             running = False
-            if name != "":
-                try:
-                    self.signals.save_history.emit()
-                except:
-                    print(_("无法写入历史记录"))
-                print(today, "幸运儿是： %s " % name)
-            else:
-                print("名单为空!")
             try:
                 pygame.mixer.music.fadeout(800)
                 pygame.mixer.music.unload()
             except pygame.error as e:
                 print(f"停止音乐播放时发生错误：{str(e)}")
-            if self.allownametts == 2:
-                ttsread(text=_("恭喜 %s") % name)
-            elif self.allownametts == 3:
-                ttsread(text=name)
-            elif self.allownametts == 1:
-                pass
 
             stop()
 
         else:  # 开始按钮
             running = True
-            self.signals.qtimer.emit(1, 50)
+            self.signals.qtimer.emit(1)
             print("开始点名")
             self.signals.show_progress.emit(1, 0, 0)
             self.signals.update_pushbotton.emit(_(" 结束"))
@@ -843,18 +864,18 @@ class UpdateThread(QRunnable):
         global newversion, checkupdate, latest_version
         # ptvsd.debug_this_thread()  # 在此线程启动断点调试
         headers = {
-            'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s' % (dmversion, allownametts, bgimg, language_value)
+            'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s,%s%s_%s' % (dmversion, allownametts, bgimg, language_value, platform.system(), platform.release(), platform.machine() )
         }
         updatecheck = "https://cmxz.top/programs/dm/check.php"
-        try:
-            check_mode = requests.get(
-                updatecheck + "?mode", timeout=5, headers=headers)
-            if int(check_mode.text) == 1:
-                print("检测到强制更新版本，这意味着当前版本有严重bug，请更新至最新版本！")
-                checkupdate = 2
-                latest_version = 0
-        except:
-            pass
+        # try:
+        #     check_mode = requests.get(
+        #         updatecheck + "?mode", timeout=5, headers=headers)
+        #     if int(check_mode.text) == 1:
+        #         print("检测到强制更新版本，这意味着当前版本有严重bug，请更新至最新版本！")
+        #         checkupdate = 2
+        #         latest_version = 0
+        # except:
+        #     pass
         if checkupdate == 2:
             try:
                 page = requests.get(updatecheck, timeout=5, headers=headers)
@@ -938,9 +959,10 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.m_flag = False
         self.setCursor(QCursor(Qt.ArrowCursor))
 
-    def qtimer(self, start, time=None):
+    def qtimer(self, start):
         if start == 1:
             self.timer = QTimer()
+            time = random.randint(30, 40)
             self.timer.start(time)
             self.timer.timeout.connect(self.setname)
             self.runflag = True
@@ -981,7 +1003,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
             self.label_2.setText(name)
 
     def get_name_list(self):
-        self.qtimer(1, 50)
+        self.qtimer(1)
 
     def closeEvent(self, event):
         print("小窗被关闭")
@@ -1007,8 +1029,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.setFixedSize(684, 500)
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
         self.groupBox.setTitle(_("功能设置"))
-        self.radioButton_3.setText(_("预设1"))
-        self.radioButton_4.setText(_("预设2"))
+        self.radioButton_3.setText(_("默认背景"))
+        self.radioButton_4.setText(_("自定义"))
         self.radioButton_5.setText(_("无"))
         self.checkBox_3.setText(_("检查更新"))
         self.checkBox_2.setText(_("语音播报"))
@@ -1087,17 +1109,19 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         newfilename, ok_pressed = QInputDialog.getText(
             self.window, _("新增名单"), _("请输入名单名称:"))
         if ok_pressed and newfilename:
-            print("新增名单名称是: %s" % newfilename)
             newnamepath = os.path.join(
                 "name", f"{newfilename}.txt")  # 打开文件并写入内容
-            with open(newnamepath, "w", encoding="utf8") as f:
-                pass
-            message = (_("已创建名为 '%s.txt' 的文件，路径为: %s") %
-                       (newfilename, newnamepath))
-
-            QMessageBox.information(
-                self.window, _("新建成功"), message, QMessageBox.Ok)
-            self.main_instance.opentext(newnamepath)
+            if not os.path.exists(newnamepath):
+                print("新增名单名称是: %s" % newfilename)
+                with open(newnamepath, "w", encoding="utf8") as file:
+                    file.write("请删除此行后编辑名单，一行一个名字，不要空格！")
+                message = (_("已创建名为 '%s.txt' 的文件，路径为: %s") %
+                           (newfilename, newnamepath))
+                QMessageBox.information(
+                    self.window, _("新建成功"), message, QMessageBox.Ok)
+                self.main_instance.opentext(newnamepath)
+            else:
+                self.main_instance.show_message(_("同名文件已存在，请勿重复创建！"), _("警告！"))
             txt_name = self.refresh_name_list()
             self.comboBox_1.clear()  # 清空下拉框的选项
             self.comboBox_1.addItems(txt_name)  # 添加新的文件名到下拉框
@@ -1209,22 +1233,30 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         if key == "enable_tts":
             if checked and self.checkBox_2.isChecked():
                 # 启用 radioButton 和 radioButton_2
-                self.radioButton.setEnabled(True)
-                self.radioButton_2.setEnabled(True)
+                # self.radioButton.setEnabled(True)
+                # self.radioButton_2.setEnabled(True)
 
                 # 如果两个 radioButton 都没有被选中，默认选中 radioButton
                 if checked and not self.radioButton.isChecked() and not self.radioButton_2.isChecked():
-                    try:
-                        speaker1 = win32com.client.Dispatch("SAPI.SpVoice")
-                        speaker1.Volume = 0
-                        speaker1.Speak("1")
-                        self.radioButton.setChecked(True)
-                    except Exception as e:
-                        self.main_instance.show_message(
-                            _("语音播报无法在此设备上开启，可能是您使用的系统为精简版，删除了自带的语言库\n%s") % e, _("错误"))
-                        self.checkBox_2.setChecked(False)
-                        self.radioButton.setEnabled(False)
-                        self.radioButton_2.setEnabled(False)
+                    self.checkBox_2.setText(_("正在检测兼容性..."))
+                    self.threadpool = QThreadPool()
+                    self.check_speaker = CheckSpeakerThread()
+                    self.threadpool.start(self.check_speaker)
+
+                    def spearker_test(result, e):
+                        if result == 1:
+                            self.radioButton.setEnabled(True)
+                            self.radioButton_2.setEnabled(True)
+                            self.radioButton.setChecked(True)
+                        else:
+                            self.main_instance.show_message(
+                                _("语音播报无法在此设备上开启，可能是您使用的系统为精简版，删除了自带的语音库！\n%s") % e, _("错误"))
+                            self.checkBox_2.setChecked(False)
+                            self.radioButton.setEnabled(False)
+                            self.radioButton_2.setEnabled(False)
+                        self.checkBox_2.setText(_("语音播报"))
+                    self.check_speaker.signals.speakertest.connect(
+                        spearker_test)
 
                 # 检查选中的情况并设置 enable_tts
                 if checked and self.radioButton.isChecked() and not self.radioButton_2.isChecked():
@@ -1244,7 +1276,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             self.enable_update = 2 if checked else 1
             if not checked:
                 self.main_instance.show_message(
-                    _("您正在关闭检查更新功能！更新意味着带来 新功能、优化 以及修复错误，强烈建议您开启此功能！\n\n当您关闭此功能后，如果当前版本存在严重错误，仍会收到新版本推送！\n\n如需完全关闭联网功能，请获取定制版本。"), _("警告"))
+                    _("您正在关闭检查更新功能！更新意味着带来 新功能、优化 以及修复错误，强烈建议您开启此功能！"), _("警告"))
 
         elif key == "enable_bgimg":
             if checked:
@@ -1253,7 +1285,13 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                     print("背景1")
                 elif self.radioButton_4.isChecked():
                     self.enable_bgimg = 2
-                    print("背景2")
+                    self.main_instance.show_message(
+                        _("您正在使用自定义背景功能，由于此工具可能需要在公众场合展示，请选择适宜场景的合适背景！ \n\n因使用不合适的背景图片而造成的后果由您自行承担！"), _("免责声明"))
+                    self.main_instance.show_message(
+                        _("使用教程：\n\n在稍后打开的\images文件夹中放入您喜欢的图片(建议暗色系、长宽比16:9)，程序将随机选取图片使用。"), _("提示"))
+                    os.makedirs("images", exist_ok=True)
+                    self.main_instance.opentext("images")
+                    print("背景自定义")
                 elif self.radioButton_5.isChecked():
                     self.enable_bgimg = 3
                     print("背景无")
@@ -1313,6 +1351,51 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                 _("历史记录文件不存在，无法统计次数！\n%s") % e, _("错误"))
 
 
+class CheckSpeakerThread(QRunnable):
+    def __init__(self, mode=None, name=None):
+        ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        super().__init__()
+        self.signals = WorkerSignals()
+        self.name = name
+        self.mode = mode
+        self.allownametts = allownametts
+
+    def ttsread(self, text):
+        speaker = win32com.client.Dispatch("SAPI.SpVoice")
+        speaker.Speak(text)
+
+    def run(self):
+        ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        if self.mode != 1:
+            try:
+                speaker = win32com.client.Dispatch("SAPI.SpVoice")
+                speaker.Volume = 0
+                speaker.Speak("1")
+                print("此设备系统支持语音播报功能！")
+                self.signals.speakertest.emit(1, "")
+            except Exception as e:
+                print("此设备系统不支持语音播报功能！Reason：", e)
+                self.signals.speakertest.emit(0, e)
+        else:
+            if self.allownametts == 2:
+                self.ttsread(text=_("恭喜 %s") % name)
+            elif self.allownametts == 3:
+                self.ttsread(text=name)
+            elif self.allownametts == 1:
+                pass
+            self.signals.update_list.emit(1, name)
+            self.signals.enable_button.emit(1)
+            self.signals.update_pushbotton.emit(_(" 小窗模式"))
+            try:
+                self.signals.save_history.emit()
+            except:
+                print(_("无法写入历史记录"))
+            print(today, "幸运儿是： %s " % name)
+            # 终止信号
+
+        self.signals.finished.emit()
+
+
 if __name__ == "__main__":
     # 防止重复运行
     lock_file = os.path.expanduser("~/.program_lock")
@@ -1322,6 +1405,8 @@ if __name__ == "__main__":
     except OSError:
         os.close(fd)
         print("另一个程序正在运行。")
+        user32 = ctypes.windll.user32
+        user32.MessageBoxW(None, _("另一个程序正在运行！"), "Warning!", 0x30)
         sys.exit()
 
     if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
