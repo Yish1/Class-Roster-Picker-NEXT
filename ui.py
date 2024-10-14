@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'picker.ui'
+# Form implementation generated from reading ui file 'e:\class roster picker\picker.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(700, 410)
+        Form.resize(701, 410)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/picker.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Form.setWindowIcon(icon)
@@ -129,7 +129,7 @@ class Ui_Form(object):
 "}\n"
 "\n"
 "* {\n"
-"    font-size: 13.50pt;\n"
+"    font-size: 18px;\n"
 "}\n"
 "")
         self.listWidget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
@@ -147,7 +147,7 @@ class Ui_Form(object):
         self.frame_2 = QtWidgets.QFrame(Form)
         self.frame_2.setGeometry(QtCore.QRect(337, 207, 131, 142))
         self.frame_2.setStyleSheet("* {\n"
-"    font-size: 8.25pt;\n"
+"    font-size: 11px;\n"
 "}")
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -164,11 +164,11 @@ class Ui_Form(object):
         self.comboBox = QtWidgets.QComboBox(self.frame_2)
         self.comboBox.setMinimumSize(QtCore.QSize(0, 30))
         self.comboBox.setStyleSheet("QComboBox {\n"
-"    font-size: 15px; /* 设置默认显示的字体大小 */\n"
+"    font-size: 15px;\n"
 "}\n"
 "\n"
 "QComboBox QAbstractItemView {\n"
-"    font-size: 15px; /* 设置下拉列表中项目的字体大小 */\n"
+"    font-size: 15px;\n"
 "}\n"
 "")
         self.comboBox.setEditable(False)
@@ -235,7 +235,7 @@ class Ui_Form(object):
         self.frame_3 = QtWidgets.QFrame(Form)
         self.frame_3.setGeometry(QtCore.QRect(490, 207, 161, 181))
         self.frame_3.setStyleSheet("* {\n"
-"    font-size: 9pt; \n"
+"    font-size: 16px; \n"
 "}")
         self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)

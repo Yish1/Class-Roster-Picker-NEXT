@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>322</width>
-    <height>192</height>
+    <width>291</width>
+    <height>172</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,13 +59,13 @@ border-bottom-right-radius :28px;</string>
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
-     <x>247</x>
-     <y>22</y>
-     <width>21</width>
-     <height>23</height>
+     <x>205</x>
+     <y>13</y>
+     <width>71</width>
+     <height>40</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -77,17 +77,75 @@ QPushButton:hover{
 	padding-bottom:4px;
 }</string>
    </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="res/ui1.qrc">
+        <normaloff>:/icons/hide.png</normaloff>:/icons/hide.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_4">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="res/ui1.qrc">
+        <normaloff>:/icons/exit.png</normaloff>:/icons/exit.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QPushButton" name="pushButton_7">
+   <property name="geometry">
+    <rect>
+     <x>95</x>
+     <y>35</y>
+     <width>111</width>
+     <height>101</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+QPushButton{
+	border:none;
+}</string>
+   </property>
    <property name="text">
     <string/>
    </property>
    <property name="icon">
     <iconset resource="res/ui1.qrc">
-     <normaloff>:/icons/exit.png</normaloff>:/icons/exit.png</iconset>
+     <normaloff>:/icons/picker.ico</normaloff>:/icons/picker.ico</iconset>
    </property>
    <property name="iconSize">
     <size>
-     <width>20</width>
-     <height>20</height>
+     <width>100</width>
+     <height>100</height>
     </size>
    </property>
   </widget>
@@ -95,22 +153,5 @@ QPushButton:hover{
  <resources>
   <include location="res/ui1.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>smallwindow</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>283</x>
-     <y>39</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>318</x>
-     <y>39</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

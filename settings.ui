@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>684</width>
-    <height>500</height>
+    <width>682</width>
+    <height>510</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,14 +18,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>330</width>
-    <height>500</height>
+    <width>682</width>
+    <height>510</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>3030</width>
-    <height>500</height>
+    <width>682</width>
+    <height>510</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -33,7 +33,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">* {
-    font-size: 9pt;
+    font-size: 12px;
 }</string>
   </property>
   <widget class="QFrame" name="frame_5">
@@ -42,7 +42,7 @@
      <x>0</x>
      <y>0</y>
      <width>331</width>
-     <height>501</height>
+     <height>511</height>
     </rect>
    </property>
    <property name="frameShape">
@@ -57,7 +57,7 @@
       <property name="minimumSize">
        <size>
         <width>267</width>
-        <height>173</height>
+        <height>190</height>
        </size>
       </property>
       <property name="styleSheet">
@@ -67,7 +67,65 @@
        <string>功能设置</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
+       <item row="6" column="0">
+        <widget class="QLabel" name="label">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>背景图片</string>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="0">
+        <widget class="QFrame" name="frame_2">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>34</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QRadioButton" name="radioButton">
+            <property name="text">
+             <string>正常模式</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButton_2">
+            <property name="text">
+             <string>听写模式(不说&quot;恭喜&quot;)</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="checkBox">
+         <property name="text">
+          <string>不放回模式(单抽结果不重复)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
         <widget class="QFrame" name="frame_3">
          <property name="minimumSize">
           <size>
@@ -106,75 +164,24 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="checkBox_3">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>33</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>检查更新</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
+       <item row="3" column="0">
         <widget class="QCheckBox" name="checkBox_2">
          <property name="text">
           <string>语音播报</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label">
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="checkBox_3">
          <property name="minimumSize">
           <size>
            <width>0</width>
            <height>0</height>
           </size>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="text">
-          <string>背景图片</string>
+          <string>检查更新</string>
          </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QFrame" name="frame_2">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>34</height>
-          </size>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QRadioButton" name="radioButton">
-            <property name="text">
-             <string>正常模式</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="radioButton_2">
-            <property name="text">
-             <string>听写模式(不说&quot;恭喜&quot;)</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </widget>
        </item>
       </layout>
@@ -221,38 +228,12 @@ QComboBox QAbstractItemView {
       </layout>
      </widget>
     </item>
-    <item row="4" column="0" colspan="2">
-     <widget class="QFrame" name="frame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="0">
-        <widget class="QPushButton" name="pushButton_2">
-         <property name="text">
-          <string>保存</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>取消</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
     <item row="3" column="0" colspan="2">
      <widget class="QGroupBox" name="groupBox_2">
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>184</height>
+        <height>188</height>
        </size>
       </property>
       <property name="title">
@@ -313,15 +294,41 @@ QComboBox QAbstractItemView {
       </layout>
      </widget>
     </item>
+    <item row="4" column="0" colspan="2">
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="1" column="0">
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="text">
+          <string>保存</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>取消</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QFrame" name="frame_6">
    <property name="geometry">
     <rect>
      <x>330</x>
-     <y>0</y>
+     <y>-3</y>
      <width>351</width>
-     <height>451</height>
+     <height>466</height>
     </rect>
    </property>
    <property name="frameShape">
@@ -342,7 +349,7 @@ QComboBox QAbstractItemView {
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>154</height>
+        <height>160</height>
        </size>
       </property>
       <property name="maximumSize">
@@ -352,7 +359,7 @@ QComboBox QAbstractItemView {
        </size>
       </property>
       <property name="title">
-       <string>其他</string>
+       <string>快捷打开</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_8">
        <property name="sizeConstraint">
@@ -364,24 +371,31 @@ QComboBox QAbstractItemView {
        <property name="rightMargin">
         <number>35</number>
        </property>
-       <item row="1" column="0">
-        <widget class="QPushButton" name="pushButton_10">
-         <property name="text">
-          <string>打开背景音乐目录</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QPushButton" name="pushButton_12">
          <property name="text">
-          <string>打开名单文件目录</string>
+          <string>名单文件目录</string>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
         <widget class="QPushButton" name="pushButton_8">
          <property name="text">
-          <string>打开历史记录目录</string>
+          <string>历史记录目录</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QPushButton" name="pushButton_9">
+         <property name="text">
+          <string>背景图片目录</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QPushButton" name="pushButton_10">
+         <property name="text">
+          <string>背景音乐目录</string>
          </property>
         </widget>
        </item>

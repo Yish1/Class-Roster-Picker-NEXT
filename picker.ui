@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
+    <width>701</width>
     <height>410</height>
    </rect>
   </property>
@@ -210,7 +210,7 @@ QScrollBar::sub-page:horizontal {
 }
 
 * {
-    font-size: 13.50pt;
+    font-size: 18px;
 }
 </string>
    </property>
@@ -259,7 +259,7 @@ QScrollBar::sub-page:horizontal {
    </property>
    <property name="styleSheet">
     <string notr="true">* {
-    font-size: 8.25pt;
+    font-size: 11px;
 }</string>
    </property>
    <property name="frameShape">
@@ -297,11 +297,11 @@ QScrollBar::sub-page:horizontal {
       </property>
       <property name="styleSheet">
        <string notr="true">QComboBox {
-    font-size: 15px; /* 设置默认显示的字体大小 */
+    font-size: 15px;
 }
 
 QComboBox QAbstractItemView {
-    font-size: 15px; /* 设置下拉列表中项目的字体大小 */
+    font-size: 15px;
 }
 </string>
       </property>
@@ -455,7 +455,7 @@ QPushButton:hover{
    </property>
    <property name="styleSheet">
     <string notr="true">* {
-    font-size: 9pt; 
+    font-size: 16px; 
 }</string>
    </property>
    <property name="frameShape">
