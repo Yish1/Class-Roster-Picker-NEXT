@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_smallwindow(object):
     def setupUi(self, smallwindow):
         smallwindow.setObjectName("smallwindow")
-        smallwindow.resize(322, 192)
+        smallwindow.resize(291, 174)
         self.label = QtWidgets.QLabel(smallwindow)
         self.label.setGeometry(QtCore.QRect(10, 10, 271, 151))
         self.label.setStyleSheet("background-color: rgba(194, 194, 194, 0.97);\n"
@@ -35,24 +35,56 @@ class Ui_smallwindow(object):
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setWordWrap(True)
         self.label_2.setObjectName("label_2")
-        self.pushButton = QtWidgets.QPushButton(smallwindow)
-        self.pushButton.setGeometry(QtCore.QRect(247, 22, 21, 23))
-        self.pushButton.setStyleSheet("\n"
+        self.frame = QtWidgets.QFrame(smallwindow)
+        self.frame.setGeometry(QtCore.QRect(205, 13, 71, 40))
+        self.frame.setStyleSheet("\n"
 "QPushButton{\n"
 "    border:none;\n"
 "}\n"
 "QPushButton:hover{\n"
 "    padding-bottom:4px;\n"
 "}")
-        self.pushButton.setText("")
+        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame.setObjectName("frame")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.frame)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.pushButton_2 = QtWidgets.QPushButton(self.frame)
+        self.pushButton_2.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton.setIcon(icon)
-        self.pushButton.setIconSize(QtCore.QSize(20, 20))
-        self.pushButton.setObjectName("pushButton")
+        icon.addPixmap(QtGui.QPixmap(":/icons/hide.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_2.setIcon(icon)
+        self.pushButton_2.setIconSize(QtCore.QSize(20, 20))
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.horizontalLayout_2.addWidget(self.pushButton_2)
+        self.pushButton_4 = QtWidgets.QPushButton(self.frame)
+        self.pushButton_4.setText("")
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_4.setIcon(icon1)
+        self.pushButton_4.setIconSize(QtCore.QSize(20, 20))
+        self.pushButton_4.setObjectName("pushButton_4")
+        self.horizontalLayout_2.addWidget(self.pushButton_4)
+        self.pushButton_7 = QtWidgets.QPushButton(smallwindow)
+        self.pushButton_7.setGeometry(QtCore.QRect(90, 30, 111, 101))
+        self.pushButton_7.setStyleSheet("\n"
+"QPushButton{\n"
+"    border:none;\n"
+"}")
+        self.pushButton_7.setText("")
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/icons/picker.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_7.setIcon(icon2)
+        self.pushButton_7.setIconSize(QtCore.QSize(100, 100))
+        self.pushButton_7.setObjectName("pushButton_7")
+        self.label_3 = QtWidgets.QLabel(smallwindow)
+        self.label_3.setGeometry(QtCore.QRect(37, 26, 64, 16))
+        self.label_3.setStyleSheet("font-size: 15px; \n"
+"")
+        self.label_3.setText("")
+        self.label_3.setObjectName("label_3")
 
         self.retranslateUi(smallwindow)
-        self.pushButton.clicked.connect(smallwindow.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(smallwindow)
 
     def retranslateUi(self, smallwindow):
