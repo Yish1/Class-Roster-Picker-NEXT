@@ -28,7 +28,6 @@ from Crypto.Cipher import ARC4
 
 rewrite_print = print
 
-
 def print(*arg):
    rewrite_print(*arg)
    rewrite_print(*arg, file=open('log.txt', "a", encoding='utf-8'))
@@ -64,7 +63,7 @@ except:
     _ = translate.gettext
 
 # version
-dmversion = 6.0
+dmversion = 6.2
 
 # config变量
 allownametts = None
@@ -139,6 +138,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         self.timer = None
         if first_use == 0:
             self.first_use_introduce()
+
     def set_bgimg(self):
         self.label_6.setText("")
         if bgimg == 2:
@@ -880,13 +880,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             message = _("未知错误")
         message = str(message)
         if first == 1:
-            msgBox.setIconPixmap(QtGui.QIcon(':/icons/picker.ico').pixmap(64, 64))
+            msgBox.setIconPixmap(QtGui.QIcon(
+                ':/icons/picker.ico').pixmap(64, 64))
         msgBox.setText(message)
         msgBox.exec_()
 
     def first_use_introduce(self):
-        self.show_message(_("欢迎使用沉梦课堂点名器%s！\n\n此工具支持单抽(放回)、单抽(不放回)、连抽功能\n还有一些特色功能：语音播报、背景音乐、小窗模式\n\n进入主界面后，请点击左上角的设置按钮，按需开启功能，编辑名单\n如果遇到了问题，可以在沉梦小站中留言，或者在github上提交issues\n\n\t----Yish_") % dmversion, _("欢迎"), 1)
-        self.update_config("first_use",1)
+        self.show_message(
+            _("欢迎使用沉梦课堂点名器%s！\n\n此工具支持单抽(放回)、单抽(不放回)、连抽功能\n还有一些特色功能：语音播报、背景音乐、小窗模式\n\n进入主界面后，请点击左上角的设置按钮，按需开启功能，编辑名单\n如果遇到了问题，可以在沉梦小站中留言，或者在github上提交issues\n\n\t----Yish_") % dmversion, _("欢迎"), 1)
+        self.update_config("first_use", 1)
+
 
 class WorkerSignals(QObject):
     # 定义信号
@@ -1527,7 +1530,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                 print("正在关闭不放回模式")
             else:
                 print("正在开启不放回模式")
-                self.main_instance.show_message(_("不放回模式，即单抽结束后的名字不会放回列表中，下次将不会抽到此名字\n当名单抽取完成、切换名单或者手动点击按钮时将会重置不放回列表！"),_("说明"))
+                self.main_instance.show_message(
+                    _("不放回模式，即单抽结束后的名字不会放回列表中，下次将不会抽到此名字\n当名单抽取完成、切换名单或者手动点击按钮时将会重置不放回列表！"), _("说明"))
 
         elif key == "enable_bgmusic":
             self.enable_bgmusic = 1 if checked else 0
@@ -1535,8 +1539,10 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                 print("正在关闭背景音乐")
             else:
                 print("正在开启背景音乐")
-                self.main_instance.show_message(_("开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n程序将随机选取一首，播放随机的音乐进度"),_("提示"))
+                self.main_instance.show_message(
+                    _("开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n程序将随机选取一首，播放随机的音乐进度"), _("提示"))
                 self.open_fold("dmmusic")
+
     def save_settings(self):
         if self.enable_tts == 1:
             self.main_instance.update_config("allownametts", 2)
