@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_smallwindow(object):
     def setupUi(self, smallwindow):
         smallwindow.setObjectName("smallwindow")
-        smallwindow.resize(291, 172)
+        smallwindow.resize(291, 174)
         self.label = QtWidgets.QLabel(smallwindow)
         self.label.setGeometry(QtCore.QRect(10, 10, 271, 151))
         self.label.setStyleSheet("background-color: rgba(194, 194, 194, 0.97);\n"
@@ -66,7 +66,7 @@ class Ui_smallwindow(object):
         self.pushButton_4.setObjectName("pushButton_4")
         self.horizontalLayout_2.addWidget(self.pushButton_4)
         self.pushButton_7 = QtWidgets.QPushButton(smallwindow)
-        self.pushButton_7.setGeometry(QtCore.QRect(95, 35, 111, 101))
+        self.pushButton_7.setGeometry(QtCore.QRect(90, 30, 111, 101))
         self.pushButton_7.setStyleSheet("\n"
 "QPushButton{\n"
 "    border:none;\n"
@@ -77,6 +77,12 @@ class Ui_smallwindow(object):
         self.pushButton_7.setIcon(icon2)
         self.pushButton_7.setIconSize(QtCore.QSize(100, 100))
         self.pushButton_7.setObjectName("pushButton_7")
+        self.label_3 = QtWidgets.QLabel(smallwindow)
+        self.label_3.setGeometry(QtCore.QRect(37, 26, 64, 16))
+        self.label_3.setStyleSheet("font-size: 15px; \n"
+"")
+        self.label_3.setText("")
+        self.label_3.setObjectName("label_3")
 
         self.retranslateUi(smallwindow)
         QtCore.QMetaObject.connectSlotsByName(smallwindow)
