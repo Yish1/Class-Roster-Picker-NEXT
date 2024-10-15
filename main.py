@@ -1537,7 +1537,6 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                 self.main_instance.show_message(
                     _("不放回模式，即单抽结束后的名字不会放回列表中，下次将不会抽到此名字\n当名单抽取完成、切换名单或者手动点击按钮时将会重置不放回列表！"), _("说明"))
 
-
         elif key == "enable_bgmusic":
             self.enable_bgmusic = 1 if checked else 0
             if not checked:
