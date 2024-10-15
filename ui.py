@@ -280,9 +280,7 @@ class Ui_Form(object):
         self.progressBar.raise_()
         self.frame_3.raise_()
         self.label_6.raise_()
-
         self.comboBox.setCurrentIndex(-1)
         self.pushButton_3.clicked.connect(Form.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Form)
-
 import res
