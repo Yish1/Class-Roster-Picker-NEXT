@@ -56,11 +56,15 @@ try:
         domain=f"{language_value}", localedir=localedir1, languages=[f"{language_value}"])
     _ = translate.gettext
 except:
-    localedir1 = os.path.join(os.path.abspath(
-        os.path.dirname(__file__)), 'locale')
-    translate = gettext.translation(
-        domain="zh_CN", localedir=localedir1, languages=["zh_CN"])
-    _ = translate.gettext
+    try:
+        localedir1 = os.path.join(os.path.abspath(
+            os.path.dirname(__file__)), 'locale')
+        translate = gettext.translation(
+            domain="zh_CN", localedir=localedir1, languages=["zh_CN"])
+        _ = translate.gettext
+    except Exception as e:
+            user32 = ctypes.windll.user32
+            user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
 
 # version
 dmversion = 6.2
@@ -1667,26 +1671,31 @@ class CheckSpeakerThread(QRunnable):
 
 
 if __name__ == "__main__":
-    # 防止重复运行
-    lock_file = os.path.expanduser("~/.program_lock")
-    fd = os.open(lock_file, os.O_RDWR | os.O_CREAT)
     try:
-        msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
-    except OSError:
-        os.close(fd)
-        print("另一个点名器正在运行。")
-        user32 = ctypes.windll.user32
-        user32.MessageBoxW(None, _("另一个点名器正在运行！"), "Warning!", 0x30)
-        sys.exit()
+        # 防止重复运行
+        lock_file = os.path.expanduser("~/.program_lock")
+        fd = os.open(lock_file, os.O_RDWR | os.O_CREAT)
+        try:
+            msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
+        except OSError:
+            os.close(fd)
+            print("另一个点名器正在运行。")
+            user32 = ctypes.windll.user32
+            user32.MessageBoxW(None, _("另一个点名器正在运行！"), "Warning!", 0x30)
+            sys.exit()
 
-    if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
-        QtWidgets.QApplication.setAttribute(
-            QtCore.Qt.AA_EnableHighDpiScaling, True)
-    # 启用高DPI自适应
-    if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
-        QtWidgets.QApplication.setAttribute(
-            QtCore.Qt.AA_UseHighDpiPixmaps, True)
-    app = QtWidgets.QApplication(sys.argv)
-    mainWindow = MainWindow()
-    mainWindow.show()
-    sys.exit(app.exec_())
+        if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
+            QtWidgets.QApplication.setAttribute(
+                QtCore.Qt.AA_EnableHighDpiScaling, True)
+        # 启用高DPI自适应
+        if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
+            QtWidgets.QApplication.setAttribute(
+                QtCore.Qt.AA_UseHighDpiPixmaps, True)
+        app = QtWidgets.QApplication(sys.argv)
+        mainWindow = MainWindow()
+        mainWindow.show()
+        sys.exit(app.exec_())
+    except Exception as e:
+        user32 = ctypes.windll.user32
+        user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
+        sys.exit()
