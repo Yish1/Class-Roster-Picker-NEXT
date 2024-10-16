@@ -1162,8 +1162,11 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
                             _(" (剩%s人)") % len(non_repetitive_list)
                         if len(non_repetitive_list) == 0:
                             self.label_2.setText(_("名单抽取完成"))
-                        else:
                             self.label_3.setText("")
+                        else:
+                            a = str(len(non_repetitive_list))
+                            if a != "0":
+                                self.label_3.setText(_("剩%s人") % a)
                     else:
                         info = self.small_window_name
                     self.main_instance.update_list(1, _("小窗：%s") % info)
@@ -1537,7 +1540,6 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                 self.main_instance.show_message(
                     _("不放回模式，即单抽结束后的名字不会放回列表中，下次将不会抽到此名字\n当名单抽取完成、切换名单或者手动点击按钮时将会重置不放回列表！"), _("说明"))
 
-
         elif key == "enable_bgmusic":
             self.enable_bgmusic = 1 if checked else 0
             if not checked:
@@ -1629,13 +1631,14 @@ class CheckSpeakerThread(QRunnable):
         # ptvsd.debug_this_thread()  # 在此线程启动断点调试
         if self.mode != 1:
             try:
-                speaker = win32com.client.Dispatch("SAPI.SpVoice")
+                speaker = win32com.client.Dispatch("SAPI.SpVoiceFake")
                 speaker.Volume = 0
                 speaker.Speak("1")
                 print("此设备系统支持语音播报功能！")
                 self.signals.speakertest.emit(1, "")
             except Exception as e:
                 print("此设备系统不支持语音播报功能！Reason：", e)
+                e = str(e)
                 self.signals.speakertest.emit(0, e)
         else:
             self.signals.update_list.emit(2, "")
@@ -1652,7 +1655,6 @@ class CheckSpeakerThread(QRunnable):
                     elif len(non_repetitive_list) == 0:
                         self.signals.update_list.emit(
                             1, _("点击开始重置名单,或切换名单继续点名"))
-                        # self.signals.update_list.emit(1,_("或切换名单继续点名"))
                         self.signals.update_list.emit(0, _("此名单已完成抽取！"))
             if self.allownametts == 2:
                 self.ttsread(text=_("恭喜 %s") % main_window_name)
