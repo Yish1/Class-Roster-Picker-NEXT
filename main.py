@@ -1631,7 +1631,7 @@ class CheckSpeakerThread(QRunnable):
         # ptvsd.debug_this_thread()  # 在此线程启动断点调试
         if self.mode != 1:
             try:
-                speaker = win32com.client.Dispatch("SAPI.SpVoiceFake")
+                speaker = win32com.client.Dispatch("SAPI.SpVoice")
                 speaker.Volume = 0
                 speaker.Speak("1")
                 print("此设备系统支持语音播报功能！")
