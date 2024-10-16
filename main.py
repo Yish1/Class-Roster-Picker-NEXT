@@ -1628,13 +1628,14 @@ class CheckSpeakerThread(QRunnable):
         # ptvsd.debug_this_thread()  # 在此线程启动断点调试
         if self.mode != 1:
             try:
-                speaker = win32com.client.Dispatch("SAPI.SpVoice")
+                speaker = win32com.client.Dispatch("SAPI.SpVoiceFake")
                 speaker.Volume = 0
                 speaker.Speak("1")
                 print("此设备系统支持语音播报功能！")
                 self.signals.speakertest.emit(1, "")
             except Exception as e:
                 print("此设备系统不支持语音播报功能！Reason：", e)
+                e = str(e)
                 self.signals.speakertest.emit(0, e)
         else:
             self.signals.update_list.emit(2, "")
@@ -1651,7 +1652,6 @@ class CheckSpeakerThread(QRunnable):
                     elif len(non_repetitive_list) == 0:
                         self.signals.update_list.emit(
                             1, _("点击开始重置名单,或切换名单继续点名"))
-                        # self.signals.update_list.emit(1,_("或切换名单继续点名"))
                         self.signals.update_list.emit(0, _("此名单已完成抽取！"))
             if self.allownametts == 2:
                 self.ttsread(text=_("恭喜 %s") % main_window_name)
