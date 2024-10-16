@@ -1138,6 +1138,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
                 self.frame.show()
                 self.label.show()
                 self.label_2.show()
+                self.label_3.show()
                 self.pushButton_7.hide()
                 self.minimum_flag = False
         self.m_flag = False
@@ -1234,6 +1235,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.frame.hide()
         self.label.hide()
         self.label_2.hide()
+        self.label_3.hide()
         self.pushButton_7.show()
         self.minimum_flag = True
 
