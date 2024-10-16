@@ -1162,8 +1162,11 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
                             _(" (剩%s人)") % len(non_repetitive_list)
                         if len(non_repetitive_list) == 0:
                             self.label_2.setText(_("名单抽取完成"))
-                        else:
                             self.label_3.setText("")
+                        else:
+                            a = str(len(non_repetitive_list))
+                            if a != "0":
+                                self.label_3.setText(_("剩%s人") % a)
                     else:
                         info = self.small_window_name
                     self.main_instance.update_list(1, _("小窗：%s") % info)
