@@ -40,3 +40,11 @@
 > 最新版下载地址：[蓝奏云下载](https://yish.lanzouw.com/b038hjo8f) (密码：cmti)
 > 
 > 沉梦小站发布地址：[GO！](https://cmxz.top/ktdmq)
+
+## 界面图片 V6.1
+> 主界面
+![image](https://github.com/user-attachments/assets/ceae2cdc-8e7a-47b4-a8ee-1daf048eb6cf)
+>小窗模式<br>
+![image](https://github.com/user-attachments/assets/21b2d8e1-9837-45d7-9b33-f2307ad1018a)
+>设置界面<br>
+![image](https://github.com/user-attachments/assets/f2451c4d-9f10-41a9-9aa9-ae7cc6300511)
