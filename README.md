@@ -9,11 +9,16 @@
 </div>
 
 > [!WARNING]
-> 更新时请备份名单，然后卸载旧版本重新安装，否则可能出现错误
+> 跨版本更新时(5.x升级6.0)请备份名单，然后卸载旧版本重新安装，否则可能出现错误
 > 
 
 > [!TIP]
-> 提示：打包参数：nuitka --standalone --lto=no --clang --msvc=latest --disable-ccache --windows-uac-admin --windows-console-mode=disable --enable-plugin=pyqt5,upx --upx-binary=E:\ctest\o\upx\upx.exe --output-dir=o --windows-icon-from-ico=picker.ico --nofollow-import-to=unittest main.py
+> 提示：
+> 打包参数：nuitka --standalone --lto=no --clang --msvc=latest --disable-ccache --windows-uac-admin --windows-console-mode=disable --enable-plugin=pyqt5,upx --upx-binary=E:\ctest\o\upx\upx.exe --output-dir=o --windows-icon-from-ico=picker.ico --nofollow-import-to=unittest main.py
+
+> [!IMPORTANT]  
+> 设备要求： 
+> 5.96版本及后续版本最低系统要求： Windows 7 x86
 
 ## 使用方式
 
@@ -34,7 +39,6 @@
 - [x] 优化单抽重复
 - [ ] 更严格的防篡改机制
 - [ ] 底层重写bgm模块(取代pygame)
-- [ ] 提供更多云端服务
       
 ## 下载链接
 > 最新版下载地址：[蓝奏云下载](https://yish.lanzouw.com/b038hjo8f) (密码：cmti)
