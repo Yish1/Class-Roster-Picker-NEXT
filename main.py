@@ -5,14 +5,15 @@ import difflib
 import os
 import time
 import requests
-import pygame
 import platform
 import hashlib
 import gettext
 import glob
 import ctypes
 import msvcrt
+# import asyncio
 # import ptvsd  # QThread断点工具
+# import edge_tts
 import win32com.client
 import webbrowser as web
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -25,9 +26,11 @@ from ui import Ui_Form  # 导入ui文件
 from smallwindow import Ui_smallwindow
 from settings import Ui_settings
 from Crypto.Cipher import ARC4
+from pygame.mixer import init as pygame_init, Sound as pygame_Sound
+from pygame.mixer import music as pygame_music
+from pygame.time import delay as pygame_delay
 
 rewrite_print = print
-
 def print(*arg):
    rewrite_print(*arg)
    rewrite_print(*arg, file=open('log.txt', "a", encoding='utf-8'))
@@ -63,8 +66,8 @@ except:
             domain="zh_CN", localedir=localedir1, languages=["zh_CN"])
         _ = translate.gettext
     except Exception as e:
-            user32 = ctypes.windll.user32
-            user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
+        user32 = ctypes.windll.user32
+        user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
 
 # version
 dmversion = 6.2
@@ -96,9 +99,7 @@ settings_flag = None
 
 # 初始化
 today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-pygame.init()
-pygame.mixer.init()
-
+pygame_init()
 
 class MainWindow(QtWidgets.QMainWindow, Ui_Form):
     def __init__(self):
@@ -919,7 +920,7 @@ class WorkerThread(QRunnable):
             self.volume += 0.02  # 每次增加0.02
             if self.volume > 1.0:
                 self.volume = 1.0  # 确保音量不超过1.0
-            pygame.mixer.music.set_volume(self.volume)
+            pygame_music.set_volume(self.volume)
         else:
             self.timer.stop()  # 停止定时器
 
@@ -956,9 +957,9 @@ class WorkerThread(QRunnable):
             stop()
             if bgmusic == 1:
                 try:
-                    pygame.mixer.music.fadeout(600)
-                    pygame.mixer.music.unload()
-                except pygame.error as e:
+                    pygame_music.fadeout(600)
+                    pygame_music.unload()
+                except Exception as e:
                     print(f"停止音乐播放时发生错误：{str(e)}")
             self.signals.finished.emit()
             # 向主线程发送终止信号
@@ -987,15 +988,15 @@ class WorkerThread(QRunnable):
                     random_file = random.choice(file_list)
                     file_path = os.path.join(folder_path, random_file)
                     print("播放音乐：%s" % file_path)
-                    pygame.mixer.music.load(file_path)
-                    sound = pygame.mixer.Sound(file_path)
+                    pygame_music.load(file_path)
+                    sound = pygame_Sound(file_path)
                     music_length = sound.get_length()
                     random_play = round(random.uniform(2, 4), 1)
                     start_time = round(music_length / random_play, 1)
                     self.signals.update_pushbotton.emit(_(" 请稍后.."), 2)
                     self.volume = 0.0
-                    pygame.mixer.music.set_volume(self.volume)
-                    pygame.mixer.music.play(1, start=start_time)
+                    pygame_music.set_volume(self.volume)
+                    pygame_music.play(1, start=start_time)
                     print(
                         f"音频时长：{music_length},随机数：{random_play},音频空降：{start_time}")
 
@@ -1008,14 +1009,14 @@ class WorkerThread(QRunnable):
                                     _(" 请稍后..."), 2)
                             if self.volume >= 0.66:
                                 self.volume = 0.66
-                            pygame.mixer.music.set_volume(self.volume)
-                            pygame.time.delay(15)
+                            pygame_music.set_volume(self.volume)
+                            pygame_delay(15)
 
                     print("音量淡入完成。")
                     self.signals.update_pushbotton.emit(_(" 结束"), 2)
                     self.signals.enable_button.emit(4)
 
-                except pygame.error as e:
+                except Exception as e:
                     print("无法播放音乐文件：%s，错误信息：%s" % (file_path, e))
             else:
                 self.signals.update_pushbotton.emit(_(" 结束"), 2)
@@ -1031,7 +1032,7 @@ class UpdateThread(QRunnable):
         self.signals = WorkerSignals()
 
     def run(self):
-        global newversion, checkupdate, latest_version
+        global newversion, checkupdate, latest_version, connect
         # ptvsd.debug_this_thread()  # 在此线程启动断点调试
         headers = {
             'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s,%s%s_%s' % (dmversion, allownametts, bgimg, language_value, platform.system(), platform.release(), platform.machine())
@@ -1063,6 +1064,8 @@ class UpdateThread(QRunnable):
                 else:
                     if float(latest_version) == newversion:
                         print("\n已忽略%s版本更新,当前版本：%s" % (newversion, dmversion))
+                if newversion:
+                    connect = True
             except:
                 print("网络异常,无法检测更新")
                 noconnect = _("网络连接异常，检查更新失败")
@@ -1625,17 +1628,35 @@ class CheckSpeakerThread(QRunnable):
         self.mode = mode
         self.allownametts = allownametts
 
-    def ttsread(self, text):
+    def ttsread(self, text, volume=None):
+        # if connect == True:
+        #     speaker = edge_tts.Communicate(text=text,
+        #         voice="zh-HK-HiuGaaiNeural",
+        #         rate='+0%',
+        #         volume= '+0%',
+        #         pitch= '+0Hz')
+            
+        # else:
         speaker = win32com.client.Dispatch("SAPI.SpVoice")
+        # for voice in speaker.GetVoices(): # 查询本机所有语言
+        #     print(voice.GetDescription())
+        try:
+            if language_value == "en_US":
+                speaker.Voice = speaker.GetVoices("Name=Microsoft Zira Desktop").Item(0)
+            else:
+                speaker.Voice = speaker.GetVoices("Name=Microsoft Huihui Desktop").Item(0)
+        except Exception as e:
+            print("无法切换语音语言，Reason：", e)
+                
+        if volume is not None:
+            speaker.Volume = volume
         speaker.Speak(text)
 
     def run(self):
         # ptvsd.debug_this_thread()  # 在此线程启动断点调试
         if self.mode != 1:
             try:
-                speaker = win32com.client.Dispatch("SAPI.SpVoice")
-                speaker.Volume = 0
-                speaker.Speak("1")
+                self.ttsread("1", 0)
                 print("此设备系统支持语音播报功能！")
                 self.signals.speakertest.emit(1, "")
             except Exception as e:

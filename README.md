@@ -9,11 +9,16 @@
 </div>
 
 > [!WARNING]
-> 更新时请备份名单，然后卸载旧版本重新安装，否则可能出现错误
+> 跨版本更新时(5.x升级6.0)请备份名单，然后卸载旧版本重新安装，否则可能出现错误
 > 
 
 > [!TIP]
-> 提示：打包参数：nuitka --standalone --lto=no --clang --msvc=latest --disable-ccache --windows-uac-admin --windows-console-mode=disable --enable-plugin=pyqt5,upx --upx-binary=E:\ctest\o\upx\upx.exe --output-dir=o --windows-icon-from-ico=picker.ico --nofollow-import-to=unittest main.py
+> 提示：
+> 打包参数：nuitka --standalone --lto=no --clang --msvc=latest --disable-ccache --windows-uac-admin --windows-console-mode=disable --enable-plugin=pyqt5,upx --upx-binary=E:\ctest\o\upx\upx.exe --output-dir=o --windows-icon-from-ico=picker.ico --nofollow-import-to=unittest main.py
+
+> [!IMPORTANT]  
+> 设备要求： 
+> 5.96版本及后续版本最低系统要求： Windows 7 x86
 
 ## 使用方式
 
@@ -34,17 +39,23 @@
 - [x] 优化单抽重复
 - [ ] 更严格的防篡改机制
 - [ ] 底层重写bgm模块(取代pygame)
-- [ ] 提供更多云端服务
       
 ## 下载链接
 > 最新版下载地址：[蓝奏云下载](https://yish.lanzouw.com/b038hjo8f) (密码：cmti)
 > 
 > 沉梦小站发布地址：[GO！](https://cmxz.top/ktdmq)
->
-## 界面图片
-> 主界面
-![image](https://github.com/user-attachments/assets/ceae2cdc-8e7a-47b4-a8ee-1daf048eb6cf)
->小窗模式
-![image](https://github.com/user-attachments/assets/21b2d8e1-9837-45d7-9b33-f2307ad1018a)
->设置界面
-![image](https://github.com/user-attachments/assets/f2451c4d-9f10-41a9-9aa9-ae7cc6300511)
+
+## 效果展示
+<details>
+<summary> Class-Roster-Picker-NEXT V6.1 (点我打开)</summary>
+
+### 主界面<br>
+<img src="https://github.com/user-attachments/assets/ceae2cdc-8e7a-47b4-a8ee-1daf048eb6cf" style="border-radius: 20px;" height="300">
+
+### 小窗模式<br>
+<img src="https://github.com/user-attachments/assets/21b2d8e1-9837-45d7-9b33-f2307ad1018a" style="border-radius: 20px;" height="300">
+
+### 设置界面<br>
+<img src="https://github.com/user-attachments/assets/f2451c4d-9f10-41a9-9aa9-ae7cc6300511" style="border-radius: 20px;" height="300">
+
+</details>
