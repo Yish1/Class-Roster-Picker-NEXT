@@ -50,12 +50,12 @@
 <summary> Class-Roster-Picker-NEXT V6.1 (点我打开)</summary>
 
 ### 主界面<br>
-![image](https://github.com/user-attachments/assets/ceae2cdc-8e7a-47b4-a8ee-1daf048eb6cf)
+<img src="https://github.com/user-attachments/assets/ceae2cdc-8e7a-47b4-a8ee-1daf048eb6cf" style="border-radius: 20px;" height="300">
 
 ### 小窗模式<br>
-![image](https://github.com/user-attachments/assets/21b2d8e1-9837-45d7-9b33-f2307ad1018a)
+<img src="https://github.com/user-attachments/assets/21b2d8e1-9837-45d7-9b33-f2307ad1018a" style="border-radius: 20px;" height="300">
 
 ### 设置界面<br>
-![image](https://github.com/user-attachments/assets/f2451c4d-9f10-41a9-9aa9-ae7cc6300511)
+<img src="https://github.com/user-attachments/assets/f2451c4d-9f10-41a9-9aa9-ae7cc6300511" style="border-radius: 20px;" height="300">
 
 </details>
