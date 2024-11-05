@@ -11,6 +11,7 @@ import gettext
 import glob
 import ctypes
 import msvcrt
+import pythoncom
 # import asyncio
 # import ptvsd  # QThread断点工具
 # import edge_tts
@@ -1528,7 +1529,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                 elif self.radioButton_4.isChecked():
                     self.enable_bgimg = 2
                     self.main_instance.show_message(
-                        _("您正在使用自定义背景功能，由于此工具可能需要在公众场合展示，请选择适宜场景的合适背景！ \n\n因使用不合适的背景图片而造成的后果由您自行承担！\n\n\n使用教程：\n\n在稍后打开的\images文件夹中放入您喜欢的图片(建议暗色系、长宽比16:9)，程序将随机选取图片使用。"), _("声明"))
+                        _("您正在使用自定义背景功能，由于此工具可能需要在公众场合展示，请选择适宜场景的合适背景！ \n\n因使用不合适的背景图片而造成的后果由您自行承担！\n\n\n使用教程：\n\n在稍后打开的\\images文件夹中放入您喜欢的图片(建议暗色系、长宽比16:9)，程序将随机选取图片使用。"), _("声明"))
                     os.makedirs("images", exist_ok=True)
                     self.main_instance.opentext("images")
                     print("背景自定义")
@@ -1637,6 +1638,7 @@ class CheckSpeakerThread(QRunnable):
         #         pitch= '+0Hz')
             
         # else:
+        pythoncom.CoInitialize()
         speaker = win32com.client.Dispatch("SAPI.SpVoice")
         # for voice in speaker.GetVoices(): # 查询本机所有语言
         #     print(voice.GetDescription())
