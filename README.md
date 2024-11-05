@@ -1,3 +1,4 @@
+中文 | [English](./README_EN.md)
 <div align="center">
 <a><img src="./Class-Roster-Picker.png" width="180" height="180" alt="Class-Roster-Picker"></a>
 </div>
