@@ -1,0 +1,15 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>setting.png</file>
+    <file>exit.png</file>
+    <file>hide.png</file>
+    <file>start.png</file>
+    <file>stop.png</file>
+    <file>swindow.png</file>
+    <file>picker.ico</file>
+  </qresource>
+  <qresource prefix="images">
+    <file>bg.webp</file>
+    <file>(1070).webp</file>
+  </qresource>
+</RCC>

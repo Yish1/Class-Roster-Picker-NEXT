@@ -8,14 +8,13 @@ import requests
 import platform
 import hashlib
 import gettext
+import pygame
 import glob
 import ctypes
 import msvcrt
-# import asyncio
+import pythoncom
 # import ptvsd  # QThread断点工具
-# import edge_tts
 import win32com.client
-import webbrowser as web
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QFontMetrics
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication
@@ -26,9 +25,6 @@ from ui import Ui_Form  # 导入ui文件
 from smallwindow import Ui_smallwindow
 from settings import Ui_settings
 from Crypto.Cipher import ARC4
-from pygame.mixer import init as pygame_init, Sound as pygame_Sound
-from pygame.mixer import music as pygame_music
-from pygame.time import delay as pygame_delay
 
 rewrite_print = print
 def print(*arg):
@@ -99,7 +95,7 @@ settings_flag = None
 
 # 初始化
 today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-pygame_init()
+pygame.mixer.init()
 
 class MainWindow(QtWidgets.QMainWindow, Ui_Form):
     def __init__(self):
@@ -611,7 +607,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         msgBox.exec_()
         clickedButton = msgBox.clickedButton()
         if clickedButton == okButton:
-            web.open_new("https://cmxz.top/ktdmq")
+            os.system("start https://cmxz.top/ktdmq")
             self.update_list(1, title)
         elif clickedButton == ignoreButton:
             self.update_list(1, title)
@@ -920,7 +916,7 @@ class WorkerThread(QRunnable):
             self.volume += 0.02  # 每次增加0.02
             if self.volume > 1.0:
                 self.volume = 1.0  # 确保音量不超过1.0
-            pygame_music.set_volume(self.volume)
+            pygame.mixer.music.set_volume(self.volume)
         else:
             self.timer.stop()  # 停止定时器
 
@@ -957,8 +953,8 @@ class WorkerThread(QRunnable):
             stop()
             if bgmusic == 1:
                 try:
-                    pygame_music.fadeout(600)
-                    pygame_music.unload()
+                    pygame.mixer.music.fadeout(600)
+                    pygame.mixer.music.unload()
                 except Exception as e:
                     print(f"停止音乐播放时发生错误：{str(e)}")
             self.signals.finished.emit()
@@ -988,15 +984,15 @@ class WorkerThread(QRunnable):
                     random_file = random.choice(file_list)
                     file_path = os.path.join(folder_path, random_file)
                     print("播放音乐：%s" % file_path)
-                    pygame_music.load(file_path)
-                    sound = pygame_Sound(file_path)
+                    pygame.mixer.music.load(file_path)
+                    sound = pygame.mixer.Sound(file_path)
                     music_length = sound.get_length()
                     random_play = round(random.uniform(2, 4), 1)
                     start_time = round(music_length / random_play, 1)
                     self.signals.update_pushbotton.emit(_(" 请稍后.."), 2)
                     self.volume = 0.0
-                    pygame_music.set_volume(self.volume)
-                    pygame_music.play(1, start=start_time)
+                    pygame.mixer.music.set_volume(self.volume)
+                    pygame.mixer.music.play(1, start=start_time)
                     print(
                         f"音频时长：{music_length},随机数：{random_play},音频空降：{start_time}")
 
@@ -1009,8 +1005,8 @@ class WorkerThread(QRunnable):
                                     _(" 请稍后..."), 2)
                             if self.volume >= 0.66:
                                 self.volume = 0.66
-                            pygame_music.set_volume(self.volume)
-                            pygame_delay(15)
+                            pygame.mixer.music.set_volume(self.volume)
+                            pygame.time.delay(15)
 
                     print("音量淡入完成。")
                     self.signals.update_pushbotton.emit(_(" 结束"), 2)
@@ -1018,6 +1014,8 @@ class WorkerThread(QRunnable):
 
                 except Exception as e:
                     print("无法播放音乐文件：%s，错误信息：%s" % (file_path, e))
+                    self.signals.update_pushbotton.emit(_(" 结束"), 2)
+                    self.signals.enable_button.emit(4)
             else:
                 self.signals.update_pushbotton.emit(_(" 结束"), 2)
                 self.signals.enable_button.emit(4)
@@ -1528,7 +1526,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                 elif self.radioButton_4.isChecked():
                     self.enable_bgimg = 2
                     self.main_instance.show_message(
-                        _("您正在使用自定义背景功能，由于此工具可能需要在公众场合展示，请选择适宜场景的合适背景！ \n\n因使用不合适的背景图片而造成的后果由您自行承担！\n\n\n使用教程：\n\n在稍后打开的\images文件夹中放入您喜欢的图片(建议暗色系、长宽比16:9)，程序将随机选取图片使用。"), _("声明"))
+                        _("您正在使用自定义背景功能，由于此工具可能需要在公众场合展示，请选择适宜场景的合适背景！ \n\n因使用不合适的背景图片而造成的后果由您自行承担！\n\n\n使用教程：\n\n在稍后打开的\\images文件夹中放入您喜欢的图片(建议暗色系、长宽比16:9)，程序将随机选取图片使用。"), _("声明"))
                     os.makedirs("images", exist_ok=True)
                     self.main_instance.opentext("images")
                     print("背景自定义")
@@ -1629,14 +1627,7 @@ class CheckSpeakerThread(QRunnable):
         self.allownametts = allownametts
 
     def ttsread(self, text, volume=None):
-        # if connect == True:
-        #     speaker = edge_tts.Communicate(text=text,
-        #         voice="zh-HK-HiuGaaiNeural",
-        #         rate='+0%',
-        #         volume= '+0%',
-        #         pitch= '+0Hz')
-            
-        # else:
+        pythoncom.CoInitialize()
         speaker = win32com.client.Dispatch("SAPI.SpVoice")
         # for voice in speaker.GetVoices(): # 查询本机所有语言
         #     print(voice.GetDescription())
