@@ -16,9 +16,9 @@ import pythoncom
 # import ptvsd  # QThread断点工具
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QCursor, QFontMetrics
+from PyQt5.QtGui import QCursor, QFontMetrics,QKeySequence
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication
-from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller
+from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller,QShortcut
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from datetime import datetime, timedelta
 from ui import Ui_Form  # 导入ui文件
@@ -119,6 +119,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         self.label_5.setText(_("当前名单："))
         self.label_4.setText(_("抽取人数："))
         self.progressBar.hide()
+
+        shortcut = QShortcut(QKeySequence(Qt.Key_Space), self)
+        if running == False:
+            shortcut.activated.connect(self.pushButton_2.click)
+        else:
+            pass
 
         self.pushButton_2.clicked.connect(self.start)
         self.pushButton_4.clicked.connect(self.run_settings)
