@@ -40,8 +40,7 @@
 
 ## TODO
 - [x] Optimize single draw repetition
-- [ ] More stringent anti-tampering mechanism
-- [ ] Rewrite the underlying bgm module (replace pygame)
+- [ ] ......
 
       
 ## Download Address
