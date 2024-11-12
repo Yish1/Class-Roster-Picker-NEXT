@@ -16,9 +16,9 @@ import pythoncom
 # import ptvsd  # QThread断点工具
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QCursor, QFontMetrics,QKeySequence
+from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication
-from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller,QShortcut
+from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QShortcut
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from datetime import datetime, timedelta
 from ui import Ui_Form  # 导入ui文件
@@ -27,9 +27,11 @@ from settings import Ui_settings
 from Crypto.Cipher import ARC4
 
 rewrite_print = print
+
+# print写入log中
 def print(*arg):
-   rewrite_print(*arg)
-   rewrite_print(*arg, file=open('log.txt', "a", encoding='utf-8'))
+    rewrite_print(*arg)
+    rewrite_print(*arg, file=open('log.txt', "a", encoding='utf-8'))
 
 
 with open('log.txt', 'w', encoding='utf-8') as log:
@@ -66,7 +68,7 @@ except:
         user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
 
 # version
-dmversion = 6.2
+dmversion = 6.3
 
 # config变量
 allownametts = None
@@ -97,6 +99,7 @@ settings_flag = None
 today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 pygame.mixer.init()
 
+
 class MainWindow(QtWidgets.QMainWindow, Ui_Form):
     def __init__(self):
         super().__init__()
@@ -120,12 +123,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         self.label_4.setText(_("抽取人数："))
         self.progressBar.hide()
 
-        shortcut = QShortcut(QKeySequence(Qt.Key_Space), self)
-        if running == False:
-            shortcut.activated.connect(self.pushButton_2.click)
-        else:
-            pass
+        # 定义空格快捷键
+        self.shortcut = QShortcut(QKeySequence(Qt.Key_Space), self)
 
+        # 连接按钮
         self.pushButton_2.clicked.connect(self.start)
         self.pushButton_4.clicked.connect(self.run_settings)
         self.pushButton_5.clicked.connect(self.small_mode)
@@ -136,11 +137,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         scroller.grabGesture(self.listWidget.viewport(),
                              QScroller.LeftMouseButtonGesture)
 
+        # 启动时执行的函数
         self.read_config()
         self.read_name_list(2)
         self.set_bgimg()
         self.cs_sha256()
         self.check_new_version()
+        self.change_space(1)
 
         self.timer = None
         if first_use == 0:
@@ -574,6 +577,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         else:
             pass
 
+    def change_space(self, value: int):
+        try:
+            self.shortcut.activated.disconnect()
+        except:
+            pass
+
+        if value == 1:
+            self.shortcut.activated.connect(self.pushButton_2.click)
+        elif value == 0:
+            self.shortcut.activated.connect(self.pushButton_5.click)
+
     def start(self):
         num = self.spinBox.value()
         if num > 1:
@@ -588,6 +602,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             self.thread.signals.enable_button.connect(self.enable_button)
             self.thread.signals.qtimer.connect(self.qtimer)
             self.thread.signals.save_history.connect(self.save_history)
+            self.thread.signals.key_space.connect(self.change_space)
             self.thread.signals.finished.connect(lambda: print("结束点名"))
 
             self.threadpool.start(self.thread)
@@ -909,6 +924,7 @@ class WorkerSignals(QObject):
     finished = pyqtSignal()
     qtimer = pyqtSignal(int)
     speakertest = pyqtSignal(int, str)
+    key_space = pyqtSignal(int)
 
 
 class WorkerThread(QRunnable):
@@ -955,6 +971,7 @@ class WorkerThread(QRunnable):
             self.signals.qtimer.emit(0)
             self.signals.show_progress.emit(0, 0, 100)
             self.signals.enable_button.emit(1)
+            self.signals.key_space.emit(1)
             running = False
             stop()
             if bgmusic == 1:
@@ -972,6 +989,7 @@ class WorkerThread(QRunnable):
             print("开始点名")
             self.signals.show_progress.emit(1, 0, 0)
             self.signals.enable_button.emit(2)
+            self.signals.key_space.emit(0)
 
             if bgmusic == 1:
                 folder_name = "dmmusic"
@@ -1639,12 +1657,14 @@ class CheckSpeakerThread(QRunnable):
         #     print(voice.GetDescription())
         try:
             if language_value == "en_US":
-                speaker.Voice = speaker.GetVoices("Name=Microsoft Zira Desktop").Item(0)
+                speaker.Voice = speaker.GetVoices(
+                    "Name=Microsoft Zira Desktop").Item(0)
             else:
-                speaker.Voice = speaker.GetVoices("Name=Microsoft Huihui Desktop").Item(0)
+                speaker.Voice = speaker.GetVoices(
+                    "Name=Microsoft Huihui Desktop").Item(0)
         except Exception as e:
             print("无法切换语音语言，Reason：", e)
-                
+
         if volume is not None:
             speaker.Volume = volume
         speaker.Speak(text)
