@@ -8,6 +8,9 @@
     <file>swindow.png</file>
     <file>picker.ico</file>
   </qresource>
+  <qresource prefix="mid">
+    <file>olg.mid</file>
+  </qresource>
   <qresource prefix="images">
     <file>bg.webp</file>
     <file>(1070).webp</file>
