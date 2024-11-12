@@ -13,11 +13,11 @@ import glob
 import ctypes
 import msvcrt
 import pythoncom
-# import ptvsd  # QThread断点工具
+# import debugpy
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence
-from PyQt5.QtCore import Qt, QTimer, QCoreApplication
+from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QShortcut
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from datetime import datetime, timedelta
@@ -26,9 +26,14 @@ from smallwindow import Ui_smallwindow
 from settings import Ui_settings
 from Crypto.Cipher import ARC4
 
+# debugpy.listen(("0.0.0.0", 5678))
+# debugpy.wait_for_client()  # 等待调试器连接
+
 rewrite_print = print
 
 # print写入log中
+
+
 def print(*arg):
     rewrite_print(*arg)
     rewrite_print(*arg, file=open('log.txt', "a", encoding='utf-8'))
@@ -84,6 +89,7 @@ first_use = None
 name = None
 mrunning = False
 running = False
+default_music = False
 default_name_list = _("默认名单")
 name_list = ""
 history_file = ""
@@ -385,8 +391,30 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
                                     bak_lines, original_lines)
                                 diff_str = '\n'.join(diff)
                                 diff_str = diff_str[11:]
-                                self.show_message(_("警告：%s 最近被修改，加号是新增的，减号是减少的\n\n此记录会在 2天后 不再展示。\n%s") % (
-                                    filename1, diff_str), _("警告"))
+
+                                minus_lines = []
+                                plus_lines = []
+                                text = diff_str.strip().split('\n')
+                                for lines in text:
+                                    lines = lines.strip()  # 去掉行首尾的空白字符
+                                    if lines.startswith('-'):
+                                        minus_lines.append(lines[1:].strip())
+                                    elif lines.startswith('+'):
+                                        plus_lines.append(lines[1:].strip())
+
+                                message = _(
+                                    "\n名单 %s 最近被修改！\n此记录会在 2天后 不再展示。\n\n") % filename1
+                                if plus_lines:
+                                    formatted_plus = '\n'.join(', '.join(
+                                        f'"{item}"' for item in plus_lines[i:i+8]) for i in range(0, len(plus_lines), 8))
+                                    message += _("新增了：\n%s\n\n") % formatted_plus
+
+                                if minus_lines:
+                                    formatted_minus = '\n'.join(', '.join(
+                                        f'"{item}"' for item in minus_lines[i:i+8]) for i in range(0, len(minus_lines), 8))
+                                    message += _("删除了：\n%s\n\n") % formatted_minus
+                                self.show_message(message, _("警告"))
+
                                 # 确保在最后一次循环才执行manage_deadline(filename1)
                                 delrecordfile = delrecordfile + 1
 
@@ -603,10 +631,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             self.thread.signals.qtimer.connect(self.qtimer)
             self.thread.signals.save_history.connect(self.save_history)
             self.thread.signals.key_space.connect(self.change_space)
-            self.thread.signals.finished.connect(lambda: print("结束点名"))
+            self.thread.signals.finished.connect(
+                lambda: print("结束点名") or self.ttsinitialize())
 
             self.threadpool.start(self.thread)
-            self.ttsinitialize()
 
     def check_new_version(self):
         self.threadpool1 = QThreadPool()
@@ -943,8 +971,7 @@ class WorkerThread(QRunnable):
             self.timer.stop()  # 停止定时器
 
     def run(self):
-        global running
-        # ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        global running, default_music
 
         def stop():
             if allownametts == 1:
@@ -974,10 +1001,18 @@ class WorkerThread(QRunnable):
             self.signals.key_space.emit(1)
             running = False
             stop()
-            if bgmusic == 1:
+            if bgmusic == 1 or pygame.mixer.music.get_busy():
                 try:
-                    pygame.mixer.music.fadeout(600)
+                    # debugpy.breakpoint()
+                    if default_music == True:
+                        pass
+                    else:
+                        pygame.mixer.music.fadeout(600)
                     pygame.mixer.music.unload()
+                    try:
+                        os.remove("olg.mid")
+                    except:
+                        pass
                 except Exception as e:
                     print(f"停止音乐播放时发生错误：{str(e)}")
             self.signals.finished.emit()
@@ -992,6 +1027,7 @@ class WorkerThread(QRunnable):
             self.signals.key_space.emit(0)
 
             if bgmusic == 1:
+                # debugpy.breakpoint()
                 folder_name = "dmmusic"
                 current_dir = os.path.dirname(os.path.abspath(__file__))
                 folder_path = os.path.join(current_dir, folder_name)
@@ -999,40 +1035,54 @@ class WorkerThread(QRunnable):
                 # 获取文件夹中的文件列表
                 file_list = os.listdir(folder_path)
                 if not file_list:
-                    self.signals.update_pushbotton.emit(_(" 结束"), 2)
-                    print("要使用背景音乐功能，请在 %s 中放入mp3格式的音乐" % folder_path)
-                    return
-                try:
-                    self.signals.update_pushbotton.emit(_(" 请稍后."), 2)
-                    self.signals.enable_button.emit(3)
-                    random_file = random.choice(file_list)
-                    file_path = os.path.join(folder_path, random_file)
-                    print("播放音乐：%s" % file_path)
-                    pygame.mixer.music.load(file_path)
-                    sound = pygame.mixer.Sound(file_path)
-                    music_length = sound.get_length()
-                    random_play = round(random.uniform(2, 4), 1)
-                    start_time = round(music_length / random_play, 1)
-                    self.signals.update_pushbotton.emit(_(" 请稍后.."), 2)
-                    self.volume = 0.0
-                    pygame.mixer.music.set_volume(self.volume)
-                    pygame.mixer.music.play(1, start=start_time)
+                    file_path = ":/mid/olg.mid"
+                    file = QFile(file_path)
+                    file.open(QFile.ReadOnly)
+                    ctypes.windll.kernel32.SetFileAttributesW("olg.mid", 0x80)
+                    with open("olg.mid", "wb") as f:
+                        f.write(file.readAll())
+                    ctypes.windll.kernel32.SetFileAttributesW("olg.mid", 2)
+
+                    default_music = True
                     print(
-                        f"音频时长：{music_length},随机数：{random_play},音频空降：{start_time}")
+                        "正在播放默认mid音频:https://www.midishow.com/en/midi/36183.html，\n请在 %s 中放入mp3格式的音乐" % folder_path)
+                else:
+                    default_music = False
+                try:
+                    self.signals.update_pushbotton.emit(_(" 加载音乐."), 2)
+                    self.signals.enable_button.emit(3)
 
-                    # 使用 for 循环进行音量淡入
-                    for i in range(33):  # 50 次循环，每次增加0.02的音量
-                        if self.volume < 0.66:
-                            self.volume += 0.02
-                            if i == 10:
-                                self.signals.update_pushbotton.emit(
-                                    _(" 请稍后..."), 2)
-                            if self.volume >= 0.66:
-                                self.volume = 0.66
-                            pygame.mixer.music.set_volume(self.volume)
-                            pygame.time.delay(15)
+                    if default_music == True:
+                        pygame.mixer.music.load("olg.mid")
+                        pygame.mixer.music.play(-1)
+                    else:
+                        random_file = random.choice(file_list)
+                        file_path = os.path.join(folder_path, random_file)
+                        pygame.mixer.music.load(file_path)
+                        print("播放音乐：%s" % file_path)
+                        sound = pygame.mixer.Sound(file_path)
+                        music_length = sound.get_length()
+                        random_play = round(random.uniform(2, 5), 1)
+                        start_time = round(music_length / random_play, 1)
+                        self.signals.update_pushbotton.emit(_(" 加载音乐.."), 2)
+                        self.volume = 0.0
+                        pygame.mixer.music.set_volume(self.volume)
+                        pygame.mixer.music.play(1, start=start_time)
+                        print(
+                            f"音频时长：{music_length},随机数：{random_play},音频空降：{start_time}")
 
-                    print("音量淡入完成。")
+                        # 使用 for 循环进行音量淡入
+                        for i in range(50):  # 50 次循环，每次增加0.02的音量
+                            if self.volume < 0.70:
+                                self.volume += 0.014
+                                self.volume = min(self.volume, 0.70)
+                                if i == 10:
+                                    self.signals.update_pushbotton.emit(
+                                        _(" 请稍后..."), 2)
+                                pygame.mixer.music.set_volume(self.volume)
+                                pygame.time.delay(30)
+                        print("音量淡入完成。")
+
                     self.signals.update_pushbotton.emit(_(" 结束"), 2)
                     self.signals.enable_button.emit(4)
 
@@ -1055,7 +1105,7 @@ class UpdateThread(QRunnable):
 
     def run(self):
         global newversion, checkupdate, latest_version, connect
-        # ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        # debugpy.breakpoint()  # 在此线程启动断点调试
         headers = {
             'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s,%s%s_%s' % (dmversion, allownametts, bgimg, language_value, platform.system(), platform.release(), platform.machine())
         }
@@ -1565,7 +1615,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             else:
                 print("正在开启不放回模式")
                 self.main_instance.show_message(
-                    _("不放回模式，即单抽结束后的名字不会放回列表中，下次将不会抽到此名字\n当名单抽取完成、切换名单或者手动点击按钮时将会重置不放回列表！"), _("说明"))
+                    _("不放回模式，即单抽结束后的名字不会放回列表中，下次将不会抽到此名字\n\n当名单抽取完成、切换名单 或 手动点击按钮 时将会重置不放回列表！"), _("说明"))
 
         elif key == "enable_bgmusic":
             self.enable_bgmusic = 1 if checked else 0
@@ -1574,7 +1624,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             else:
                 print("正在开启背景音乐")
                 self.main_instance.show_message(
-                    _("开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n程序将随机选取一首，播放随机的音乐进度"), _("提示"))
+                    _("开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n程序将随机选取一首，播放随机的音乐进度\n\n注：程序自带默认音频，在音乐目录下放入音乐后，默认音频不会进入候选列表。"), _("提示"))
                 self.open_fold("dmmusic")
 
     def save_settings(self):
@@ -1670,7 +1720,7 @@ class CheckSpeakerThread(QRunnable):
         speaker.Speak(text)
 
     def run(self):
-        # ptvsd.debug_this_thread()  # 在此线程启动断点调试
+        # debugpy.breakpoint()  # 在此线程启动断点调试
         if self.mode != 1:
             try:
                 self.ttsread("1", 0)
@@ -1716,15 +1766,16 @@ class CheckSpeakerThread(QRunnable):
 if __name__ == "__main__":
     try:
         # 防止重复运行
-        lock_file = os.path.expanduser("~/.program_lock")
+        lock_file = os.path.expanduser("~/.CRP_lock")
         fd = os.open(lock_file, os.O_RDWR | os.O_CREAT)
         try:
             msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
         except OSError:
             os.close(fd)
-            print("另一个点名器正在运行。")
+            print("另一个点名器正在运行。\nAnother CRP is already running.")
             user32 = ctypes.windll.user32
-            user32.MessageBoxW(None, _("另一个点名器正在运行！"), "Warning!", 0x30)
+            user32.MessageBoxW(
+                None, "另一个点名器正在运行。\nAnother CRP is already running.", "Warning!", 0x30)
             sys.exit()
 
         if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):

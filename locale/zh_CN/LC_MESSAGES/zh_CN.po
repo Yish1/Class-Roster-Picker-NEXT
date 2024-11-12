@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-10-16 13:04+0800\n"
-"PO-Revision-Date: 2024-10-16 13:05+0800\n"
+"POT-Creation-Date: 2024-11-12 16:48+0800\n"
+"PO-Revision-Date: 2024-11-12 16:49+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -17,145 +17,175 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 "X-Generator: Poedit 3.5\n"
 
-#: E:\class roster picker\main.py:86
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:93
 msgid "默认名单"
 msgstr ""
 
-#: E:\class roster picker\main.py:114 picker\main.py:1274
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:120
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1351
 msgid "沉梦课堂点名器 %s"
 msgstr ""
 
-#: E:\class roster picker\main.py:115 picker\main.py:947
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:121
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:993
 msgid " 开始"
 msgstr ""
 
-#: E:\class roster picker\main.py:116 picker\main.py:933 picker\main.py:949
-#: picker\main.py:1649
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:122
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:979
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:995
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1739
 msgid " 小窗模式"
 msgstr ""
 
-#: E:\class roster picker\main.py:120 picker\main.py:649
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:126
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:695
 msgid "幸运儿是:"
 msgstr ""
 
-#: E:\class roster picker\main.py:122
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:128
 msgid "当前名单："
 msgstr ""
 
-#: E:\class roster picker\main.py:123
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:129
 msgid "抽取人数："
 msgstr ""
 
-#: E:\class roster picker\main.py:159
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:171
 msgid "自定义背景"
 msgstr ""
 
-#: E:\class roster picker\main.py:241
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:253
 msgid "名单文件不存在，且默认名单无法生成，请反馈给我们！"
 msgstr ""
 
-#: E:\class roster picker\main.py:241
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:253
 msgid "名单生成异常！"
 msgstr ""
 
-#: E:\class roster picker\main.py:272
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:284
 msgid "所选名单文件已被移动或删除！"
 msgstr ""
 
-#: E:\class roster picker\main.py:272
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:284
 msgid "找不到文件！"
 msgstr ""
 
-#: E:\class roster picker\main.py:281
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:293
 msgid "'%s'，共 %s 人"
 msgstr ""
 
-#: E:\class roster picker\main.py:283 picker\main.py:289
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:295
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:301
 msgid "(不放回)"
 msgstr ""
 
-#: E:\class roster picker\main.py:287
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:299
 msgid "切换至>'%s' 共 %s 人"
 msgstr ""
 
-#: E:\class roster picker\main.py:318
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:330
 msgid "读取配置文件失败！"
 msgstr ""
 
-#: E:\class roster picker\main.py:318
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:330
 msgid ""
 "配置文件读取失败，已重置为默认值！\n"
 "%s"
 msgstr ""
 
-#: E:\class roster picker\main.py:382
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:405
 msgid ""
-"警告：%s 最近被修改，加号是新增的，减号是减少的\n"
 "\n"
+"名单 %s 最近被修改！\n"
 "此记录会在 2天后 不再展示。\n"
-"%s"
+"\n"
 msgstr ""
 
-#: E:\class roster picker\main.py:383 picker\main.py:417 picker\main.py:792
-#: picker\main.py:846 picker\main.py:1374 picker\main.py:1388
-#: picker\main.py:1513
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:410
+msgid ""
+"新增了：\n"
+"%s\n"
+"\n"
+msgstr ""
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:415
+msgid ""
+"删除了：\n"
+"%s\n"
+"\n"
+msgstr ""
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:416
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:451
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:838
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:892
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1451
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1465
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1590
 msgid "警告"
 msgstr ""
 
-#: E:\class roster picker\main.py:416
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:450
 msgid "警告：%s 的备份被删除，此名单可能已经被修改！"
 msgstr ""
 
-#: E:\class roster picker\main.py:532
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:566
 msgid "名单文件%s编码错误，请检查文件编码是否为utf8或gbk"
 msgstr ""
 
-#: E:\class roster picker\main.py:532 picker\main.py:624 picker\main.py:1376
-#: picker\main.py:1487 picker\main.py:1616
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:566
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:670
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1453
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1564
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1693
 msgid "错误"
 msgstr ""
 
-#: E:\class roster picker\main.py:533
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:567
 msgid "名单文件无效！"
 msgstr ""
 
-#: E:\class roster picker\main.py:624
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:670
 msgid "连抽人数大于名单人数!"
 msgstr ""
 
-#: E:\class roster picker\main.py:642
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:688
 msgid "连抽：%d 人"
 msgstr ""
 
-#: E:\class roster picker\main.py:656
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:702
 msgid "已重置单抽列表(%s人)"
 msgstr ""
 
-#: E:\class roster picker\main.py:778
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:824
 msgid " (还剩%s人)"
 msgstr ""
 
-#: E:\class roster picker\main.py:792 picker\main.py:846
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:838
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:892
 msgid "名单文件为空，请输入名字（一行一个）后再重新点名！"
 msgstr ""
 
-#: E:\class roster picker\main.py:794 picker\main.py:854
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:840
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:900
 msgid "名单文件为空！"
 msgstr ""
 
-#: E:\class roster picker\main.py:799 picker\main.py:852
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:845
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:898
 msgid "选择的名单文件%s不存在！"
 msgstr ""
 
-#: E:\class roster picker\main.py:884
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:930
 msgid "未知错误"
 msgstr ""
 
-#: E:\class roster picker\main.py:894
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:940
 msgid "欢迎"
 msgstr ""
 
-#: E:\class roster picker\main.py:894
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:940
 msgid ""
 "欢迎使用沉梦课堂点名器%s！\n"
 "\n"
@@ -168,189 +198,197 @@ msgid ""
 "\t----Yish_"
 msgstr ""
 
-#: E:\class roster picker\main.py:938 picker\main.py:1670
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:984
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1760
 msgid "无法写入历史记录"
 msgstr ""
 
-#: E:\class roster picker\main.py:942 picker\main.py:1654
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:988
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1744
 msgid "最终的幸运儿即将出现："
 msgstr ""
 
-#: E:\class roster picker\main.py:945 picker\main.py:1657
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:991
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1747
 msgid "点击开始重置名单,或切换名单继续点名"
 msgstr ""
 
-#: E:\class roster picker\main.py:946 picker\main.py:1658
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:992
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1748
 msgid "此名单已完成抽取！"
 msgstr ""
 
-#: E:\class roster picker\main.py:981 picker\main.py:1015 picker\main.py:1021
-msgid " 结束"
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1052
+msgid " 加载音乐."
 msgstr ""
 
-#: E:\class roster picker\main.py:985
-msgid " 请稍后."
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1067
+msgid " 加载音乐.."
 msgstr ""
 
-#: E:\class roster picker\main.py:995
-msgid " 请稍后.."
-msgstr ""
-
-#: E:\class roster picker\main.py:1008
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1081
 msgid " 请稍后..."
 msgstr ""
 
-#: E:\class roster picker\main.py:1025
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1086
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1091
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1094
+msgid " 结束"
+msgstr ""
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1098
 msgid " 重置名单"
 msgstr ""
 
-#: E:\class roster picker\main.py:1054
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1127
 msgid "检测到新版本！"
 msgstr ""
 
-#: E:\class roster picker\main.py:1061
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1134
 msgid ""
 "云端最新版本为%s，要现在下载新版本吗？<br>您也可以稍后访问沉梦小站官网获取最"
 "新版本。<br><br>%s"
 msgstr ""
 
-#: E:\class roster picker\main.py:1068
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1143
 msgid "网络连接异常，检查更新失败"
 msgstr ""
 
-#: E:\class roster picker\main.py:1099
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1174
 msgid "开始"
 msgstr ""
 
-#: E:\class roster picker\main.py:1105
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1180
 msgid "点名器小窗模式"
 msgstr ""
 
-#: E:\class roster picker\main.py:1162
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1238
 msgid " (剩%s人)"
 msgstr ""
 
-#: E:\class roster picker\main.py:1164
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1240
 msgid "名单抽取完成"
 msgstr ""
 
-#: E:\class roster picker\main.py:1169 picker\main.py:1189
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1245
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1265
 msgid "剩%s人"
 msgstr ""
 
-#: E:\class roster picker\main.py:1172
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1248
 msgid "小窗：%s"
 msgstr ""
 
-#: E:\class roster picker\main.py:1186
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1262
 msgid "名单已重置"
 msgstr ""
 
-#: E:\class roster picker\main.py:1192
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1268
 msgid "名单为空!"
 msgstr ""
 
-#: E:\class roster picker\main.py:1249
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1326
 msgid "功能设置"
 msgstr ""
 
-#: E:\class roster picker\main.py:1250
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1327
 msgid "默认背景"
 msgstr ""
 
-#: E:\class roster picker\main.py:1251
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1328
 msgid "自定义"
 msgstr ""
 
-#: E:\class roster picker\main.py:1252
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1329
 msgid "无"
 msgstr ""
 
-#: E:\class roster picker\main.py:1253
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1330
 msgid "不放回模式(单抽结果不重复)"
 msgstr ""
 
-#: E:\class roster picker\main.py:1254
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1331
 msgid "检查更新"
 msgstr ""
 
-#: E:\class roster picker\main.py:1255 picker\main.py:1491
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1332
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1568
 msgid "语音播报"
 msgstr ""
 
-#: E:\class roster picker\main.py:1256
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1333
 msgid "背景音乐"
 msgstr ""
 
-#: E:\class roster picker\main.py:1257
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1334
 msgid "背景图片"
 msgstr ""
 
-#: E:\class roster picker\main.py:1258
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1335
 msgid "正常模式"
 msgstr ""
 
-#: E:\class roster picker\main.py:1259
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1336
 msgid "听写模式(不说\"恭喜\")"
 msgstr ""
 
-#: E:\class roster picker\main.py:1260
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1337
 msgid "语言设置"
 msgstr ""
 
-#: E:\class roster picker\main.py:1261
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1338
 msgid "保存"
 msgstr ""
 
-#: E:\class roster picker\main.py:1262
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1339
 msgid "取消"
 msgstr ""
 
-#: E:\class roster picker\main.py:1263
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1340
 msgid "名单管理"
 msgstr ""
 
-#: E:\class roster picker\main.py:1264
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1341
 msgid "删除所选名单"
 msgstr ""
 
-#: E:\class roster picker\main.py:1265
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1342
 msgid "统计所选名单"
 msgstr ""
 
-#: E:\class roster picker\main.py:1266
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1343
 msgid "新建名单"
 msgstr ""
 
-#: E:\class roster picker\main.py:1267
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1344
 msgid "编辑所选名单"
 msgstr ""
 
-#: E:\class roster picker\main.py:1268
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1345
 msgid "快捷打开"
 msgstr ""
 
-#: E:\class roster picker\main.py:1269
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1346
 msgid "历史记录目录"
 msgstr ""
 
-#: E:\class roster picker\main.py:1270
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1347
 msgid "背景图片目录"
 msgstr ""
 
-#: E:\class roster picker\main.py:1271
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1348
 msgid "背景音乐目录"
 msgstr ""
 
-#: E:\class roster picker\main.py:1272
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1349
 msgid "名单文件目录"
 msgstr ""
 
-#: E:\class roster picker\main.py:1273
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1350
 msgid "关于"
 msgstr ""
 
-#: E:\class roster picker\main.py:1275
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1352
 msgid ""
 "<html><head/><body><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具"
 "<br/></p><p align=\"center\"><a href=\"https://cmxz.top/ktdmq\"><span "
@@ -360,85 +398,86 @@ msgid ""
 "Class-Roster-Picker-NEXT: 课堂点名器</span></a></p></body></html>"
 msgstr ""
 
-#: E:\class roster picker\main.py:1277
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1354
 msgid "课堂点名器设置"
 msgstr ""
 
-#: E:\class roster picker\main.py:1338
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1415
 msgid "新增名单"
 msgstr ""
 
-#: E:\class roster picker\main.py:1338
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1415
 msgid "请输入名单名称:"
 msgstr ""
 
-#: E:\class roster picker\main.py:1346
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1423
 msgid ""
 "已创建名为 '%s.txt' 的文件，路径为: %s\n"
 "\n"
 "请在稍后打开的文本中输入名单内容，一行一个名字，不要出现空格！"
 msgstr ""
 
-#: E:\class roster picker\main.py:1349
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1426
 msgid "新建成功"
 msgstr ""
 
-#: E:\class roster picker\main.py:1352
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1429
 msgid "同名文件已存在，请勿重复创建！"
 msgstr ""
 
-#: E:\class roster picker\main.py:1352
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1429
 msgid "警告！"
 msgstr ""
 
-#: E:\class roster picker\main.py:1359
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1436
 msgid "再次输入名单名称将删除此名单！"
 msgstr ""
 
-#: E:\class roster picker\main.py:1359
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1436
 msgid "删除名单"
 msgstr ""
 
-#: E:\class roster picker\main.py:1366
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1443
 msgid "已成功删除名单： '%s.txt' "
 msgstr ""
 
-#: E:\class roster picker\main.py:1368
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1445
 msgid "删除成功"
 msgstr ""
 
-#: E:\class roster picker\main.py:1374 picker\main.py:1388
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1451
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1465
 msgid ""
 "名单文件不存在，或已被删除！\n"
 "%s"
 msgstr ""
 
-#: E:\class roster picker\main.py:1376
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1453
 msgid "名单名称输入错误！"
 msgstr ""
 
-#: E:\class roster picker\main.py:1475
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1552
 msgid "正在检测兼容性..."
 msgstr ""
 
-#: E:\class roster picker\main.py:1487
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1564
 msgid ""
 "语音播报无法在此设备上开启，可能是您使用的系统为精简版，删除了自带的语音"
 "库！\n"
 "%s"
 msgstr ""
 
-#: E:\class roster picker\main.py:1513
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1590
 msgid ""
 "您正在关闭检查更新功能！更新意味着带来 新功能、优化 以及修复错误，强烈建议您"
 "开启此功能！"
 msgstr ""
 
-#: E:\class roster picker\main.py:1526
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1603
 msgid "声明"
 msgstr ""
 
-#: E:\class roster picker\main.py:1526
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1603
 msgid ""
 "您正在使用自定义背景功能，由于此工具可能需要在公众场合展示，请选择适宜场景的"
 "合适背景！ \n"
@@ -452,48 +491,47 @@ msgid ""
 "随机选取图片使用。"
 msgstr ""
 
-#: E:\class roster picker\main.py:1541
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1618
 msgid ""
 "不放回模式，即单抽结束后的名字不会放回列表中，下次将不会抽到此名字\n"
-"当名单抽取完成、切换名单或者手动点击按钮时将会重置不放回列表！"
+"\n"
+"当名单抽取完成、切换名单 或 手动点击按钮 时将会重置不放回列表！"
 msgstr ""
 
-#: E:\class roster picker\main.py:1541
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1618
 msgid "说明"
 msgstr ""
 
-#: E:\class roster picker\main.py:1550
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1627
 msgid ""
 "开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n"
-"程序将随机选取一首，播放随机的音乐进度"
+"程序将随机选取一首，播放随机的音乐进度\n"
+"\n"
+"注：程序自带默认音频，在音乐目录下放入音乐后，默认音频不会进入候选列表。"
 msgstr ""
 
-#: E:\class roster picker\main.py:1550
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1627
 msgid "提示"
 msgstr ""
 
-#: E:\class roster picker\main.py:1606
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1683
 msgid "中奖名单统计(统计会覆盖上一次结果):\n"
 msgstr ""
 
-#: E:\class roster picker\main.py:1611
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1688
 msgid "保存结果"
 msgstr ""
 
-#: E:\class roster picker\main.py:1611
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1688
 msgid "统计结果已保存到'中奖统计.txt'"
 msgstr ""
 
-#: E:\class roster picker\main.py:1616
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1693
 msgid ""
 "历史记录文件不存在，无法统计次数！\n"
 "%s"
 msgstr ""
 
-#: E:\class roster picker\main.py:1660
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1750
 msgid "恭喜 %s"
-msgstr ""
-
-#: E:\class roster picker\main.py:1687
-msgid "另一个点名器正在运行！"
 msgstr ""
