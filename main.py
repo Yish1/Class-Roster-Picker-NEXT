@@ -13,7 +13,7 @@ import glob
 import ctypes
 import msvcrt
 import pythoncom
-import debugpy
+# import debugpy
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence
@@ -26,8 +26,8 @@ from smallwindow import Ui_smallwindow
 from settings import Ui_settings
 from Crypto.Cipher import ARC4
 
-debugpy.listen(("0.0.0.0", 5678))
-debugpy.wait_for_client()  # 等待调试器连接
+# debugpy.listen(("0.0.0.0", 5678))
+# debugpy.wait_for_client()  # 等待调试器连接
 
 rewrite_print = print
 
@@ -73,7 +73,7 @@ except:
         user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
 
 # version
-dmversion = 6.3
+dmversion = 6.35
 
 # config变量
 allownametts = None
@@ -817,6 +817,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             self.pushButton_2.clicked.disconnect()
             self.pushButton_2.clicked.connect(self.reset_repetive_list)
 
+        elif value == 6:
+            self.spinBox.setEnabled(False)# 开始单抽后不允许选择人数
+
+        elif value == 7:
+            self.spinBox.setEnabled(True)
     def update_list(self, mode, value):
         if mode == 2:
             mode = 1
@@ -1003,7 +1008,8 @@ class WorkerThread(QRunnable):
             self.signals.qtimer.emit(0)
             self.signals.show_progress.emit(0, 0, 100)
             self.signals.enable_button.emit(1)
-            self.signals.key_space.emit(1)
+            self.signals.key_space.emit(1)# 调整空格为开始
+            self.signals.enable_button.emit(7)# 恢复spinbox
             running = False
             stop()
             if bgmusic == 1 or pygame.mixer.music.get_busy():
@@ -1026,6 +1032,7 @@ class WorkerThread(QRunnable):
         else:  # 开始按钮
             running = True
             self.signals.qtimer.emit(1)
+            self.signals.enable_button.emit(6)# 禁用人数选择框spinbox
             print("开始点名")
             self.signals.show_progress.emit(1, 0, 0)
             self.signals.enable_button.emit(2)
@@ -1373,7 +1380,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.pushButton_6.setText(_("统计所选名单"))
         self.pushButton_3.setText(_("新建名单"))
         self.pushButton_5.setText(_("编辑所选名单"))
-        self.groupBox_6.setTitle(_("快捷打开"))
+        self.groupBox_6.setTitle(_("快捷访问"))
         self.pushButton_8.setText(_("历史记录目录"))
         self.pushButton_9.setText(_("背景图片目录"))
         self.pushButton_10.setText(_("背景音乐目录"))
