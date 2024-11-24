@@ -1098,7 +1098,7 @@ class WorkerThread(QRunnable):
                         self.signals.update_list.emit(7, _("正在播放:%s") % music_name)
                         self.volume = 0.0
                         pygame.mixer.music.set_volume(self.volume)
-                        pygame.mixer.music.play(1, start=start_time)
+                        pygame.mixer.music.play(-1, start=start_time)
                         print(
                             f"音频时长：{music_length},随机数：{random_play},音频空降：{start_time}")
 
