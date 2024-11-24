@@ -541,6 +541,30 @@ QPushButton{background:rgba(118, 218, 96, 1);border-radius:5px;}QPushButton:hove
     <set>Qt::NoTextInteraction</set>
    </property>
   </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>63</x>
+     <y>372</y>
+     <width>241</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel {
+    color: #FFFFFF;
+}</string>
+   </property>
+   <property name="text">
+    <string>正在播放:</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
+   <property name="textInteractionFlags">
+    <set>Qt::NoTextInteraction</set>
+   </property>
+  </widget>
   <zorder>label_2</zorder>
   <zorder>label</zorder>
   <zorder>frame</zorder>
@@ -551,6 +575,7 @@ QPushButton{background:rgba(118, 218, 96, 1);border-radius:5px;}QPushButton:hove
   <zorder>progressBar</zorder>
   <zorder>frame_3</zorder>
   <zorder>label_6</zorder>
+  <zorder>label_7</zorder>
  </widget>
  <resources>
   <include location="res/ui1.qrc"/>

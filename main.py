@@ -127,6 +127,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         self.spinBox.setValue(1)
         self.label_5.setText(_("当前名单："))
         self.label_4.setText(_("抽取人数："))
+        self.label_7.setText("")
         self.progressBar.hide()
 
         # 定义空格快捷键
@@ -148,7 +149,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         self.read_name_list(2)
         self.set_bgimg()
         self.cs_sha256()
-        self.check_new_version()
+        # self.check_new_version()
         self.change_space(1)
 
         self.timer = None
@@ -831,6 +832,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         elif mode == 0:
             self.label_3.setText(value)
 
+        elif mode == 7:
+            self.label_7.setText(value)
+
     def qtimer(self, start):
         global non_repetitive_list, name, main_window_name
         if start == 1:
@@ -991,6 +995,7 @@ class WorkerThread(QRunnable):
                                 1, _("点击开始重置名单,或切换名单继续点名"))
                             self.signals.update_list.emit(0, _("此名单已完成抽取！"))
             self.signals.update_pushbotton.emit(_(" 开始"), 1)
+            self.signals.update_list.emit(7, "")
             if namelen == 0:
                 self.signals.update_pushbotton.emit(_(" 小窗模式"), 2)
 
@@ -1010,7 +1015,7 @@ class WorkerThread(QRunnable):
                         pygame.mixer.music.fadeout(600)
                     pygame.mixer.music.unload()
                     try:
-                        os.remove("olg.mid")
+                        os.remove("tmp.mid")
                     except:
                         pass
                 except Exception as e:
@@ -1035,17 +1040,21 @@ class WorkerThread(QRunnable):
                 # 获取文件夹中的文件列表
                 file_list = os.listdir(folder_path)
                 if not file_list:
-                    file_path = ":/mid/olg.mid"
+                    mid_file = ['olg.mid', 'qqss.mid', 'april.mid', 'hyl.mid', 'hzt.mid',
+                                'lemon.mid', 'ltinat.mid', 'qby.mid', 'xxlg.mid', 'ydh.mid', 'level5.mid']
+                    mid_load = random.choice(mid_file)
+                    file_path = f":/mid/{mid_load}"
                     file = QFile(file_path)
                     file.open(QFile.ReadOnly)
-                    ctypes.windll.kernel32.SetFileAttributesW("olg.mid", 0x80)
-                    with open("olg.mid", "wb") as f:
+                    ctypes.windll.kernel32.SetFileAttributesW("tmp.mid", 0x80)
+                    with open("tmp.mid", "wb") as f:
                         f.write(file.readAll())
-                    ctypes.windll.kernel32.SetFileAttributesW("olg.mid", 2)
+                    ctypes.windll.kernel32.SetFileAttributesW("tmp.mid", 2)
 
                     default_music = True
                     print(
-                        "正在播放默认mid音频:https://www.midishow.com/en/midi/36183.html，\n请在 %s 中放入mp3格式的音乐" % folder_path)
+                        "正在播放默认mid音频:%s，\n请在 %s 中放入mp3格式的音乐" % (mid_load,folder_path))
+                    self.signals.update_list.emit(7, _("正在播放:%s") % mid_load)
                 else:
                     default_music = False
                 try:
@@ -1053,7 +1062,7 @@ class WorkerThread(QRunnable):
                     self.signals.enable_button.emit(3)
 
                     if default_music == True:
-                        pygame.mixer.music.load("olg.mid")
+                        pygame.mixer.music.load("tmp.mid")
                         pygame.mixer.music.play(-1)
                     else:
                         random_file = random.choice(file_list)
@@ -1107,7 +1116,7 @@ class UpdateThread(QRunnable):
         global newversion, checkupdate, latest_version, connect
         # debugpy.breakpoint()  # 在此线程启动断点调试
         headers = {
-            'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s,%s,%s%s_%s' % (dmversion, allownametts, bgimg, language_value, bgmusic, platform.system(), platform.release(), platform.machine())
+            'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s,%s,%s%s_%s' % (dmversion, allownametts, bgimg, bgmusic, language_value, platform.system(), platform.release(), platform.machine())
         }
         updatecheck = "https://cmxz.top/programs/dm/check.php"
         # try:

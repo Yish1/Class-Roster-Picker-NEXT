@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'e:\class roster picker\picker.ui'
+# Form implementation generated from reading ui file 'picker.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -270,6 +270,14 @@ class Ui_Form(object):
         self.label_6.setAlignment(QtCore.Qt.AlignCenter)
         self.label_6.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.label_6.setObjectName("label_6")
+        self.label_7 = QtWidgets.QLabel(Form)
+        self.label_7.setGeometry(QtCore.QRect(63, 372, 241, 20))
+        self.label_7.setStyleSheet("QLabel {\n"
+"    color: #FFFFFF;\n"
+"}")
+        self.label_7.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.label_7.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.label_7.setObjectName("label_7")
         self.label_2.raise_()
         self.label.raise_()
         self.frame.raise_()
@@ -280,7 +288,10 @@ class Ui_Form(object):
         self.progressBar.raise_()
         self.frame_3.raise_()
         self.label_6.raise_()
+        self.label_7.raise_()
+
         self.comboBox.setCurrentIndex(-1)
         self.pushButton_3.clicked.connect(Form.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Form)
+
 import res
