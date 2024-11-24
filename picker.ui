@@ -545,14 +545,17 @@ QPushButton{background:rgba(118, 218, 96, 1);border-radius:5px;}QPushButton:hove
    <property name="geometry">
     <rect>
      <x>63</x>
-     <y>372</y>
+     <y>371</y>
      <width>241</width>
      <height>20</height>
     </rect>
    </property>
    <property name="styleSheet">
     <string notr="true">QLabel {
-    color: #FFFFFF;
+    color: #B4B4B4;
+}
+* {
+    font-size: 10px;
 }</string>
    </property>
    <property name="text">

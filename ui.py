@@ -271,9 +271,12 @@ class Ui_Form(object):
         self.label_6.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.label_6.setObjectName("label_6")
         self.label_7 = QtWidgets.QLabel(Form)
-        self.label_7.setGeometry(QtCore.QRect(63, 372, 241, 20))
+        self.label_7.setGeometry(QtCore.QRect(63, 371, 241, 20))
         self.label_7.setStyleSheet("QLabel {\n"
-"    color: #FFFFFF;\n"
+"    color: #B4B4B4;\n"
+"}\n"
+"* {\n"
+"    font-size: 10px;\n"
 "}")
         self.label_7.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label_7.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
