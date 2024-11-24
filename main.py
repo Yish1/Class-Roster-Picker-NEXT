@@ -13,7 +13,7 @@ import glob
 import ctypes
 import msvcrt
 import pythoncom
-# import debugpy
+import debugpy
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence
@@ -26,8 +26,8 @@ from smallwindow import Ui_smallwindow
 from settings import Ui_settings
 from Crypto.Cipher import ARC4
 
-# debugpy.listen(("0.0.0.0", 5678))
-# debugpy.wait_for_client()  # 等待调试器连接
+debugpy.listen(("0.0.0.0", 5678))
+debugpy.wait_for_client()  # 等待调试器连接
 
 rewrite_print = print
 
@@ -1015,7 +1015,7 @@ class WorkerThread(QRunnable):
                         pygame.mixer.music.fadeout(600)
                     pygame.mixer.music.unload()
                     try:
-                        os.remove("tmp.mid")
+                        os.remove("tmp.cmxz")
                     except:
                         pass
                 except Exception as e:
@@ -1040,21 +1040,41 @@ class WorkerThread(QRunnable):
                 # 获取文件夹中的文件列表
                 file_list = os.listdir(folder_path)
                 if not file_list:
-                    mid_file = ['olg.mid', 'qqss.mid', 'april.mid', 'hyl.mid', 'hzt.mid',
-                                'lemon.mid', 'ltinat.mid', 'qby.mid', 'xxlg.mid', 'ydh.mid', 'level5.mid']
-                    mid_load = random.choice(mid_file)
-                    file_path = f":/mid/{mid_load}"
-                    file = QFile(file_path)
-                    file.open(QFile.ReadOnly)
-                    ctypes.windll.kernel32.SetFileAttributesW("tmp.mid", 0x80)
-                    with open("tmp.mid", "wb") as f:
-                        f.write(file.readAll())
-                    ctypes.windll.kernel32.SetFileAttributesW("tmp.mid", 2)
+                    try:
+                        mid_file = ['olg.mid', 'qqss.mid', 'april.mid', 'hyl.mid', 'hzt.mid',
+                                    'lemon.mid', 'ltinat.mid', 'qby.mid', 'xxlg.mid', 'ydh.mid', 'level5.mid']
+                        mid_load = random.choice(mid_file)
+                        file_path = f":/mid/{mid_load}"
+                        file = QFile(file_path)
+                        file.open(QFile.ReadOnly)
+                        ctypes.windll.kernel32.SetFileAttributesW("tmp.cmxz", 0x80)
+                        with open("tmp.cmxz", "wb") as f:
+                            f.write(file.readAll())
+                        ctypes.windll.kernel32.SetFileAttributesW("tmp.cmxz", 2)
+                        default_music = True
 
-                    default_music = True
-                    print(
-                        "正在播放默认mid音频:%s，\n请在 %s 中放入mp3格式的音乐" % (mid_load,folder_path))
-                    self.signals.update_list.emit(7, _("正在播放:%s") % mid_load)
+                        mid_load = mid_load.rsplit('.mid', 1)[0]
+                        mid_name = {
+                            "olg": "Only My Railgun",
+                            "qqss": "前前前世(ぜんぜんぜんせ)", # https://www.midishow.com/en/midi/47670.html
+                            "april": "若能绽放光芒(光るなら)",  # https://www.midishow.com/en/midi/ff14-op-midi-download-151208
+                            "hyl": "好运来(Good Luck Comes)",  # https://www.midishow.com/en/midi/1115.html
+                            "hzt": "花の塔",                   # https://www.midishow.com/en/midi/ff14-lycoris-recoil-ed-midi-download-158585
+                            "lemon": "Lemon_Yish_modify",                 # https://www.midishow.com/en/midi/71733.html#删除部分前奏
+                            "ltinat": "Late in autumn_Yish_modify",       # https://www.midishow.com/en/midi/late-in-autumn-midi-download-148678删除部分前奏
+                            "qby": "千本桜",                   # https://www.midishow.com/en/midi/71765.html
+                            "xxlg": "小小恋歌",                # https://www.midishow.com/en/midi/71740.html
+                            "ydh": "运动员进行曲",             # https://www.midishow.com/en/midi/140621.html
+                            "level5": "Level5-裁决之光"        # https://www.midishow.com/en/midi/23834.html
+                        }
+                        mid_load = mid_name.get(mid_load, mid_load)
+
+                        print(
+                            "正在播放默认音频:%s\n请在 %s 中放入mp3格式的音乐" % (mid_load, folder_path))
+                        self.signals.update_list.emit(7, _("正在播放(默认音频):%s") % mid_load)
+                    except Exception as e:
+                        default_music = True
+                        print("err: %s" % str(e))
                 else:
                     default_music = False
                 try:
@@ -1062,7 +1082,7 @@ class WorkerThread(QRunnable):
                     self.signals.enable_button.emit(3)
 
                     if default_music == True:
-                        pygame.mixer.music.load("tmp.mid")
+                        pygame.mixer.music.load("tmp.cmxz")
                         pygame.mixer.music.play(-1)
                     else:
                         random_file = random.choice(file_list)
@@ -1074,6 +1094,8 @@ class WorkerThread(QRunnable):
                         random_play = round(random.uniform(2, 5), 1)
                         start_time = round(music_length / random_play, 1)
                         self.signals.update_pushbotton.emit(_(" 加载音乐.."), 2)
+                        music_name = random_file.rsplit('.', 1)[0]
+                        self.signals.update_list.emit(7, _("正在播放:%s") % music_name)
                         self.volume = 0.0
                         pygame.mixer.music.set_volume(self.volume)
                         pygame.mixer.music.play(1, start=start_time)
@@ -1633,7 +1655,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             else:
                 print("正在开启背景音乐")
                 self.main_instance.show_message(
-                    _("开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n程序将随机选取一首，播放随机的音乐进度\n\n注：程序自带默认音频，在音乐目录下放入音乐后，默认音频不会进入候选列表。"), _("提示"))
+                    _("开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n程序将随机选取一首，播放随机的音乐进度\n\n注：程序自带几首默认音频，当您在音乐目录下放入音乐后，默认音频将不会再进入候选列表！"), _("提示"))
                 self.open_fold("dmmusic")
 
     def save_settings(self):
