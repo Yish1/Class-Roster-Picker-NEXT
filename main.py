@@ -1049,7 +1049,7 @@ class WorkerThread(QRunnable):
                 if not file_list:
                     try:
                         mid_file = ['olg.mid', 'qqss.mid', 'april.mid', 'hyl.mid', 'hzt.mid',
-                                    'lemon.mid', 'ltinat.mid', 'qby.mid', 'xxlg.mid', 'ydh.mid', 'level5.mid']
+                                    'lemon.mid', 'ltinat.mid', 'qby.mid', 'xxlg.mid', 'ydh.mid', 'level5.mid', 'zyzy.mid']
                         mid_load = random.choice(mid_file)
                         file_path = f":/mid/{mid_load}"
                         file = QFile(file_path)
@@ -1069,10 +1069,11 @@ class WorkerThread(QRunnable):
                             "hzt": "花の塔",                   # https://www.midishow.com/en/midi/ff14-lycoris-recoil-ed-midi-download-158585
                             "lemon": "Lemon_Yish_modify",                 # https://www.midishow.com/en/midi/71733.html#删除部分前奏
                             "ltinat": "Late in autumn_Yish_modify",       # https://www.midishow.com/en/midi/late-in-autumn-midi-download-148678删除部分前奏
-                            "qby": "千本桜",                   # https://www.midishow.com/en/midi/71765.html
-                            "xxlg": "小小恋歌",                # https://www.midishow.com/en/midi/71740.html
-                            "ydh": "运动员进行曲",             # https://www.midishow.com/en/midi/140621.html
-                            "level5": "Level5-裁决之光"        # https://www.midishow.com/en/midi/23834.html
+                            "qby": "千本桜",                    # https://www.midishow.com/en/midi/71765.html
+                            "xxlg": "小小恋歌",                 # https://www.midishow.com/en/midi/71740.html
+                            "ydh": "运动员进行曲",              # https://www.midishow.com/en/midi/140621.html
+                            "level5": "LEVEL5 -Judgelight-",   # https://www.midishow.com/en/midi/23834.html
+                            "zyzy": "自言自语(ヒトリゴト)-ClariS"# https://www.midishow.com/en/midi/ff14-8-op-claris-midi-download-171600
                         }
                         mid_load = mid_name.get(mid_load, mid_load)
 
@@ -1125,6 +1126,7 @@ class WorkerThread(QRunnable):
                     self.signals.enable_button.emit(4)
 
                 except Exception as e:
+                    self.signals.update_list.emit(7, _("无法播放：%s") % e)
                     print("无法播放音乐文件：%s，错误信息：%s" % (file_path, e))
                     self.signals.update_pushbotton.emit(_(" 结束"), 2)
                     self.signals.enable_button.emit(4)
@@ -1638,7 +1640,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                 elif self.radioButton_4.isChecked():
                     self.enable_bgimg = 2
                     self.main_instance.show_message(
-                        _("您正在使用自定义背景功能，由于此工具可能需要在公众场合展示，请选择适宜场景的合适背景！ \n\n因使用不合适的背景图片而造成的后果由您自行承担！\n\n\n使用教程：\n\n在稍后打开的\\images文件夹中放入您喜欢的图片(建议暗色系、长宽比16:9)，程序将随机选取图片使用。"), _("声明"))
+                        _("您正在使用自定义背景功能，由于此工具可能需要在公众场合展示，请选择适宜场景的合适背景！ \n因使用不合适的背景图片而造成的后果由您自行承担！\n\n使用教程：\n\n在稍后打开的\\images文件夹中放入您喜欢的图片(建议暗色系、长宽比16:9)，程序将随机选取图片使用。"), _("声明!"))
                     os.makedirs("images", exist_ok=True)
                     self.main_instance.opentext("images")
                     print("背景自定义")
@@ -1653,7 +1655,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             else:
                 print("正在开启不放回模式")
                 self.main_instance.show_message(
-                    _("不放回模式，即单抽结束后的名字不会放回列表中，下次将不会抽到此名字\n\n当名单抽取完成、切换名单 或 手动点击按钮 时将会重置不放回列表！"), _("说明"))
+                    _("不放回模式，即单抽结束后的名字不会放回列表中，下次将不会抽到此名字\n当名单抽取完成、切换名单 或 手动点击按钮 时将会重置不放回列表！"), _("说明"))
 
         elif key == "enable_bgmusic":
             self.enable_bgmusic = 1 if checked else 0
