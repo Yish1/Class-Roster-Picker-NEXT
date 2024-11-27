@@ -13,7 +13,7 @@ import glob
 import ctypes
 import msvcrt
 import pythoncom
-# import debugpy
+import debugpy
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence
@@ -95,7 +95,7 @@ name_list = ""
 history_file = ""
 non_repetitive_list = ""
 namelen = 0
-main_window_name = None
+origin_name_list = None
 
 # 窗口标识符
 small_window_flag = None
@@ -632,6 +632,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             self.thread.signals.qtimer.connect(self.qtimer)
             self.thread.signals.save_history.connect(self.save_history)
             self.thread.signals.key_space.connect(self.change_space)
+            self.thread.signals.tts_read.connect(self.tts_read)
             self.thread.signals.finished.connect(
                 lambda: print("结束点名") or self.ttsinitialize())
 
@@ -825,9 +826,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
     def update_list(self, mode, value):
         if mode == 2:
             mode = 1
-            value = f" {main_window_name}"
+            value = f" {origin_name_list}" if origin_name_list else ""
             if non_repetitive == 1:
-                value += _(" (还剩%s人)") % (len(non_repetitive_list))
+                value += _(" (还剩%s人)") % (len(non_repetitive_list)) if origin_name_list else ""
         if mode == 1:
             if value == "":
                 pass
@@ -841,11 +842,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             self.label_7.setText(value)
 
     def qtimer(self, start):
-        global non_repetitive_list, name, main_window_name
+        global non_repetitive_list, name, origin_name_list
         if start == 1:
             if len(name_list) == 0:
                 self.show_message(_("名单文件为空，请输入名字（一行一个）后再重新点名！"), _("警告"))
                 self.qtimer(0)
+                self.pushButton_5.setEnabled(True)
+                self.pushButton_5.click()# 名单没有人就自动按结束按钮
+                origin_name_list = None
                 self.label_3.setText(_("名单文件为空！"))
                 name = ""
                 try:
@@ -862,35 +866,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         elif start == 0:
             try:
                 self.timer.stop()
-                if non_repetitive == 1:
-                    if len(non_repetitive_list) > 0:
-                        if main_window_name in non_repetitive_list:
-                            non_repetitive_list.remove(main_window_name)
-                        else:
-                            print(f"不重复的单抽名单中没有{main_window_name}")
-                if allownametts != 1:
-                    try:
-                        if main_window_name != "":
-                            self.threadpool2 = QThreadPool()
-                            self.check_speaker = CheckSpeakerThread(1)
-                            self.check_speaker.signals.update_list.connect(
-                                self.update_list)
-                            self.check_speaker.signals.update_pushbotton.connect(
-                                self.update_pushbotton)
-                            self.check_speaker.signals.enable_button.connect(
-                                self.enable_button)
-                            self.check_speaker.signals.save_history.connect(
-                                self.save_history)
-                            self.threadpool2.start(self.check_speaker)
-                        else:
-                            print("名单文件为空！")
-                    except Exception as e:
-                        print(f"语音播报失败，原因：{e}")
+
             except Exception as e:
                 print(f"停止计时器失败:{e}")
 
     def setname(self):
-        global name, non_repetitive_list, main_window_name
+        global name, non_repetitive_list, origin_name_list
         font = QtGui.QFont()
         font.setPointSize(45)  # 字体大小
         self.label_3.setFont(font)
@@ -907,6 +888,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
                 self.show_message(_("选择的名单文件%s不存在！") % file_path, "\n%s" % e)
             finally:
                 self.label_3.setText(_("名单文件为空！"))
+                self.pushButton_5.setEnabled(True)
+                self.pushButton_5.click()# 名单没有人就自动按结束按钮(中途切换名单)
+                origin_name_list = None
                 self.qtimer(0)
                 return
         try:
@@ -928,8 +912,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             metrics = QFontMetrics(font)
         font = self.label_3.font()
         font_size = font.pointSize()
-        main_window_name = name
-        self.label_3.setText(main_window_name)
+        origin_name_list = name
+        self.label_3.setText(origin_name_list)
 
     def show_message(self, message, title, first=None):
         msgBox = QMessageBox()
@@ -949,6 +933,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             _("欢迎使用沉梦课堂点名器%s！\n\n此工具支持单抽(放回)、单抽(不放回)、连抽功能\n还有一些特色功能：语音播报、背景音乐、小窗模式\n\n进入主界面后，请点击左上角的设置按钮，按需开启功能，编辑名单\n如果遇到了问题，可以在沉梦小站中留言，或者在github上提交issues\n\n\t----Yish_") % dmversion, _("欢迎"), 1)
         self.update_config("first_use", 1)
 
+    def tts_read(self):
+        try:
+            if origin_name_list != "":
+                self.threadpool2 = QThreadPool()
+                self.check_speaker = SpeakerThread(1)
+                self.check_speaker.signals.update_list.connect(
+                    self.update_list)
+                self.check_speaker.signals.update_pushbotton.connect(
+                    self.update_pushbotton)
+                self.check_speaker.signals.enable_button.connect(
+                    self.enable_button)
+                self.check_speaker.signals.save_history.connect(
+                    self.save_history)
+                self.threadpool2.start(self.check_speaker)
+            else:
+                print("名单文件为空！")
+        except Exception as e:
+            print(f"语音播报失败，原因：{e}")
 
 class WorkerSignals(QObject):
     # 定义信号
@@ -962,6 +964,7 @@ class WorkerSignals(QObject):
     qtimer = pyqtSignal(int)
     speakertest = pyqtSignal(int, str)
     key_space = pyqtSignal(int)
+    tts_read = pyqtSignal()
 
 
 class WorkerThread(QRunnable):
@@ -980,25 +983,36 @@ class WorkerThread(QRunnable):
             self.timer.stop()  # 停止定时器
 
     def run(self):
+        # debugpy.breakpoint()
         global running, default_music
 
         def stop():
-            if allownametts == 1:
-                self.signals.update_list.emit(2, "")
-                self.signals.update_pushbotton.emit(_(" 小窗模式"), 2)
-                self.signals.enable_button.emit(1)
-                try:
-                    self.signals.save_history.emit()
-                except:
-                    print(_("无法写入历史记录"))
-                if non_repetitive == 1:
-                    if namelen != 0:
-                        if len(non_repetitive_list) == 2:
-                            self.signals.update_list.emit(1, _("最终的幸运儿即将出现："))
-                        elif len(non_repetitive_list) == 1:
-                            self.signals.update_list.emit(
-                                1, _("点击开始重置名单,或切换名单继续点名"))
-                            self.signals.update_list.emit(0, _("此名单已完成抽取！"))
+            self.signals.update_pushbotton.emit(_(" 小窗模式"), 2)
+            try:
+                self.signals.save_history.emit()
+            except:
+                print(_("无法写入历史记录"))
+            self.signals.update_list.emit(2, "")
+            self.signals.enable_button.emit(1)
+
+            if non_repetitive == 1:
+                if len(non_repetitive_list) > 0:
+                    if origin_name_list in non_repetitive_list:
+                        non_repetitive_list.remove(origin_name_list)
+                    else:
+                        print(f"不重复的单抽名单中没有{origin_name_list}")
+                if namelen != 0:
+                    if len(non_repetitive_list) == 1:
+                        self.signals.update_list.emit(1, _("最终的幸运儿即将出现："))
+                    elif len(non_repetitive_list) == 0:
+                        self.signals.update_list.emit(
+                            1, _("点击开始重置名单,或切换名单继续点名"))
+                        self.signals.update_list.emit(0, _("此名单已完成抽取！"))
+
+            if allownametts != 1:
+                self.signals.tts_read.emit()
+
+
             self.signals.update_pushbotton.emit(_(" 开始"), 1)
             self.signals.update_list.emit(7, "")
             if namelen == 0:
@@ -1260,6 +1274,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.setCursor(QCursor(Qt.ArrowCursor))
 
     def qtimer(self, start):
+        global origin_name_list
         if start == 1:
             self.timer = QTimer()
             time = random.randint(30, 40)
@@ -1286,6 +1301,8 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
                     else:
                         info = self.small_window_name
                     self.main_instance.update_list(1, _("小窗：%s") % info)
+                    origin_name_list = name
+                    self.main_instance.tts_read()
                 else:
                     pass
             except Exception as e:
@@ -1591,7 +1608,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                 if checked and not self.radioButton.isChecked() and not self.radioButton_2.isChecked():
                     self.checkBox_2.setText(_("正在检测兼容性..."))
                     self.threadpool = QThreadPool()
-                    self.check_speaker = CheckSpeakerThread()
+                    self.check_speaker = SpeakerThread()
                     self.threadpool.start(self.check_speaker)
 
                     def spearker_test(result, e):
@@ -1655,7 +1672,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             else:
                 print("正在开启不放回模式")
                 self.main_instance.show_message(
-                    _("不放回模式，即单抽结束后的名字不会放回列表中，下次将不会抽到此名字\n当名单抽取完成、切换名单 或 手动点击按钮 时将会重置不放回列表！"), _("说明"))
+                    _("不放回模式，即单抽结束后的名字不会放回列表中，下次将不会抽到此名字\n\n当名单抽取完成、切换名单 或 手动点击按钮 时将会重置不放回列表！"), _("说明"))
 
         elif key == "enable_bgmusic":
             self.enable_bgmusic = 1 if checked else 0
@@ -1733,7 +1750,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                 _("历史记录文件不存在，无法统计次数！\n%s") % e, _("错误"))
 
 
-class CheckSpeakerThread(QRunnable):
+class SpeakerThread(QRunnable):
     def __init__(self, mode=None):
         super().__init__()
         self.signals = WorkerSignals()
@@ -1771,34 +1788,16 @@ class CheckSpeakerThread(QRunnable):
                 e = str(e)
                 self.signals.speakertest.emit(0, e)
         else:
-            self.signals.update_list.emit(2, "")
-            if non_repetitive == 1:
-                self.signals.enable_button.emit(6)
+            if origin_name_list != None:
+                if self.allownametts == 2:
+                    self.ttsread(text=_("恭喜 %s") % origin_name_list)
+                elif self.allownametts == 3:
+                    time.sleep(0.3)
+                    self.ttsread(text=origin_name_list)
+                elif self.allownametts == 1:
+                    pass
             else:
-                self.signals.enable_button.emit(1)
-            self.signals.update_pushbotton.emit(_(" 小窗模式"), 2)
-            if non_repetitive == 1:
-                if namelen != 0:
-
-                    if len(non_repetitive_list) == 1:
-                        self.signals.update_list.emit(1, _("最终的幸运儿即将出现："))
-                    elif len(non_repetitive_list) == 0:
-                        self.signals.update_list.emit(
-                            1, _("点击开始重置名单,或切换名单继续点名"))
-                        self.signals.update_list.emit(0, _("此名单已完成抽取！"))
-            if self.allownametts == 2:
-                self.ttsread(text=_("恭喜 %s") % main_window_name)
-            elif self.allownametts == 3:
-                time.sleep(0.3)
-                self.ttsread(text=main_window_name)
-            elif self.allownametts == 1:
                 pass
-
-            try:
-                self.signals.save_history.emit()
-            except:
-                print(_("无法写入历史记录"))
-            # 终止信号
 
         self.signals.finished.emit()
 
@@ -1806,7 +1805,7 @@ class CheckSpeakerThread(QRunnable):
 if __name__ == "__main__":
     try:
         # 防止重复运行
-        lock_file = os.path.expanduser("~/.CRP_lock")
+        lock_file = os.path.expanduser("~/.Class_Roster_Picker_lock")
         fd = os.open(lock_file, os.O_RDWR | os.O_CREAT)
         try:
             msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
