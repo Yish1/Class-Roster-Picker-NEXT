@@ -13,7 +13,7 @@ import glob
 import ctypes
 import msvcrt
 import pythoncom
-import debugpy
+# import debugpy
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence
@@ -149,7 +149,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         self.read_name_list(2)
         self.set_bgimg()
         self.cs_sha256()
-        # self.check_new_version()
+        self.check_new_version()
         self.change_space(1)
 
         self.timer = None
@@ -644,6 +644,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         self.threadpool1.start(self.update_thread)
         self.update_thread.signals.find_new_version.connect(
             self.update_message)
+        self.update_thread.signals.update_list.connect(
+            self.update_list)
         self.update_thread.signals.finished.connect(
             lambda: print("检查更新线程结束"))
 
@@ -707,18 +709,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
     def update_progress_bar_mulit(self):
         global mrunning
         mrunning = True
-        self.progressBar.setStyleSheet(" QProgressBar {\n"
-                                       "        border: 2px solid rgba(88, 88, 88, 0.81);\n"
-                                       "        border-radius: 2px;\n"
-                                       "        background-color: rgba(0, 0, 0, 0);\n"
-                                       "    }\n"
-                                       "\n"
-                                       "    QProgressBar::chunk {\n"
-                                       "        background-color: QLinearGradient(\n"
-                                       "            x1: 0, y1: 0, x2: 1, y2: 1,\n"
-                                       "            stop: 0 #ffda95, stop: 1 #FF9800\n"
-                                       "        );\n"
-                                       "    }")
+        self.update_progress_bar("","","","mulit")# 金色传说
         if self.progressBar.value() < 100:
             self.value += 1
             self.progressBar.setValue(self.value)
@@ -727,29 +718,58 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             mrunning = False
             self.value = 0
             self.progressBar.setValue(self.value)
-            self.progressBar.hide()
+            self.update_progress_bar(0,"","","default")# 隐藏并恢复默认进度条样式
             self.ptimer.stop()  # 停止定时器
-            self.progressBar.setStyleSheet(" QProgressBar {\n"
-                                           "        border: 2px solid rgba(88, 88, 88, 0.81);\n"
-                                           "        border-radius: 2px;\n"
-                                           "        background-color: rgba(0, 0, 0, 0);\n"
-                                           "    }\n"
-                                           "\n"
-                                           "    QProgressBar::chunk {\n"
-                                           "        background-color: QLinearGradient(\n"
-                                           "            x1: 0, y1: 0, x2: 1, y2: 1,\n"
-                                           "            stop: 0 #00BCD4, stop: 1 #8BC34A\n"
-                                           "        );\n"
-                                           "        border-radius: 8px;\n"
-                                           "    }")
+            
 
-    def update_progress_bar(self, mode, value, value2):
-        self.progressBar.setValue(value)
-        self.progressBar.setMaximum(value2)
+    def update_progress_bar(self, mode, value, value2, style = None):
+        if value == "" and value2 == "":
+            pass
+        else:
+            self.progressBar.setValue(value)
+            self.progressBar.setMaximum(value2)
+
         if mode == 1:
             self.progressBar.show()
+
         elif mode == 0:
             self.progressBar.hide()
+
+        if style == "default":
+            self.progressBar.setStyleSheet("""
+                QProgressBar {
+                    border: 2px solid rgba(88, 88, 88, 0.81);
+                    border-radius: 2px;
+                    background-color: rgba(0, 0, 0, 0);
+                }
+
+                QProgressBar::chunk {
+                    background-color: QLinearGradient(
+                        x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #00BCD4, stop: 1 #8BC34A
+                    );
+                    border-radius: 8px;
+                }
+            """)
+
+        elif style == "mulit" or style == "mulit_radius":
+            radius_style = f"        border-radius: 8px;\n" if style == "mulit_radius" else ""
+            self.progressBar.setStyleSheet(f"""
+                QProgressBar {{
+                    border: 2px solid rgba(88, 88, 88, 0.81);
+                    border-radius: 2px;
+                    background-color: rgba(0, 0, 0, 0);
+                }}
+
+                QProgressBar::chunk {{
+                    background-color: QLinearGradient(
+                        x1: 0, y1: 0, x2: 1, y2: 1,
+                        stop: 0 #ffda95, stop: 1 #FF9800
+                    );
+                    {radius_style}
+                }}
+            """)              
+            
 
     def update_pushbotton(self, text, mode=None):
         if mode == 1:
@@ -954,7 +974,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
 
 class WorkerSignals(QObject):
     # 定义信号
-    show_progress = pyqtSignal(int, int, int)
+    show_progress = pyqtSignal(int, int, int, str)
     update_list = pyqtSignal(int, str)
     update_pushbotton = pyqtSignal(str, int)
     find_new_version = pyqtSignal(str, str)
@@ -1020,7 +1040,7 @@ class WorkerThread(QRunnable):
 
         if running:  # 结束按钮
             self.signals.qtimer.emit(0)
-            self.signals.show_progress.emit(0, 0, 100)
+            self.signals.show_progress.emit(0, 0, 100, "default")
             self.signals.enable_button.emit(1)
             self.signals.key_space.emit(1)# 调整空格为开始
             self.signals.enable_button.emit(7)# 恢复spinbox
@@ -1048,7 +1068,10 @@ class WorkerThread(QRunnable):
             self.signals.qtimer.emit(1)
             self.signals.enable_button.emit(6)# 禁用人数选择框spinbox
             print("开始点名")
-            self.signals.show_progress.emit(1, 0, 0)
+            if non_repetitive == 1 and len(non_repetitive_list) == 1:
+                self.signals.show_progress.emit(1, 0, 0, "mulit_radius")
+            else:
+                self.signals.show_progress.emit(1, 0, 0, "default")
             self.signals.enable_button.emit(2)
             self.signals.key_space.emit(0)
 
@@ -1062,8 +1085,11 @@ class WorkerThread(QRunnable):
                 file_list = os.listdir(folder_path)
                 if not file_list:
                     try:
-                        mid_file = ['olg.mid', 'qqss.mid', 'april.mid', 'hyl.mid', 'hzt.mid',
-                                    'lemon.mid', 'ltinat.mid', 'qby.mid', 'xxlg.mid', 'ydh.mid', 'level5.mid', 'zyzy.mid']
+                        if non_repetitive == 1 and len(non_repetitive_list) == 1 :
+                            mid_file = ['hyl.mid']
+                        else:
+                            mid_file = ['olg.mid', 'qqss.mid', 'april.mid', 'hyl.mid', 'hzt.mid',
+                                        'lemon.mid', 'ltinat.mid', 'qby.mid', 'xxlg.mid', 'ydh.mid', 'level5.mid', 'zyzy.mid']
                         mid_load = random.choice(mid_file)
                         file_path = f":/mid/{mid_load}"
                         file = QFile(file_path)
@@ -1081,12 +1107,12 @@ class WorkerThread(QRunnable):
                             "april": "若能绽放光芒(光るなら)",  # https://www.midishow.com/en/midi/ff14-op-midi-download-151208
                             "hyl": "好运来(Good Luck Comes)",  # https://www.midishow.com/en/midi/1115.html
                             "hzt": "花の塔",                   # https://www.midishow.com/en/midi/ff14-lycoris-recoil-ed-midi-download-158585
-                            "lemon": "Lemon_Yish_modify",                 # https://www.midishow.com/en/midi/71733.html#删除部分前奏
-                            "ltinat": "Late in autumn_Yish_modify",       # https://www.midishow.com/en/midi/late-in-autumn-midi-download-148678删除部分前奏
-                            "qby": "千本桜",                    # https://www.midishow.com/en/midi/71765.html
-                            "xxlg": "小小恋歌",                 # https://www.midishow.com/en/midi/71740.html
-                            "ydh": "运动员进行曲",              # https://www.midishow.com/en/midi/140621.html
-                            "level5": "LEVEL5 -Judgelight-",   # https://www.midishow.com/en/midi/23834.html
+                            "lemon": "Lemon",                 # https://www.midishow.com/en/midi/71733.html#删除部分前奏_Yish_
+                            "ltinat": "Late in autumn",       # https://www.midishow.com/en/midi/late-in-autumn-midi-download-148678删除部分前奏_Yish_
+                            "qby": "千本桜",                     # https://www.midishow.com/en/midi/71765.html
+                            "xxlg": "小小恋歌",                  # https://www.midishow.com/en/midi/71740.html
+                            "ydh": "运动员进行曲",               # https://www.midishow.com/en/midi/140621.html
+                            "level5": "LEVEL5 -Judgelight-",    # https://www.midishow.com/en/midi/23834.html
                             "zyzy": "自言自语(ヒトリゴト)-ClariS"# https://www.midishow.com/en/midi/ff14-8-op-claris-midi-download-171600
                         }
                         mid_load = mid_name.get(mid_load, mid_load)
@@ -1188,8 +1214,10 @@ class UpdateThread(QRunnable):
                     self.signals.find_new_version.emit(_("云端最新版本为%s，要现在下载新版本吗？<br>您也可以稍后访问沉梦小站官网获取最新版本。<br><br>%s") % (
                         newversion, new_version_detail), findnewversion)
                 else:
-                    if float(latest_version) == newversion:
+                    if float(latest_version) == newversion and dmversion != newversion:
                         print("\n已忽略%s版本更新,当前版本：%s" % (newversion, dmversion))
+                        findnewversion += _("(已忽略)")
+                        self.signals.update_list.emit(1, findnewversion)
                 if newversion:
                     connect = True
             except:
