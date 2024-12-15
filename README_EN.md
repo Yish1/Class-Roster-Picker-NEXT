@@ -43,7 +43,7 @@
 - [ ] ......
 
       
-## Download Address
+## Download Url
 > Latest version download address：[Lanzou Cloud](https://yish.lanzouw.com/b038hjo8f) (Passward：cmti)
 > 
 > IN CMXZ.TOP：[GO！](https://cmxz.top/ktdmq)
