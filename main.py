@@ -21,7 +21,7 @@ from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QShortcut
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from datetime import datetime, timedelta
-from ui import Ui_Form  # 导入ui文件
+from ui import Ui_CRPmain  # 导入ui文件
 from smallwindow import Ui_smallwindow
 from settings import Ui_settings
 from Crypto.Cipher import ARC4
@@ -32,8 +32,6 @@ from Crypto.Cipher import ARC4
 rewrite_print = print
 
 # print写入log中
-
-
 def print(*arg):
     rewrite_print(*arg)
     rewrite_print(*arg, file=open('log.txt', "a", encoding='utf-8'))
@@ -73,7 +71,7 @@ except:
         user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
 
 # version
-dmversion = 6.35
+dmversion = 6.4
 
 # config变量
 allownametts = None
@@ -106,7 +104,7 @@ today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 pygame.mixer.init()
 
 
-class MainWindow(QtWidgets.QMainWindow, Ui_Form):
+class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
     def __init__(self):
         super().__init__()
         self.setupUi(self)  # 初始化UI
@@ -114,8 +112,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         self.setWindowFlag(Qt.FramelessWindowHint)
         # 设置半透明背景
         self.setAttribute(Qt.WA_TranslucentBackground)
+        
+        # 鼠标拖动标志
         self.m_flag = False
-        self.setMinimumSize(QtCore.QSize(700, 409))
+        self.resize_flag = False
+
+        self.setMinimumSize(QtCore.QSize(780, 445))
         self.setWindowTitle(QCoreApplication.translate(
             "MainWindow", _("沉梦课堂点名器 %s") % dmversion))
         self.pushButton_2.setText(_(" 开始"))
@@ -129,6 +131,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         self.label_4.setText(_("抽取人数："))
         self.label_7.setText("")
         self.progressBar.hide()
+        self.commandLinkButton.hide()
+
+        # 添加横线遮罩的 FrameWithLines
+        self.linemask = FrameWithLines(self)
+        self.linemask.setObjectName("linemask")
+        self.gridLayout.addWidget(self.linemask, 0, 0, 1, 1)
+        self.linemask.lower()
+        self.linemask.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+
+        self.setCentralWidget(self.frame)
 
         # 定义空格快捷键
         self.shortcut = QShortcut(QKeySequence(Qt.Key_Space), self)
@@ -138,6 +150,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         self.pushButton_4.clicked.connect(self.run_settings)
         self.pushButton_5.clicked.connect(self.small_mode)
         self.pushButton.clicked.connect(lambda: self.mini(1))
+        self.commandLinkButton.clicked.connect(self.restoresize)
 
         # 启用触摸手势滚动
         scroller = QScroller.scroller(self.listWidget)
@@ -149,12 +162,65 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         self.read_name_list(2)
         self.set_bgimg()
         self.cs_sha256()
-        self.check_new_version()
+        # self.check_new_version()
         self.change_space(1)
 
         self.timer = None
         if first_use == 0:
             self.first_use_introduce()
+
+
+    def mouseMoveEvent(self, event):
+        # 获取鼠标相对于窗口的坐标
+        pos = event.pos()
+        rect = self.rect()  # 窗口的区域
+
+        # 判断是否在右下角区域
+        if (rect.width() - pos.x() <= 35 and
+            rect.height() - pos.y() <= 35):
+            self.setCursor(QCursor(Qt.SizeFDiagCursor))  # 设置调整大小的鼠标指针
+        else:
+            self.setCursor(QCursor(Qt.ArrowCursor))  # 恢复默认光标
+
+        if self.resize_flag:
+            # 调整窗口大小
+            diff = event.globalPos() - self.m_Position
+            new_width = self.width() + diff.x()
+            new_height = self.height() + diff.y()
+            self.resize(
+                max(new_width, self.minimumWidth()),
+                max(new_height, self.minimumHeight())
+            )
+            self.m_Position = event.globalPos()
+        elif self.m_flag:
+            # 拖动窗口
+            self.move(event.globalPos() - self.m_Position)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            if (self.width() - event.pos().x() <= 35 and
+                self.height() - event.pos().y() <= 35):
+                self.resize_flag = True
+                self.m_Position = event.globalPos()
+            elif event.pos().y() <= self.height() // 2:
+                self.m_flag = True
+                self.m_Position = event.globalPos() - self.pos()
+
+    def mouseReleaseEvent(self, event):
+        self.m_flag = False
+        self.resize_flag = False
+        self.setCursor(QCursor(Qt.ArrowCursor))  # 恢复光标
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        screen_geometry = QApplication.primaryScreen().availableGeometry()
+        # 检查窗口尺寸
+        if self.width() > screen_geometry.width() * 0.8 or self.height() > screen_geometry.height() * 0.8:
+            self.commandLinkButton.show()  # 显示按钮
+            if self.width() > screen_geometry.width() or self.height() > screen_geometry.height():
+                self.resize(screen_geometry.width(), screen_geometry.height())
+        else:
+            self.commandLinkButton.hide()  # 隐藏按钮
 
     def set_bgimg(self):
         self.label_6.setText("")
@@ -166,20 +232,28 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
             file_list = os.listdir(folder_path)
             if not file_list:
                 print("要使用自定义背景功能，请在 %s 中放入图片文件" % folder_path)
-                self.label_2.setStyleSheet("border-image: url(:/images/(1070).webp);"
-                                           "border-radius: 28px;")
+                self.frame.setStyleSheet("#frame {\n"
+                                "border-image: url(:/images/(1070).webp);"
+                                "border-radius: 28px;"
+                                "}")
                 return
             self.label_6.setText(_("自定义背景"))
             random_file = random.choice(file_list)
             print(random_file)
-            self.label_2.setStyleSheet(f"border-image: url('./images/{random_file}');"
-                                       "border-radius: 30px;")
+            self.frame.setStyleSheet("#frame {\n"
+                                       f"border-image: url('./images/{random_file}');"
+                                       "border-radius: 28px;"
+                                       "}")
         elif bgimg == 1 or bgimg == 0:
-            self.label_2.setStyleSheet("border-image: url(:/images/bg.webp);"
-                                       "border-radius: 28px;")
+            self.frame.setStyleSheet("#frame {\n"
+                                       "border-image: url(:/images/bg.webp);"
+                                       "border-radius: 28px;"
+                                       "}")
         elif bgimg == 3:
-            self.label_2.setStyleSheet("background-color: rgba(42, 45, 47, 0.92);\n"
-                                       "border-radius: 28px;")
+            self.frame.setStyleSheet("#frame {\n"
+                                    "background-color: rgba(42, 45, 47, 0.92);\n"
+                                    "border-radius: 28px;"
+                                    "}")
 
     def small_mode(self):
         global small_window_flag
@@ -194,38 +268,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         if settings_flag is None:
             settings_window = settingsWindow(mainWindow)
             settings_flag = settings_window.run_settings_window()
-
     def closeEvent(self, event):
         # 关闭其他窗口的代码
         for widget in QApplication.topLevelWidgets():
             if isinstance(widget, QWidget) and widget != self:
                 widget.close()
         event.accept()
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            if event.pos().y() <= self.height() // 2.0:  # 只允许在上半部分拖动
-                self.m_flag = True
-                self.m_Position = event.globalPos() - self.pos()  # 获取鼠标相对窗口的位置
-                event.accept()
-                self.setCursor(QCursor(Qt.OpenHandCursor))  # 更改鼠标图标
-
-    def mouseMoveEvent(self, event):
-        if Qt.LeftButton and self.m_flag:
-            self.setWindowState(Qt.WindowNoState)
-            self.move(event.globalPos() - self.m_Position)  # 更改窗口位置
-            event.accept()
-
-    def mouseReleaseEvent(self, event):
-        self.m_flag = False
-        self.setCursor(QCursor(Qt.ArrowCursor))  # 恢复默认鼠标图标
-
     def mini(self, mode):
         if mode == 1:
             self.showMinimized()
         elif mode == 2:
             self.showNormal()
     # 功能实现代码
+
+    def restoresize(self):
+        self.resize(780, 445)
+        screen_geometry = QApplication.primaryScreen().availableGeometry()
+        x = (screen_geometry.width() - self.width()) // 2
+        y = (screen_geometry.height() - self.height()) // 2
+        self.move(x, y)
 
     def make_name_list(self):
         for i in range(1, 21):
@@ -879,7 +940,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
                                       file_path, "\n%s" % e)
             else:
                 self.timer = QTimer(self)
-                time = random.randint(30, 40)
+                time = random.randint(99, 130)
                 self.timer.start(time)
                 self.timer.timeout.connect(self.setname)
 
@@ -893,7 +954,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
     def setname(self):
         global name, non_repetitive_list, origin_name_list
         font = QtGui.QFont()
-        font.setPointSize(45)  # 字体大小
+        font.setPointSize(80)  # 字体大小
         self.label_3.setFont(font)
         if non_repetitive == 1:
             if len(non_repetitive_list) == 0:
@@ -920,18 +981,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
                 name = random.choice(name_list)
         except:
             pass
-        font = self.label_3.font()
         font_size = font.pointSize()
-
-        # 检测文本宽度
         metrics = QFontMetrics(font)
-        while metrics.width(name) > 1.8*self.label_3.width() and font_size > 0:
+
+        # 计算每行最大可以容纳的字符数
+        # a 代表最大行数的估算值
+        max_width = self.label_3.width()
+        max_height = self.label_3.height()
+
+        # 估算一行字符数
+        a = int(metrics.width(name) / max_width) + 2  # 根据文本的总宽度和标签宽度来估算行数
+
+        # 如果文本换行后的高度超出了标签高度，逐步减小字体
+        while metrics.height() * a *1.1 > max_height and font_size > 0:           
             font_size -= 1
             font.setPointSize(font_size)
             self.label_3.setFont(font)
             metrics = QFontMetrics(font)
-        font = self.label_3.font()
-        font_size = font.pointSize()
+            
+            
+            # 再次计算换行后估算行数
+            a = int(metrics.width(name) / max_width) + 2  # 更新行数
         origin_name_list = name
         self.label_3.setText(origin_name_list)
 
@@ -1305,7 +1375,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         global origin_name_list
         if start == 1:
             self.timer = QTimer()
-            time = random.randint(30, 40)
+            time = random.randint(99, 130)
             self.timer.start(time)
             self.timer.timeout.connect(self.setname)
             self.runflag = True
@@ -1362,15 +1432,18 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
             except:
                 pass
 
-            font = self.label_2.font()
             font_size = font.pointSize()
-            # 检测文本宽度
             metrics = QFontMetrics(font)
-            while metrics.width(name) > 1.8*self.label_2.width() and font_size > 0:
+            max_width = self.label_2.width()
+            max_height = self.label_2.height()
+            # 估算一行字符数
+            a = int(metrics.width(name) / max_width) + 2
+            while metrics.height() * a *1.1 > max_height and font_size > 0:           
                 font_size -= 1
                 font.setPointSize(font_size)
                 self.label_2.setFont(font)
                 metrics = QFontMetrics(font)
+                a = int(metrics.width(name) / max_width) + 2  # 更新行数
             self.small_window_name = name
             self.label_2.setText(name)
 
@@ -1830,6 +1903,54 @@ class SpeakerThread(QRunnable):
         self.signals.finished.emit()
 
 
+
+class FrameWithLines(QtWidgets.QFrame): 
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.border_radius = 28  # 圆角半径
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        painter = QtGui.QPainter(self)
+
+        # 设置裁剪区域，带圆角的矩形
+        path = QtGui.QPainterPath()
+        rect = QtCore.QRectF(self.rect())  # 将 QRect 转换为 QRectF
+        path.addRoundedRect(rect, self.border_radius, self.border_radius)
+        painter.setClipPath(path)
+
+        # 设置遮罩画笔
+        pen = QtGui.QPen(QtGui.QColor(0, 0, 0, 150))  # 半透明黑色
+        pen.setWidth(int(1.3))  # 横线宽度
+        painter.setPen(pen)
+
+        # 绘制横线，确保在圆角矩形内
+        line_spacing = int(3.0)  # 横线间距
+        y = 0
+        while y < self.height():
+            painter.drawLine(0, y, self.width(), y)
+            y += line_spacing
+
+        # 绘制右下角的直角标志
+        marker_color = QtGui.QColor(140,140,140)
+        marker_pen = QtGui.QPen(marker_color)
+        marker_pen.setWidth(int(2.6))  # 设置线条宽度
+        painter.setPen(marker_pen)
+
+        # 设置直角的起点和终点
+        line_length = 13  # 直角标志的长度
+        margin = 18
+        x_start = self.width() - margin - line_length  # 水平线起点
+        y_start = self.height() - margin - line_length  # 垂直线起点
+
+        # 水平线
+        painter.drawLine(x_start, self.height() - margin, self.width() - margin, self.height() - margin)
+        # 垂直线
+        painter.drawLine(self.width() - margin, y_start, self.width() - margin, self.height() - margin)
+
+        painter.end()
+
+
 if __name__ == "__main__":
     try:
         # 防止重复运行
@@ -1839,11 +1960,17 @@ if __name__ == "__main__":
             msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
         except OSError:
             os.close(fd)
-            print("另一个点名器正在运行。\nAnother CRP is already running.")
             user32 = ctypes.windll.user32
-            user32.MessageBoxW(
-                None, "另一个点名器正在运行。\nAnother CRP is already running.", "Warning!", 0x30)
-            sys.exit()
+            result = user32.MessageBoxW(
+                None,
+                "另一个点名器正在运行。\n是否继续运行？\n\nAnother CRP is already running.\nDo you want to continue?",
+                "Warning!",
+                0x31
+            )
+            if result == 2:
+                sys.exit()  # 退出程序
+            elif result == 1:
+                print("用户选择继续运行。")
 
         if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
             QtWidgets.QApplication.setAttribute(
