@@ -23,7 +23,7 @@ from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreAppli
 from datetime import datetime, timedelta
 from ui import Ui_CRPmain  # 导入ui文件
 from smallwindow import Ui_smallwindow
-from settings import Ui_settings
+from settings import Ui_Settings
 from Crypto.Cipher import ARC4
 
 # debugpy.listen(("0.0.0.0", 5678))
@@ -93,6 +93,7 @@ name_list = ""
 history_file = ""
 non_repetitive_list = ""
 namelen = 0
+newversion = None
 origin_name_list = None
 
 # 窗口标识符
@@ -161,7 +162,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.read_config()
         self.read_name_list(2)
         self.set_bgimg()
-        self.cs_sha256()
+        # self.cs_sha256()
         # self.check_new_version()
         self.change_space(1)
 
@@ -215,7 +216,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         super().resizeEvent(event)
         screen_geometry = QApplication.primaryScreen().availableGeometry()
         # 检查窗口尺寸
-        if self.width() > screen_geometry.width() * 0.8 or self.height() > screen_geometry.height() * 0.8:
+        if self.width() > screen_geometry.width() * 0.9 or self.height() > screen_geometry.height() * 0.9:
             self.commandLinkButton.show()  # 显示按钮
             if self.width() > screen_geometry.width() or self.height() > screen_geometry.height():
                 self.resize(screen_geometry.width(), screen_geometry.height())
@@ -1473,41 +1474,70 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.minimum_flag = True
 
 
-class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
+class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
     def __init__(self, main_instance=None):
         super().__init__()
         central_widget = QtWidgets.QWidget(self)  # 创建一个中央小部件
         self.setCentralWidget(central_widget)  # 设置中央小部件为QMainWindow的中心区域
         self.setupUi(central_widget)  # 初始化UI到中央小部件上
-        self.setFixedSize(682, 523)
+        self.setMinimumSize(667, 539)
+        self.resize(667, 539)
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
-        self.groupBox.setTitle(_("功能设置"))
+        self.pushButton_2.setText(_("保存"))
+        self.pushButton.setText(_("取消"))
+        self.groupBox_6.setTitle(_("快捷访问"))
+        self.pushButton_12.setText(_("名单文件目录"))
+        self.pushButton_10.setText(_("背景音乐目录"))
+        self.pushButton_8.setText(_("历史记录目录"))
+        self.groupBox.setTitle(_("功能开关"))
+        self.checkBox.setText(_("不放回模式(单抽结果不重复)"))
+        self.checkBox_3.setText(_("检查更新"))
+        self.checkBox_4.setText(_("背景音乐"))
+        self.checkBox_2.setText(_("语音播报"))
+        self.radioButton.setText(_("正常模式"))
+        self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
+        self.label.setText(_("背景图片"))
         self.radioButton_3.setText(_("默认背景"))
         self.radioButton_4.setText(_("自定义"))
         self.radioButton_5.setText(_("无"))
-        self.checkBox.setText(_("不放回模式(单抽结果不重复)"))
-        self.checkBox_3.setText(_("检查更新"))
-        self.checkBox_2.setText(_("语音播报"))
-        self.checkBox_4.setText(_("背景音乐"))
-        self.label.setText(_("背景图片"))
-        self.radioButton.setText(_("正常模式"))
-        self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
-        self.groupBox_3.setTitle(_("语言设置"))
-        self.pushButton_2.setText(_("保存"))
-        self.pushButton.setText(_("取消"))
-        self.groupBox_2.setTitle(_("名单管理"))
-        self.pushButton_4.setText(_("删除所选名单"))
-        self.pushButton_6.setText(_("统计所选名单"))
-        self.pushButton_3.setText(_("新建名单"))
-        self.pushButton_5.setText(_("编辑所选名单"))
-        self.groupBox_6.setTitle(_("快捷访问"))
-        self.pushButton_8.setText(_("历史记录目录"))
         self.pushButton_9.setText(_("背景图片目录"))
-        self.pushButton_10.setText(_("背景音乐目录"))
-        self.pushButton_12.setText(_("名单文件目录"))
+        self.groupBox_3.setTitle(_("语言设置"))
         self.groupBox_5.setTitle(_("关于"))
-        self.label_2.setText(_("沉梦课堂点名器 %s") % dmversion)
-        self.label_3.setText(_("<html><head/><body><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具<br/></p><p align=\"center\"><a href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p></body></html>"))
+        self.label_2.setText(_("沉梦课堂点名器 V%s" % dmversion))
+        self.label_3.setText(_("<html><head/><body><p align=\"center\"></p><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具</p><p align=\"center\"><br/><a href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a><br/></p><p align=\"center\">Developers: Yish1, QQB-Roy, limuy2022</p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><br/></p></body></html>"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("基本设置"))
+        self.groupBox_2.setTitle(_("名单管理"))
+        self.pushButton_3.setText(_("新建名单"))
+        self.pushButton_4.setText(_("删除所选名单"))
+        self.pushButton_15.setText(_("访问名单文件目录"))
+        self.pushButton_13.setText(_("撤销未保存的修改"))
+        self.textEdit.setHtml(_("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'SimSun\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        self.pushButton_11.setText(_("保存修改"))
+        self.label_8.setText(_("！！！编辑名单时请确保名字为 一行一个！！！"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("名单管理"))
+        self.groupBox_4.setTitle(_("历史记录列表"))
+        self.pushButton_5.setText(_("统计所选历史记录"))
+        self.textEdit_2.setHtml(_("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'SimSun\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("历史记录"))
+        self.textBrowser.setHtml(_("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'SimSun\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        self.label_4.setText(_("沉梦课堂点名器 V%s" % dmversion))
+        self.label_5.setText(_("<html><head/><body><p align=\"center\"></p><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具</p><p align=\"center\"><br/><a href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a><br/></p><p align=\"center\">Developers: Yish1, QQB-Roy, limuy2022</p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><br/></p></body></html>"))
+        self.label_6.setText(_("当前版本号："))
+        self.label_7.setText(_("云端版本号："))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _("关于"))
+
         self.setWindowTitle(QCoreApplication.translate(
             "MainWindow", _("课堂点名器设置")))
 
@@ -1515,6 +1545,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.read_name_list()
         self.read_config()
         self.find_langluge()
+        self.find_history()
+        self.show_dmversion()
 
         self.enable_tts = None
         self.enable_update = None
@@ -1522,20 +1554,30 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.language_value = None
         self.disable_repetitive = None
         self.enable_bgmusic = None
+        self.file_path = None
 
         self.window = QWidget()
         self.window.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
         self.pushButton.clicked.connect(self.close)
         self.pushButton_3.clicked.connect(self.add_new_list)
         self.pushButton_4.clicked.connect(self.delete_list)
-        self.pushButton_5.clicked.connect(self.edit_list)
         self.pushButton_2.clicked.connect(self.save_settings)
-        self.pushButton_6.clicked.connect(self.count_name)
+        self.pushButton_5.clicked.connect(self.count_name)
         self.comboBox_2.currentIndexChanged.connect(self.change_langluge)
         self.pushButton_12.clicked.connect(lambda: self.open_fold("name"))
+        self.pushButton_15.clicked.connect(lambda: self.open_fold("name"))
         self.pushButton_10.clicked.connect(lambda: self.open_fold("dmmusic"))
         self.pushButton_9.clicked.connect(lambda: self.open_fold("images"))
         self.pushButton_8.clicked.connect(lambda: self.open_fold("history"))
+        self.pushButton_11.clicked.connect(self.save_name_list)
+        self.pushButton_13.clicked.connect(self.read_name_inlist)
+        self.listWidget.itemSelectionChanged.connect(self.read_name_inlist)
+        self.listWidget_2.itemSelectionChanged.connect(lambda:self.find_history(1))
+        self.tabWidget.currentChanged.connect(self.tab_changed)
+
+        self.pushButton_11.setEnabled(False)
+        self.pushButton_13.setEnabled(False)
+        self.pushButton_5.setEnabled(False)
 
         self.checkBox.toggled.connect(
             lambda checked: self.process_config("disable_repetitive", checked))
@@ -1556,9 +1598,15 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         self.radioButton_5.toggled.connect(
             lambda checked: self.process_config("enable_bgimg", checked))
 
+    def tab_changed(self, index):
+        if index != 0:
+            self.frame.hide()
+        else:
+            self.frame.show()
+
     def read_name_list(self):
         txt_files_name = self.main_instance.read_name_list(1)
-        self.comboBox_1.addItems(txt_files_name)  # 添加文件名到下拉框
+        self.listWidget.addItems(txt_files_name)  # 添加文件名到列表
 
     def refresh_name_list(self):
         txt_name = [filename for filename in os.listdir(
@@ -1567,6 +1615,44 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
             filename)[0] for filename in txt_name]
 
         return txt_files_name
+    
+    def read_name_inlist(self, mode = None):
+        
+        selected_items = self.listWidget.selectedItems()
+
+        if not selected_items:
+            self.pushButton_11.setEnabled(False)
+            self.pushButton_13.setEnabled(False)
+            return
+        else:
+            self.pushButton_11.setEnabled(True)
+            self.pushButton_13.setEnabled(True)
+        
+        # huoqu列表选择的文件
+        for item in selected_items:
+            selected_text_inlist = item.text()
+    
+        self.file_path = os.path.join("name", selected_text_inlist+".txt")
+
+        if not self.file_path or not os.path.isfile(self.file_path):
+            return
+        
+        else:
+            file_content = self.read_txt()
+            self.textEdit.setPlainText(file_content)       
+   
+    def read_txt(self):
+        file_content = None
+        try:
+            # 打开文件并读取内容
+            with open(self.file_path, 'r', encoding='utf-8') as f:
+                file_content = f.read()
+        except:
+            # 打开文件并读取内容
+            with open(self.file_path, 'r', encoding='gbk') as f:
+                file_content = f.read()
+        finally:
+            return file_content
 
     def add_new_list(self):
         newfilename, ok_pressed = QInputDialog.getText(
@@ -1582,48 +1668,121 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                            (newfilename, newnamepath))
                 QMessageBox.information(
                     self.window, _("新建成功"), message, QMessageBox.Ok)
-                self.main_instance.opentext(newnamepath)
             else:
                 self.main_instance.show_message(_("同名文件已存在，请勿重复创建！"), _("警告！"))
             txt_name = self.refresh_name_list()
-            self.comboBox_1.clear()  # 清空下拉框的选项
-            self.comboBox_1.addItems(txt_name)  # 添加新的文件名到下拉框
+            self.listWidget.clear()  # 清空下拉框的选项
+            self.listWidget.addItems(txt_name)  # 添加新的文件名到下拉框
 
     def delete_list(self):
         target_filename, ok_pressed = QInputDialog.getText(
-            self.window, _("删除名单"), _("再次输入名单名称将删除此名单！"))
+            self.window, _("删除名单"), _("输入要删除的名单名称："))
         if ok_pressed and target_filename:
-            if target_filename == self.comboBox_1.currentText():
-                target_filepath = os.path.join(
-                    "name", f"{target_filename}.txt")
-                try:
-                    os.remove(target_filepath)  # 删除文件
-                    message = (_("已成功删除名单： '%s.txt' ") % target_filename)
-                    QMessageBox.information(
-                        self.window, _("删除成功"), message, QMessageBox.Ok)
-                    txt_name = self.refresh_name_list()
-                    self.comboBox_1.clear()  # 清空下拉框的选项
-                    self.comboBox_1.addItems(txt_name)  # 添加新的文件名到下拉框
-                except Exception as e:
-                    QMessageBox.warning(
-                        self.window, _('警告'), _('名单文件不存在，或已被删除！\n%s') % e, QMessageBox.Ok)
-            else:
-                self.main_instance.show_message(_("名单名称输入错误！"), _("错误"))
+            target_filepath = os.path.join(
+                "name", f"{target_filename}.txt")
+            try:
+                os.remove(target_filepath)  # 删除文件
+                message = (_("已成功删除名单： '%s.txt' ") % target_filename)
+                QMessageBox.information(
+                    self.window, _("删除成功"), message, QMessageBox.Ok)
+                txt_name = self.refresh_name_list()
+                self.listWidget.clear()  # 清空下拉框的选项
+                self.listWidget.addItems(txt_name)  # 添加新的文件名到下拉框
+            except Exception as e:
+                QMessageBox.warning(
+                    self.window, _('警告'), _('名单文件不存在，或已被删除！\n%s') % e, QMessageBox.Ok)
 
-    def edit_list(self):
-        target_filename = self.comboBox_1.currentText()
-        target_filepath = os.path.join(
-            "name", f"{target_filename}"+".txt")
-        try:
-            self.main_instance.opentext(target_filepath)  # 自带错误处理
-        except Exception as e:
-            # 捕捉预料外的错误
-            print(f"名单文件不存在，无法编辑{e}")
-            QMessageBox.warning(
-                self.window, _('警告'), _('名单文件不存在，或已被删除！\n%s') % e, QMessageBox.Ok)
+    def save_name_list(self):
+        file_content = self.textEdit.toPlainText()
+        
+        current_name_list = file_content.splitlines()
+        current_name_count = len(current_name_list)
+
+        # 计算源文件中的名字数目（假设文件已存在并读取其内容）
+        original_name_count = 0
+        if os.path.isfile(self.file_path):
+            try:
+                with open(self.file_path, 'r', encoding='utf-8') as f:
+                    original_name_list = f.read().splitlines()
+                    original_name_count = len(original_name_list)
+            except Exception as e:
+                self.main_instance.show_message(_("无法读取源文件！\n%s" % e), _("错误"))
+
+        # 计算增加/减少的名字数量
+        name_diff = current_name_count - original_name_count
+        if name_diff > 0:
+            change_message = _("增加了 %d 个名字" % name_diff)
+        elif name_diff < 0:
+            change_message = _("减少了 %d 个名字" % abs(name_diff))
+        else:
+            change_message = _("名单人数没有变化")
+
+        # 弹出确认窗口，询问用户是否继续保存
+        msg = QMessageBox(self)
+        msg.setIcon(QMessageBox.Question)
+        msg.setWindowTitle(_("保存确认"))
+        msg.setText(f"您正在保存文件：{os.path.basename(self.file_path)}\n"
+                    f"名单中共有 {current_name_count} 个名字，\n"
+                    f"与源文件相比，{change_message}。\n"
+                    f"是否继续保存？")
+        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        result = msg.exec_()
+
+        # 根据用户选择继续保存或取消
+        if result == QMessageBox.Yes:
+            try:
+                # 写入文件内容
+                with open(self.file_path, 'w', encoding='utf-8') as f:
+                    f.write(file_content)
+                self.main_instance.show_message(_("名单保存成功！"), _("提示"))
+            except Exception as e:
+                self.main_instance.show_message(_("名单保存出现错误！\n%s" % e), _("错误"))
+        else:
+            self.main_instance.show_message(_("已取消保存！"), _("提示"))
+
+
+    def find_history(self,mode = None):
+        if mode == 1:
+            # Read模式
+            selected_items = self.listWidget_2.selectedItems()
+            if not selected_items:
+                self.pushButton_5.setEnabled(False)
+                return
+            else:
+                self.pushButton_5.setEnabled(True)
+            
+            # 获取列表选择的文件
+            for item in selected_items:
+                selected_text_inlist = item.text()
+        
+            self.file_path = os.path.join("history", selected_text_inlist+".txt")
+
+            if not self.file_path or not os.path.isfile(self.file_path):
+                return
+            
+            else:
+                file_content = self.read_txt()
+                self.textEdit_2.setPlainText(file_content)       
+
+        else:    
+            # Find模式，读取指定目录下的文件夹名
+            history_dir = "./history"
+            try:
+                if os.path.exists(history_dir) and os.path.isdir(history_dir):
+                    history_file = [filename for filename in os.listdir(
+                        history_dir) if filename.endswith(".txt")]
+                    history_files_name = [os.path.splitext(
+                        filename)[0] for filename in history_file]
+                    if not history_files_name:
+                        return
+
+                    self.listWidget_2.addItems(history_files_name)
+                else:
+                    print(f"目录不存在: {history_dir}")
+            except Exception as e:
+                print(f"读取历史文件夹失败: {e}")    
 
     def find_langluge(self):
-        # 读取指定目录下的文件夹名
         locale_dir = "./locale"
         try:
             if os.path.exists(locale_dir) and os.path.isdir(locale_dir):
@@ -1642,6 +1801,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
         try:
             self.main_instance.mini(2)
             self.main_instance.read_name_list()
+            self.main_instance.get_selected_file(0)
         except Exception as e:
             print(e)
         global settings_flag
@@ -1822,7 +1982,17 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
 
     def count_name(self):
         name_counts = {}  # 存储名字出现次数的字典
-        file = "history/%s中奖记录.txt" % self.comboBox_1.currentText()
+
+        selected_items = self.listWidget_2.selectedItems()
+
+        if not selected_items:
+            print("未知错误")
+            return
+
+        for item in selected_items:
+            count_target = item.text()
+
+        file = "history/%s.txt" % count_target
         try:
             with open(file, encoding="utf-8") as file:
                 for line in file:
@@ -1843,13 +2013,26 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_settings):  # 设置窗口
                 cresult += "%s 出现了 %s 次\n" % (name, count)
                 with open('中奖统计.txt', 'w', encoding="utf-8") as file:
                     file.write(cresult)
-            QMessageBox.information(self, _("保存结果"), _("统计结果已保存到'中奖统计.txt'"))
+            QMessageBox.information(self, _("保存结果"), _("统计结果已保存到'/中奖统计.txt'"))
+
+            self.textEdit_2.setPlainText(cresult)
             self.main_instance.opentext('中奖统计.txt')
         except Exception as e:
             print("读取文件时发生错误:", e)
             self.main_instance.show_message(
                 _("历史记录文件不存在，无法统计次数！\n%s") % e, _("错误"))
 
+    def show_dmversion(self):
+        global newversion
+        self.label_6.setText(_("当前版本号：%s") % dmversion)
+        if newversion:
+            pass
+        else:
+            newversion = _("无法获取最新版本！")
+        self.label_7.setText(_("云端版本号：%s") % newversion)
+        self.file_path = "history_version.txt"
+        content = self.read_txt()
+        self.textBrowser.setPlainText(content)
 
 class SpeakerThread(QRunnable):
     def __init__(self, mode=None):
