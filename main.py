@@ -19,7 +19,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QShortcut
-from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
+from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication, QUrl
 from datetime import datetime, timedelta
 from ui import Ui_CRPmain  # 导入ui文件
 from smallwindow import Ui_smallwindow
@@ -82,6 +82,7 @@ last_name_list = None
 non_repetitive = None
 bgmusic = None
 first_use = None
+enable_name_mod = None
 
 # 全局变量
 name = None
@@ -162,7 +163,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.read_config()
         self.read_name_list(2)
         self.set_bgimg()
-        # self.cs_sha256()
+        self.cs_sha256()
         # self.check_new_version()
         self.change_space(1)
 
@@ -366,12 +367,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.listWidget.setCurrentRow(self.listWidget.count() - 1)
 
     def read_config(self):
-        global allownametts, checkupdate, bgimg, last_name_list, language_value, latest_version, non_repetitive, bgmusic, first_use
+        global allownametts, checkupdate, bgimg, last_name_list, language_value, latest_version, non_repetitive, bgmusic, first_use, enable_name_mod
         config = {}
         if not os.path.exists('config.ini'):
             with open('config.ini', 'w', encoding='utf-8') as file:
                 file.write(
-                    '[language]=zh_CN\n[allownametts]=1\n[checkupdate]=2\n[bgimg]=1\n[last_name_list]=None\n[latest_version]=0\n[non_repetitive]=0\n[bgmusic]=0\n[first_use]=0')
+                    '[language]=zh_CN\n[allownametts]=1\n[checkupdate]=2\n[bgimg]=1\n[last_name_list]=None\n[latest_version]=0\n[non_repetitive]=1\n[bgmusic]=0\n[first_use]=0\n[enable_name_mod]=1')
         with open('config.ini', 'r', encoding='utf-8') as file:
             for line in file:
                 if '=' in line:
@@ -387,6 +388,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             non_repetitive = int(config.get('non_repetitive'))
             bgmusic = int(config.get('bgmusic'))
             first_use = int(config.get('first_use'))
+            enable_name_mod = int(config.get('enable_name_mod'))
 
         except Exception as e:
             print(f"配置文件读取失败，已重置为默认值！{e}")
@@ -401,6 +403,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         with open('config.ini', 'w', encoding='utf-8') as file:
             for key, value in config.items():
                 file.write(f"[{key}]={value}\n")
+        print(f"写入配置{variable} = {new_value} 成功！")
         self.read_config()
         if variable == 'bgimg':
             self.set_bgimg()
@@ -408,6 +411,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             pass
 
     def cs_sha256(self):
+        if enable_name_mod == 0:
+            return
         delrecordfile = 0
         os.makedirs('data', exist_ok=True)
         ctypes.windll.kernel32.SetFileAttributesW('data', 2)
@@ -1511,50 +1516,32 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_4.setText(_("删除所选名单"))
         self.pushButton_15.setText(_("访问名单文件目录"))
         self.pushButton_13.setText(_("撤销未保存的修改"))
-        self.textEdit.setHtml(_("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'SimSun\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.pushButton_11.setText(_("保存修改"))
         self.label_8.setText(_("！！！编辑名单时请确保名字为 一行一个！！！"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("名单管理"))
         self.groupBox_4.setTitle(_("历史记录列表"))
         self.pushButton_5.setText(_("统计所选历史记录"))
-        self.textEdit_2.setHtml(_("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'SimSun\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("历史记录"))
-        self.textBrowser.setHtml(_("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'SimSun\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
-        self.label_4.setText(_("沉梦课堂点名器 V%s" % dmversion))
-        self.label_5.setText(_("<html><head/><body><p align=\"center\"></p><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具</p><p align=\"center\"><br/><a href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a><br/></p><p align=\"center\">Developers: Yish1, QQB-Roy, limuy2022</p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><br/></p></body></html>"))
-        self.label_6.setText(_("当前版本号："))
-        self.label_7.setText(_("云端版本号："))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _("关于"))
-
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
+        self.checkBox_5.setText(_("名单修改感知(Beta)"))
         self.setWindowTitle(QCoreApplication.translate(
-            "MainWindow", _("课堂点名器设置")))
+            "MainWindow", _("沉梦课堂点名器设置")))
 
         self.main_instance = main_instance
         self.read_name_list()
         self.read_config()
         self.find_langluge()
         self.find_history()
-        self.show_dmversion()
 
         self.enable_tts = None
         self.enable_update = None
         self.enable_bgimg = None
         self.language_value = None
         self.disable_repetitive = None
+        self.enable_name_mod = None
         self.enable_bgmusic = None
         self.file_path = None
+        self.isload = None
 
         self.window = QWidget()
         self.window.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
@@ -1591,6 +1578,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             lambda checked: self.process_config("enable_update", checked))
         self.checkBox_4.toggled.connect(
             lambda checked: self.process_config("enable_bgmusic", checked))
+        self.checkBox_5.toggled.connect(
+            lambda checked: self.process_config("enable_name_mod", checked))
         self.radioButton_3.toggled.connect(
             lambda checked: self.process_config("enable_bgimg", checked))
         self.radioButton_4.toggled.connect(
@@ -1603,6 +1592,11 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.frame.hide()
         else:
             self.frame.show()
+        if index == 3:
+            if self.isload is None:
+                self.browser.setZoomFactor(0.75)
+                self.browser.load(QUrl("https://cmxz.top/ktdmq"))
+                self.isload = True
 
     def read_name_list(self):
         txt_files_name = self.main_instance.read_name_list(1)
@@ -1854,6 +1848,11 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         elif bgmusic == 0:
             self.checkBox_4.setChecked(False)
 
+        if enable_name_mod == 1:
+            self.checkBox_5.setChecked(True)
+        elif enable_name_mod == 0:
+            self.checkBox_5.setChecked(False)
+
     def open_fold(self, value):
         os.makedirs(value, exist_ok=True)
         self.main_instance.opentext(value)
@@ -1945,6 +1944,15 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                     _("开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n程序将随机选取一首，播放随机的音乐进度\n\n注：程序自带几首默认音频，当您在音乐目录下放入音乐后，默认音频将不会再进入候选列表！"), _("提示"))
                 self.open_fold("dmmusic")
 
+        elif key == "enable_name_mod":
+            self.enable_name_mod = 1 if checked else 0
+            if not checked:
+                self.main_instance.show_message(
+                    _("您正在关闭名单篡改监测功能！程序不会再监测名单是否被修改！"), _("警告"))
+                print("正在关闭名单检测")
+            else:
+                print("正在开启检查检测")
+
     def save_settings(self):
         if self.enable_tts == 1:
             self.main_instance.update_config("allownametts", 2)
@@ -1977,6 +1985,11 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.main_instance.update_config("bgmusic", 1)
         elif self.enable_bgmusic == 0:
             self.main_instance.update_config("bgmusic", 0)
+
+        if self.enable_name_mod == 1:
+            self.main_instance.update_config("enable_name_mod", 1)
+        elif self.enable_name_mod == 0:
+            self.main_instance.update_config("enable_name_mod", 0)
 
         self.close()
 
@@ -2021,18 +2034,6 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             print("读取文件时发生错误:", e)
             self.main_instance.show_message(
                 _("历史记录文件不存在，无法统计次数！\n%s") % e, _("错误"))
-
-    def show_dmversion(self):
-        global newversion
-        self.label_6.setText(_("当前版本号：%s") % dmversion)
-        if newversion:
-            pass
-        else:
-            newversion = _("无法获取最新版本！")
-        self.label_7.setText(_("云端版本号：%s") % newversion)
-        self.file_path = "history_version.txt"
-        content = self.read_txt()
-        self.textBrowser.setPlainText(content)
 
 class SpeakerThread(QRunnable):
     def __init__(self, mode=None):
@@ -2162,6 +2163,11 @@ if __name__ == "__main__":
         if hasattr(QtCore.Qt, "AA_UseHighDpiPixmaps"):
             QtWidgets.QApplication.setAttribute(
                 QtCore.Qt.AA_UseHighDpiPixmaps, True)
+
+        os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-logging --v=0"  # 禁止日志输出
+        os.environ["QTWEBENGINE_DISABLE_SYSTEM_PROXY"] = "1"  # 关闭系统代理
+        os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] += " --use-angle=gl --ignore-gpu-blacklist"  # 启用 OpenGL 后端，忽略 GPU 黑名单
+        QCoreApplication.setAttribute(Qt.AA_UseOpenGLES)    
         app = QtWidgets.QApplication(sys.argv)
         mainWindow = MainWindow()
         mainWindow.show()
