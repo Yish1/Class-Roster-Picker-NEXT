@@ -14,6 +14,74 @@
    <string>CRP Settings</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="0">
+    <widget class="QFrame" name="frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>300</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>300</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>取消</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>保存</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="0" column="0" colspan="2">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -975,92 +1043,53 @@ p, li { white-space: pre-wrap; }
       <attribute name="title">
        <string>反馈/定制</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_20">
-       <item row="0" column="0">
-        <widget class="QWebEngineView" name="browser" native="true"/>
-       </item>
-      </layout>
+      <widget class="QPushButton" name="pushButton_6">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>60</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>反馈</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_14">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>60</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>定制</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_4">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>10</y>
+         <width>341</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>本来这地方应该直接内嵌相应的网页，但是自带Chromium会浪费您70mb，所以暂时用现在简约的界面</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
      </widget>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QFrame" name="frame">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>300</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>300</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="1" column="0">
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>保存</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="pushButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>取消</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QWebEngineView</class>
-   <extends>QWidget</extends>
-   <header>PyQt5.QtWebEngineWidgets</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="res/ui1.qrc"/>
  </resources>

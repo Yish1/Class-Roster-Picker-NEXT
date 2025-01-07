@@ -19,7 +19,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QShortcut
-from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication, QUrl
+from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from datetime import datetime, timedelta
 from ui import Ui_CRPmain  # 导入ui文件
 from smallwindow import Ui_smallwindow
@@ -164,7 +164,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.read_name_list(2)
         self.set_bgimg()
         self.cs_sha256()
-        # self.check_new_version()
+        self.check_new_version()
         self.change_space(1)
 
         self.timer = None
@@ -1524,6 +1524,9 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("历史记录"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
         self.checkBox_5.setText(_("名单修改感知(Beta)"))
+        self.pushButton_6.setText(_("反馈"))
+        self.pushButton_14.setText(_("定制"))
+        self.label_4.setText(_("本来这地方应该直接内嵌相应的网页，但是自带Chromium会浪费您70mb，所以暂时用现在简约的界面"))
         self.setWindowTitle(QCoreApplication.translate(
             "MainWindow", _("沉梦课堂点名器设置")))
 
@@ -1550,6 +1553,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_4.clicked.connect(self.delete_list)
         self.pushButton_2.clicked.connect(self.save_settings)
         self.pushButton_5.clicked.connect(self.count_name)
+        self.pushButton_6.clicked.connect(lambda: os.system("start https://cmxz.top/ktdmq#%E5%8F%8D%E9%A6%88"))
         self.comboBox_2.currentIndexChanged.connect(self.change_langluge)
         self.pushButton_12.clicked.connect(lambda: self.open_fold("name"))
         self.pushButton_15.clicked.connect(lambda: self.open_fold("name"))
@@ -1558,6 +1562,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_8.clicked.connect(lambda: self.open_fold("history"))
         self.pushButton_11.clicked.connect(self.save_name_list)
         self.pushButton_13.clicked.connect(self.read_name_inlist)
+        self.pushButton_14.clicked.connect(lambda:os.system("start https://cmxz.top/ktdmq#%E5%AE%9A%E5%88%B6%E7%89%88%E6%9C%AC"))
         self.listWidget.itemSelectionChanged.connect(self.read_name_inlist)
         self.listWidget_2.itemSelectionChanged.connect(lambda:self.find_history(1))
         self.tabWidget.currentChanged.connect(self.tab_changed)
@@ -1592,11 +1597,6 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.frame.hide()
         else:
             self.frame.show()
-        if index == 3:
-            if self.isload is None:
-                self.browser.setZoomFactor(0.75)
-                self.browser.load(QUrl("https://cmxz.top/ktdmq"))
-                self.isload = True
 
     def read_name_list(self):
         txt_files_name = self.main_instance.read_name_list(1)
@@ -2164,10 +2164,12 @@ if __name__ == "__main__":
             QtWidgets.QApplication.setAttribute(
                 QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
-        os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-logging --v=0"  # 禁止日志输出
-        os.environ["QTWEBENGINE_DISABLE_SYSTEM_PROXY"] = "1"  # 关闭系统代理
-        os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] += " --use-angle=gl --ignore-gpu-blacklist"  # 启用 OpenGL 后端，忽略 GPU 黑名单
-        QCoreApplication.setAttribute(Qt.AA_UseOpenGLES)    
+        # os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-logging --v=0"  # 禁止日志输出
+        # os.environ["QTWEBENGINE_DISABLE_SYSTEM_PROXY"] = "1"  # 关闭系统代理
+        # os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] += " --use-angle=gl --ignore-gpu-blacklist"  # 启用 OpenGL 后端，忽略 GPU 黑名单
+        # QCoreApplication.setAttribute(Qt.AA_UseOpenGLES)   
+        # 以上是集成70mb的 QtWebEngine 的解决方案，已弃用
+
         app = QtWidgets.QApplication(sys.argv)
         mainWindow = MainWindow()
         mainWindow.show()
