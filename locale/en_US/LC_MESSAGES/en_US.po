@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-11-12 16:48+0800\n"
-"PO-Revision-Date: 2024-11-12 16:53+0800\n"
+"POT-Creation-Date: 2025-01-11 10:45+0800\n"
+"PO-Revision-Date: 2025-01-11 12:01+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en_US\n"
@@ -18,31 +18,29 @@ msgstr ""
 "X-Generator: Poedit 3.5\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:93
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:88
 msgid "默认名单"
 msgstr "Default List"
 
 #: F:\Programs\Class-Roster-Picker-NEXT\main.py:120
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1351
 msgid "沉梦课堂点名器 %s"
 msgstr "Class roster picker %s"
 
 #: F:\Programs\Class-Roster-Picker-NEXT\main.py:121
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:993
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:901
 msgid " 开始"
 msgstr " Start"
 
 #: F:\Programs\Class-Roster-Picker-NEXT\main.py:122
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:979
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:995
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1739
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:875
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:904
 msgid " 小窗模式"
 msgstr " Small Mode"
 
 #: F:\Programs\Class-Roster-Picker-NEXT\main.py:126
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:695
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:556
 msgid "幸运儿是:"
-msgstr "Lucky one is:"
+msgstr "Lucky dog is:"
 
 #: F:\Programs\Class-Roster-Picker-NEXT\main.py:128
 msgid "当前名单："
@@ -52,46 +50,46 @@ msgstr "Current List:"
 msgid "抽取人数："
 msgstr "Set Num:"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:171
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:237
 msgid "自定义背景"
 msgstr "Customized backgrounds"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:253
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:313
 msgid "名单文件不存在，且默认名单无法生成，请反馈给我们！"
 msgstr ""
 "The list file does not exist and the default list cannot be generated. "
 "Please give us a feedback!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:253
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:313
 msgid "名单生成异常！"
-msgstr "Exception in generating the list!"
+msgstr "List generation exception!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:284
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:344
 msgid "所选名单文件已被移动或删除！"
 msgstr "The selected list file has been moved or deleted!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:284
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:344
 msgid "找不到文件！"
-msgstr "File not found!"
+msgstr "Can't find the file!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:293
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:353
 msgid "'%s'，共 %s 人"
 msgstr "‘%s’, total of %s people"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:295
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:301
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:355
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:361
 msgid "(不放回)"
 msgstr "(Non put back)"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:299
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:359
 msgid "切换至>'%s' 共 %s 人"
 msgstr "Switched to '%s', total of %s people"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:330
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:390
 msgid "读取配置文件失败！"
 msgstr "Failed to read configuration file!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:330
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:390
 msgid ""
 "配置文件读取失败，已重置为默认值！\n"
 "%s"
@@ -99,114 +97,71 @@ msgstr ""
 "Configuration file read failed and has been reset to default values!\n"
 "%s"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:405
-msgid ""
-"\n"
-"名单 %s 最近被修改！\n"
-"此记录会在 2天后 不再展示。\n"
-"\n"
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:423
+msgid "Error: 名单文件%s编码错误，请检查文件编码是否为utf8或gbk"
 msgstr ""
-"\n"
-"List %s was recently modified !\n"
-"This record will no longer be displayed after 2 days.\n"
-"\n"
+"Error: List file %s encoding error, please check if the file encoding is "
+"utf8 or gbk"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:410
-msgid ""
-"新增了：\n"
-"%s\n"
-"\n"
-msgstr ""
-"Added:\n"
-"%s\n"
-"\n"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:415
-msgid ""
-"删除了：\n"
-"%s\n"
-"\n"
-msgstr ""
-"Deleted:\n"
-"%s\n"
-"\n"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:416
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:451
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:838
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:892
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1451
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1465
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1590
-msgid "警告"
-msgstr "Warning"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:450
-msgid "警告：%s 的备份被删除，此名单可能已经被修改！"
-msgstr ""
-"Warning: The backup of %s has been deleted. This list may have been modified!"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:566
-msgid "名单文件%s编码错误，请检查文件编码是否为utf8或gbk"
-msgstr ""
-"The encoding of the list file %s is incorrect. Please check if the file "
-"encoding is utf-8 or gbk"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:566
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:670
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1453
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1564
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1693
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:423
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:531
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:725
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:759
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1460
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1493
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1508
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1563
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1708
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1849
 msgid "错误"
 msgstr "Error"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:567
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:424
 msgid "名单文件无效！"
 msgstr "The list file is invalid!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:670
-msgid "连抽人数大于名单人数!"
-msgstr ""
-"The number of consecutive draws exceeds the number of people on the list!"
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:531
+msgid "Error: 连抽人数大于名单人数!"
+msgstr "Error: Num is bigger than list lenth!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:688
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:549
 msgid "连抽：%d 人"
 msgstr "Consecutive draws: %d people"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:702
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:563
 msgid "已重置单抽列表(%s人)"
 msgstr "Reset Single Draw List (%s people)"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:824
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:708
 msgid " (还剩%s人)"
 msgstr " (%s remaining)"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:838
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:892
-msgid "名单文件为空，请输入名字（一行一个）后再重新点名！"
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:725
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:759
+msgid "Error: 名单文件为空，请输入名字（一行一个）后再重新点名！"
 msgstr ""
-"The list file is empty. Please enter a name (one in one line) before re-"
-"numbering!"
+"Error: The list file is empty, please enter names (one on a line) and then "
+"retry!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:840
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:900
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:730
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:767
 msgid "名单文件为空！"
 msgstr "The list file is empty!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:845
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:898
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:735
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:765
 msgid "选择的名单文件%s不存在！"
-msgstr "List file does not exist or has been deleted!"
+msgstr "The selected list file %s does not exist!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:930
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:808
 msgid "未知错误"
 msgstr "Unknown error"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:940
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:818
 msgid "欢迎"
 msgstr "Welcome"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:940
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:818
 msgid ""
 "欢迎使用沉梦课堂点名器%s！\n"
 "\n"
@@ -232,54 +187,62 @@ msgstr ""
 "\n"
 "\t----Yish_"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:984
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1760
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:879
 msgid "无法写入历史记录"
 msgstr "Unable to write to history"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:988
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1744
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:891
 msgid "最终的幸运儿即将出现："
-msgstr "The final lucky ones will appear:"
+msgstr "The final lucky dog will appear:"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:991
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1747
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:894
 msgid "点击开始重置名单,或切换名单继续点名"
 msgstr ""
 "Click to start resetting the list or toggle the list to continue naming"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:992
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1748
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:895
 msgid "此名单已完成抽取！"
 msgstr "This list has been completed!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1052
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:987
+msgid "正在播放(默认音频):%s"
+msgstr "default music :%s"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:994
 msgid " 加载音乐."
 msgstr " Load music."
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1067
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1009
 msgid " 加载音乐.."
 msgstr " Loading..."
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1081
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1011
+msgid "正在播放:%s"
+msgstr "Playing:%s"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1025
 msgid " 请稍后..."
 msgstr "Loading..."
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1086
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1091
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1094
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1030
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1036
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1039
 msgid " 结束"
 msgstr "Stop"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1098
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1034
+msgid "无法播放：%s"
+msgstr "Unplayable: %s"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1043
 msgid " 重置名单"
 msgstr "Reset List"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1127
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1072
 msgid "检测到新版本！"
 msgstr "New version detected!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1134
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1079
 msgid ""
 "云端最新版本为%s，要现在下载新版本吗？<br>您也可以稍后访问沉梦小站官网获取最"
 "新版本。<br><br>%s"
@@ -288,174 +251,244 @@ msgstr ""
 "now?<br>You can also visit the Deep Dream Blog later to get the latest "
 "version.<br><br>%s"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1143
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1084
+msgid "(已忽略)"
+msgstr "(ignored)"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1090
 msgid "网络连接异常，检查更新失败"
 msgstr "Network error, unable to check for updates."
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1174
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1121
 msgid "开始"
 msgstr "Start"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1180
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1127
 msgid "点名器小窗模式"
 msgstr "Small Mode of the CRP"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1238
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1186
 msgid " (剩%s人)"
 msgstr " (%s remaining)"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1240
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1188
 msgid "名单抽取完成"
 msgstr "list completed"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1245
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1265
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1193
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1215
 msgid "剩%s人"
 msgstr "%s remaining"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1248
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1196
 msgid "小窗：%s"
 msgstr "Small Mode: %s"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1262
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1212
 msgid "名单已重置"
 msgstr "The list has been reset"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1268
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1218
 msgid "名单为空!"
 msgstr "The list is empty!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1326
-msgid "功能设置"
-msgstr "Function Settings"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1327
-msgid "默认背景"
-msgstr "Default background"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1328
-msgid "自定义"
-msgstr "Custom"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1329
-msgid "无"
-msgstr "None"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1330
-msgid "不放回模式(单抽结果不重复)"
-msgstr "non_repetitive mode"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1331
-msgid "检查更新"
-msgstr "Check for updates"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1332
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1568
-msgid "语音播报"
-msgstr "Voice broadcast"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1333
-msgid "背景音乐"
-msgstr "Open BGM directory"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1334
-msgid "背景图片"
-msgstr "Background Picture"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1335
-msgid "正常模式"
-msgstr "Normal Mode"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1336
-msgid "听写模式(不说\"恭喜\")"
-msgstr "Dictation mode (no \"Congrats\")"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1337
-msgid "语言设置"
-msgstr "Language Settings"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1338
-msgid "保存"
-msgstr "Save"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1339
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1281
 msgid "取消"
 msgstr "Cancel"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1340
-msgid "名单管理"
-msgstr "List management"
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1282
+msgid "保存"
+msgstr "Save"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1341
-msgid "删除所选名单"
-msgstr "Remove Selected List"
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1283
+msgid "快捷访问"
+msgstr "Quick access"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1342
-msgid "统计所选名单"
-msgstr "Statistical Selected Lists"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1343
-msgid "新建名单"
-msgstr "Add New List"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1344
-msgid "编辑所选名单"
-msgstr "Edit Selected List"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1345
-msgid "快捷打开"
-msgstr "Quick Link"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1346
-msgid "历史记录目录"
-msgstr "history directory"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1347
-msgid "背景图片目录"
-msgstr "Background Picture "
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1348
-msgid "背景音乐目录"
-msgstr "BGM directory"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1349
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1284
 msgid "名单文件目录"
 msgstr "list file directory"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1350
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1285
+msgid "背景音乐目录"
+msgstr "BGM directory"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1286
+msgid "历史记录目录"
+msgstr "history directory"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1287
+msgid "功能开关"
+msgstr "Function switch"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1288
+msgid "背景音乐"
+msgstr "Open BGM directory"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1289
+msgid "正常模式"
+msgstr "Normal Mode"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1290
+msgid "听写模式(不说\"恭喜\")"
+msgstr "Dictation mode (no \"Congrats\")"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1291
+msgid "不放回模式(单抽结果不重复)"
+msgstr "non_repetitive mode"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1292
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1712
+msgid "语音播报"
+msgstr "Voice broadcast"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1293
+msgid "检查更新"
+msgstr "Check for updates"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1294
+msgid "背景图片"
+msgstr "Background Picture"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1295
+msgid "默认背景"
+msgstr "Default background"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1296
+msgid "自定义"
+msgstr "Custom"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1297
+msgid "无"
+msgstr "None"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1298
+msgid "背景图片目录"
+msgstr "Background Picture "
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1299
+msgid "语言设置"
+msgstr "Language Settings"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1300
 msgid "关于"
 msgstr "About"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1352
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1301
+msgid "沉梦课堂点名器 V%s"
+msgstr "Class Roster Picker V%s"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1302
 msgid ""
-"<html><head/><body><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具"
-"<br/></p><p align=\"center\"><a href=\"https://cmxz.top/ktdmq\"><span "
-"style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></"
-"p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-"
-"NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/"
-"Class-Roster-Picker-NEXT: 课堂点名器</span></a></p></body></html>"
+"<html><head/><body><p align=\"center\"></p><p align=\"center\">一个支持 单"
+"抽，连抽的课堂点名小工具</p><p align=\"center\"><br/><a href=\"https://cmxz."
+"top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦"
+"小站</span></a><br/></p><p align=\"center\">Contributors: Yish1, QQB-Roy, "
+"limuy2022</p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-"
+"Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:"
+"#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p "
+"align=\"center\"><br/></p></body></html>"
 msgstr ""
-"<html><head/><body><p align=\"center\">A classroom roll-call tool that "
-"supports single draw and consecutive draws<br/></p><p align=\"center\"><a "
+"<html><head/><body><p align=\"center\"></p><p align=\"center\">A tool for "
+"randomly selecting students in the classroom, with features like single "
+"selection and consecutive selection</p><p align=\"center\"><br/><a "
 "href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; "
-"color:#0000ff;\">Deep Dream Blog</span></a></p><p align=\"center\"><a "
-"href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" "
-"text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: "
-"Class Roster Picker</span></a></p></body></html>"
+"color:#0000ff;\">Deep Dream Blog</span></a><br/></p><p "
+"align=\"center\">Contributors: Yish1, QQB-Roy, limuy2022</p><p "
+"align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-"
+"NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/"
+"Class-Roster-Picker-NEXT: Class Roster Picker</span></a></p><p "
+"align=\"center\"><br/></p></body></html>"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1354
-msgid "课堂点名器设置"
-msgstr "Class Roster Picker Settings"
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1303
+msgid "基本设置"
+msgstr "Basic settings"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1415
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1304
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1311
+msgid "名单管理"
+msgstr "List management"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1305
+msgid "新建名单"
+msgstr "Add New List"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1306
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1472
+msgid "删除名单"
+msgstr "Delete List"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1307
+msgid "访问名单文件目录"
+msgstr "list file directory"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1308
+msgid "撤销未保存的修改"
+msgstr "Undo unsaved changes"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1309
+msgid "保存修改"
+msgstr "Save Changes"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1310
+msgid "！！！编辑名单时请确保名字为 一行一个！！！"
+msgstr ""
+"!!! When editing the list please make sure the names are on a line by line "
+"basis!!!!"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1312
+msgid "历史记录列表"
+msgstr "History List"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1313
+msgid "统计所选历史记录"
+msgstr "Statistics"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1314
+msgid "访问历史记录目录"
+msgstr "Open History Folder"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1315
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1468
+msgid "删除历史记录"
+msgstr "Del Historical record"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1316
+msgid "历史记录"
+msgstr "Historical record"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1317
+msgid "反馈"
+msgstr "Feedback"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1318
+msgid "定制"
+msgstr "customizable"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1319
+msgid ""
+"本来这地方应该直接内嵌相应的网页，但是自带Chromium会浪费您70mb，所以暂时用现"
+"在简约的界面"
+msgstr ""
+"This place should be inline with the corresponding webpage, but Chromium "
+"will waste 70mb, so I'll use the current minimalist interface for now."
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1320
+msgid "反馈/定制"
+msgstr "Feedback/Customization"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1322
+msgid "沉梦课堂点名器设置"
+msgstr "Deep Dream CRP Settings"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1447
 msgid "新增名单"
 msgstr "Add list"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1415
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1447
 msgid "请输入名单名称:"
 msgstr "Please enter a name for the list:"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1423
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1455
 msgid ""
 "已创建名为 '%s.txt' 的文件，路径为: %s\n"
 "\n"
@@ -466,81 +499,122 @@ msgstr ""
 "Please enter the list of names in the text file that will open shortly, with "
 "one name per line, and no spaces!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1426
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1458
 msgid "新建成功"
 msgstr "Created file successfully"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1429
-msgid "同名文件已存在，请勿重复创建！"
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1460
+msgid "Error: 同名文件已存在，请勿重复创建！"
 msgstr ""
-"A file with the same name already exists, please do not create a duplicate!"
+"Error: A file with the same name already exists, please do not create again!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1429
-msgid "警告！"
-msgstr "Warning!"
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1469
+msgid "输入要删除的历史记录名称：(无需输入\"中奖记录\")"
+msgstr ""
+"Enter the name of the history record to be deleted: (No need to enter \"中奖"
+"记录\")"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1436
-msgid "再次输入名单名称将删除此名单！"
-msgstr "Entering names again will remove them!"
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1473
+msgid "输入要删除的名单名称："
+msgstr "Enter the name of the list to be deleted:"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1436
-msgid "删除名单"
-msgstr "Delete List"
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1485
+msgid "已成功删除文件： '%s.txt' "
+msgstr "Delete successful: '%s.txt' "
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1443
-msgid "已成功删除名单： '%s.txt' "
-msgstr "Delete successful: '%s.txt'"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1445
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1487
 msgid "删除成功"
 msgstr "Delete successful"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1451
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1465
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1493
 msgid ""
-"名单文件不存在，或已被删除！\n"
+"Error: 目标文件不存在，或已被删除！\n"
 "%s"
 msgstr ""
-"List file does not exist or has been deleted! \n"
+"Error: Target file does not exist or has been deleted!\n"
 "%s"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1453
-msgid "名单名称输入错误！"
-msgstr "Error entering list name!"
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1536
+msgid ""
+"新增了：\n"
+"%s\n"
+"\n"
+msgstr ""
+"Added:\n"
+"%s\n"
+"\n"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1552
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1541
+msgid ""
+"删除了：\n"
+"%s\n"
+"\n"
+msgstr ""
+"Deleted:\n"
+"%s\n"
+"\n"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1544
+msgid ""
+"未进行任何修改。\n"
+"\n"
+msgstr ""
+"No changes.\n"
+"\n"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1548
+msgid "保存确认"
+msgstr "Save confirmation"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1561
+msgid "名单保存成功！"
+msgstr "List saved successfully!"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1561
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1565
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1771
+msgid "提示"
+msgstr "Tips"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1565
+msgid "已取消保存！"
+msgstr "Saving has been canceled!"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1696
 msgid "正在检测兼容性..."
 msgstr "Testing compatibility..."
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1564
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1708
 msgid ""
-"语音播报无法在此设备上开启，可能是您使用的系统为精简版，删除了自带的语音"
-"库！\n"
+"Error: 语音播报无法在此设备上开启，可能是您使用的系统为精简版，删除了自带的语"
+"音库！\n"
 "%s"
 msgstr ""
-"The broadcast could not be on this device, and perhaps the system you used "
-"was a lean version of it, removing the voice library!"
+"Error: The broadcast could not be on this device, and perhaps the system you "
+"used was a lean version of it, removing the voice library!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1590
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1734
 msgid ""
 "您正在关闭检查更新功能！更新意味着带来 新功能、优化 以及修复错误，强烈建议您"
 "开启此功能！"
 msgstr ""
-"You are closing the check for updates! Update means bringing in new "
-"functionality, optimising, and repairing errors, and strongly recommends "
-"that you turn this on!"
+"You are turning off the check for updates feature! Updates mean new "
+"features, optimizations, and bug fixes, and it is highly recommended that "
+"you turn this feature on!"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1603
-msgid "声明"
-msgstr "Disclaimer"
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1734
+msgid "警告"
+msgstr "Warning"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1603
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1747
+msgid "声明!"
+msgstr "Disclaimer!"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1747
 msgid ""
 "您正在使用自定义背景功能，由于此工具可能需要在公众场合展示，请选择适宜场景的"
 "合适背景！ \n"
-"\n"
 "因使用不合适的背景图片而造成的后果由您自行承担！\n"
-"\n"
 "\n"
 "使用教程：\n"
 "\n"
@@ -550,7 +624,6 @@ msgstr ""
 "You are currently using the custom background feature. As this tool may be "
 "displayed in public settings, please choose an appropriate background for "
 "suitable environments!\n"
-"\n"
 "Any consequences resulting from the use of inappropriate background images "
 "are your responsibility!\n"
 "\n"
@@ -560,7 +633,7 @@ msgstr ""
 "recommended) in the \\images folder that will open shortly. The program will "
 "randomly select an image to use."
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1618
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1762
 msgid ""
 "不放回模式，即单抽结束后的名字不会放回列表中，下次将不会抽到此名字\n"
 "\n"
@@ -573,52 +646,106 @@ msgstr ""
 "switching to a different name list, or when manually clicking the reset "
 "button！"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1618
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1762
 msgid "说明"
 msgstr "Annotations"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1627
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1771
 msgid ""
 "开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n"
 "程序将随机选取一首，播放随机的音乐进度\n"
 "\n"
-"注：程序自带默认音频，在音乐目录下放入音乐后，默认音频不会进入候选列表。"
+"注：程序自带几首默认音频，当您在音乐目录下放入音乐后，默认音频将不会再进入候"
+"选列表！"
 msgstr ""
 "After you turn on the background music function, you need to put some of "
 "your favorite music in the background music directory that will be opened "
 "later.\n"
 "The program will randomly select one and play a random music progression.\n"
 "\n"
-"Note: The program comes with default audio, after you put music in the music "
-"directory, the default audio will not enter the candidate list."
+"Note: The program comes with some default audio, after you put music in the "
+"music directory, the default audio will not enter the candidate list."
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1627
-msgid "提示"
-msgstr "Tips"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1683
-msgid "中奖名单统计(统计会覆盖上一次结果):\n"
-msgstr "Picker list statistics (statistics will overwrite the last results).\n"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1688
-msgid "保存结果"
-msgstr "Save Results"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1688
-msgid "统计结果已保存到'中奖统计.txt'"
-msgstr "Statistics have been saved to '中奖名单.txt'"
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1693
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1844
 msgid ""
-"历史记录文件不存在，无法统计次数！\n"
+"统计已保存至安装目录下的/中奖统计.txt中\n"
+"(每次统计会覆盖上一次统计结果)\n"
+"\n"
+msgstr ""
+"The statistics have been saved to the \"中奖记录.txt\" file in the "
+"installation directory.\n"
+"(Each new statistic will overwrite the previous one.)\n"
+"\n"
+
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1849
+msgid ""
+"Error: 历史记录文件不存在，无法统计次数！\n"
 "%s"
 msgstr ""
-"History record file does not exist, unable to count occurrences!\n"
+"Error: History record file does not exist, unable to count occurrences!\n"
 "%s"
 
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1750
+#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1891
 msgid "恭喜 %s"
 msgstr "Congrats %s"
+
+#~ msgid ""
+#~ "\n"
+#~ "名单 %s 最近被修改！\n"
+#~ "此记录会在 2天后 不再展示。\n"
+#~ "\n"
+#~ msgstr ""
+#~ "\n"
+#~ "List %s was recently modified !\n"
+#~ "This record will no longer be displayed after 2 days.\n"
+#~ "\n"
+
+#~ msgid "警告：%s 的备份被删除，此名单可能已经被修改！"
+#~ msgstr ""
+#~ "Warning: The backup of %s has been deleted. This list may have been "
+#~ "modified!"
+
+#~ msgid "删除所选名单"
+#~ msgstr "Remove Selected List"
+
+#~ msgid "名单修改感知(Beta)"
+#~ msgstr "List Modification Perception (Beta)"
+
+#~ msgid "警告！"
+#~ msgstr "Warning!"
+
+#~ msgid "名单人数没有变化"
+#~ msgstr "No change in list"
+
+#~ msgid "您正在关闭名单篡改监测功能！程序不会再监测名单是否被修改！"
+#~ msgstr ""
+#~ "You are turning off the list tampering monitoring feature! The program "
+#~ "will no longer monitor the list for tampering!"
+
+#~ msgid "中奖名单统计(统计会覆盖上一次结果):\n"
+#~ msgstr ""
+#~ "Picker list statistics (statistics will overwrite the last results).\n"
+
+#~ msgid "保存结果"
+#~ msgstr "Save Results"
+
+#~ msgid "统计结果已保存到'/中奖统计.txt'"
+#~ msgstr "Statistics have been saved to '中奖名单.txt'"
+
+#~ msgid "功能设置"
+#~ msgstr "Function Settings"
+
+#~ msgid "编辑所选名单"
+#~ msgstr "Edit Selected List"
+
+#~ msgid "再次输入名单名称将删除此名单！"
+#~ msgstr "Entering names again will remove them!"
+
+#~ msgid "名单名称输入错误！"
+#~ msgstr "Error entering list name!"
+
+#~ msgid "快捷打开"
+#~ msgstr "Quick Link"
 
 #~ msgid " 请稍后."
 #~ msgstr "Loading."
