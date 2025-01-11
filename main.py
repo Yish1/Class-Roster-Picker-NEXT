@@ -6,10 +6,8 @@ import os
 import time
 import requests
 import platform
-import hashlib
 import gettext
 import pygame
-import glob
 import ctypes
 import msvcrt
 import pythoncom
@@ -82,7 +80,6 @@ last_name_list = None
 non_repetitive = None
 bgmusic = None
 first_use = None
-enable_name_mod = None
 
 # 全局变量
 name = None
@@ -163,7 +160,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.read_config()
         self.read_name_list(2)
         self.set_bgimg()
-        self.cs_sha256()
         self.check_new_version()
         self.change_space(1)
 
@@ -270,6 +266,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         if settings_flag is None:
             settings_window = settingsWindow(mainWindow)
             settings_flag = settings_window.run_settings_window()
+            
     def closeEvent(self, event):
         # 关闭其他窗口的代码
         for widget in QApplication.topLevelWidgets():
@@ -367,12 +364,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.listWidget.setCurrentRow(self.listWidget.count() - 1)
 
     def read_config(self):
-        global allownametts, checkupdate, bgimg, last_name_list, language_value, latest_version, non_repetitive, bgmusic, first_use, enable_name_mod
+        global allownametts, checkupdate, bgimg, last_name_list, language_value, latest_version, non_repetitive, bgmusic, first_use
         config = {}
         if not os.path.exists('config.ini'):
             with open('config.ini', 'w', encoding='utf-8') as file:
                 file.write(
-                    '[language]=zh_CN\n[allownametts]=1\n[checkupdate]=2\n[bgimg]=1\n[last_name_list]=None\n[latest_version]=0\n[non_repetitive]=1\n[bgmusic]=0\n[first_use]=0\n[enable_name_mod]=1')
+                    '[language]=zh_CN\n[allownametts]=1\n[checkupdate]=2\n[bgimg]=1\n[last_name_list]=None\n[latest_version]=0\n[non_repetitive]=1\n[bgmusic]=0\n[first_use]=0')
         with open('config.ini', 'r', encoding='utf-8') as file:
             for line in file:
                 if '=' in line:
@@ -388,7 +385,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             non_repetitive = int(config.get('non_repetitive'))
             bgmusic = int(config.get('bgmusic'))
             first_use = int(config.get('first_use'))
-            enable_name_mod = int(config.get('enable_name_mod'))
 
         except Exception as e:
             print(f"配置文件读取失败，已重置为默认值！{e}")
@@ -410,212 +406,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         else:
             pass
 
-    def cs_sha256(self):
-        if enable_name_mod == 0:
-            return
-        delrecordfile = 0
-        os.makedirs('data', exist_ok=True)
-        ctypes.windll.kernel32.SetFileAttributesW('data', 2)
-        os.makedirs('bak', exist_ok=True)
-        ctypes.windll.kernel32.SetFileAttributesW('bak', 2)
-
-        for filename1 in os.listdir('name'):
-            if filename1.endswith('.txt'):
-                file_path = os.path.join('name', filename1)
-                output_file_path = os.path.join('data', filename1 + '.cmxz')
-
-                if not os.path.exists(output_file_path):
-                    sha256_value = self.calculate_sha256(file_path)
-                    with open(output_file_path, 'w') as f:
-                        f.write(sha256_value)
-                    print(f'已保存标识符值：{output_file_path}')
-                    self.fileoperation('name', filename1, 'encrypt')
-                else:
-                    sha256_value = self.calculate_sha256(file_path)
-                    with open(output_file_path, 'r') as f:
-                        saved_sha256_value = f.read().strip()
-
-                    if sha256_value == saved_sha256_value:
-                        print(f'{filename1} 的标识符值与记录一致。')
-                        self.fileoperation('name', filename1, 'encrypt')
-
-                    else:
-                        print(f'警告：{filename1} 的标识符值与记录不一致。')
-                        self.fileoperation('bak', filename1, 'decrypt')
-                        with open(file_path, 'r', encoding='utf-8', errors='ignore') as original_file, open(processed_file_path, 'r', encoding='utf-8', errors='ignore') as bak_file:
-                            original_content = original_file.read()
-                            bak_content = bak_file.read()
-
-                            if original_content == bak_content:
-                                print('文件内容一致。')
-                            else:
-                                print('文件内容不一致。以下是修改的内容：')
-                                # 去除内容中的空行
-                                bak_lines = [
-                                    line for line in bak_content.splitlines() if line.strip()]
-                                original_lines = [
-                                    line for line in original_content.splitlines() if line.strip()]
-                                diff = difflib.unified_diff(
-                                    bak_lines, original_lines)
-                                diff_str = '\n'.join(diff)
-                                diff_str = diff_str[11:]
-
-                                minus_lines = []
-                                plus_lines = []
-                                text = diff_str.strip().split('\n')
-                                for lines in text:
-                                    lines = lines.strip()  # 去掉行首尾的空白字符
-                                    if lines.startswith('-'):
-                                        minus_lines.append(lines[1:].strip())
-                                    elif lines.startswith('+'):
-                                        plus_lines.append(lines[1:].strip())
-
-                                message = _(
-                                    "\n名单 %s 最近被修改！\n此记录会在 2天后 不再展示。\n\n") % filename1
-                                if plus_lines:
-                                    formatted_plus = '\n'.join(', '.join(
-                                        f'"{item}"' for item in plus_lines[i:i+8]) for i in range(0, len(plus_lines), 8))
-                                    message += _("新增了：\n%s\n\n") % formatted_plus
-
-                                if minus_lines:
-                                    formatted_minus = '\n'.join(', '.join(
-                                        f'"{item}"' for item in minus_lines[i:i+8]) for i in range(0, len(minus_lines), 8))
-                                    message += _("删除了：\n%s\n\n") % formatted_minus
-                                self.show_message(message, _("警告"))
-
-                                # 确保在最后一次循环才执行manage_deadline(filename1)
-                                delrecordfile = delrecordfile + 1
-
-        if delrecordfile > 0:
-            self.manage_deadline("0")
-
-    def calculate_sha256(self, file_path):
-        sha256_hash = hashlib.sha256()
-        with open(file_path, 'rb') as f:
-            for byte_block in iter(lambda: f.read(4096), b""):
-                sha256_hash.update(byte_block)
-        return sha256_hash.hexdigest()
-
-    def fileoperation(self, folder_path, filename, operation):
-        enfilename = filename + ".cmxz"
-        file_path = os.path.join(folder_path, filename)
-        if operation == 'encrypt':
-            if filename.endswith('.txt'):
-                self.process_file(file_path, 'encrypt')
-        elif operation == 'decrypt':
-            if enfilename.endswith('.cmxz'):
-                file_path = os.path.join(folder_path, enfilename)
-                self.process_file(file_path, 'decrypt')
-            return processed_file_path
-
-    def process_file(self, file_path, operation):
-        global processed_file_path
-        try:
-            with open(file_path, 'rb') as f:
-                data = f.read()
-        except FileNotFoundError:
-            # 文件不存在时弹窗提示
-            self.show_message(_("警告：%s 的备份被删除，此名单可能已经被修改！") %
-                              file_path, _("警告"))
-        cipher = ARC4.new(b'cmxztopktdmq')
-        if operation == 'encrypt':
-            try:
-                processed_data = cipher.encrypt(data)
-                processed_file_path = os.path.join(
-                    'bak', os.path.basename(file_path) + '.cmxz')
-                if os.path.exists(processed_file_path):
-                    print(f'加密文件已存在: {processed_file_path}')
-                    return processed_file_path
-            except:
-                print("加密文件不存在")
-
-        elif operation == 'decrypt':
-            try:
-                processed_data = cipher.decrypt(data)
-                original_filename = os.path.basename(file_path)[:-5]
-                processed_file_path = os.path.join('bak', original_filename)
-            except:
-                print("解密文件不存在")
-
-        try:
-            with open(processed_file_path, 'wb') as f:
-                f.write(processed_data)
-
-            print(f'文件{operation}成功: {processed_file_path}')
-            return processed_file_path
-        except:
-            self.manage_deadline("1")
-
-    def manage_deadline(self, now):
-        timefile_path = os.path.join('bak', 'adeadline.txt')
-        current_date = datetime.now().date()
-
-        def write_to_file():
-            # 获取默认截止日期并写入文件
-            global result_time
-            deadline_date = datetime.now() + timedelta(days=2)
-            result_time = deadline_date
-            if now != "1":
-                with open(timefile_path, 'w') as file:
-                    file.write(deadline_date.strftime('%Y-%m-%d'))
-                self.fileoperation('bak', 'adeadline.txt', 'encrypt')
-                os.remove(timefile_path)
-            else:
-                print("名单校验已重置")
-
-        def read_from_file():
-            # 从文件中读取截止日期
-            if os.path.exists(timefile_path + '.cmxz'):
-                self.fileoperation('bak', 'adeadline.txt', 'decrypt')
-                with open(timefile_path, 'r') as file:
-                    date_str = file.read().strip()
-                    if date_str:
-                        return datetime.strptime(date_str, '%Y-%m-%d').date()
-                return None
-
-        def remove_directory(data_folder):
-            txt_files = glob.glob(os.path.join(data_folder, '*.txt'))
-            # 获取指定文件夹中所有扩展名为 .cmxz 的文件列表
-            cmxz_files = glob.glob(os.path.join(data_folder, '*.cmxz'))
-            all_files = txt_files + cmxz_files
-            # 循环删除文件
-            for file_path in all_files:
-                try:
-                    os.remove(file_path)
-                    print(f"Deleted: {file_path}")
-                except OSError as e:
-                    print(f"Error: {e.filename} - {e.strerror}")
-
-        deadline_date = read_from_file()
-
-        if deadline_date:
-            # 如果截止日期已过，删除数据文件夹
-            if current_date > deadline_date:
-                print(f"截止日期({deadline_date})已过。删除数据文件夹。")
-                try:
-                    # 递归删除目录及其内容
-                    remove_directory("data")
-                    remove_directory("bak")
-                    print("数据文件夹已删除。")
-                except OSError as e:
-                    print(f"删除数据文件夹时发生错误: {e}")
-            else:
-                print(f"截止日期是{deadline_date}。尚未过期。暂不重置校验")
-                if now == "1":
-                    remove_directory("data")  # 异常处理
-                    remove_directory("bak")
-                try:
-                    os.remove(timefile_path)
-                except:
-                    pass
-        else:
-            # 如果没有截止日期，生成随机日期并写入文件
-            if now == "1":
-                remove_directory("data")  # 异常处理
-                remove_directory("bak")
-            write_to_file()
-            print(f"生成了一个随机截止日期: {result_time}。写入文件。")
-
     def process_name_file(self, file_path):
         global name_list, namelen, non_repetitive_list
         try:
@@ -631,10 +421,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                                  for line in f.readlines() if line.strip()]
             except:
                 self.show_message(
-                    _("名单文件%s编码错误，请检查文件编码是否为utf8或gbk") % file_path, _("错误"))
+                    _("Error: 名单文件%s编码错误，请检查文件编码是否为utf8或gbk") % file_path, _("错误"))
                 self.label_3.setText(_("名单文件无效！"))
         print("\n", name_list)
         namelen = len(name_list)
+        self.spinBox.setMaximum(namelen)
         print("读取到的有效名单长度:", namelen)
         if non_repetitive == 1:
             non_repetitive_list = name_list.copy()
@@ -738,7 +529,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
     def start_mulit(self):
         num = self.spinBox.value()
         if num > namelen:
-            self.show_message(_("连抽人数大于名单人数!"), _("错误"))
+            self.show_message(_("Error: 连抽人数大于名单人数!"), _("错误"))
         else:
             if mrunning == False:
                 self.ptimer = QTimer(self)
@@ -932,7 +723,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         global non_repetitive_list, name, origin_name_list
         if start == 1:
             if len(name_list) == 0:
-                self.show_message(_("名单文件为空，请输入名字（一行一个）后再重新点名！"), _("警告"))
+                self.show_message(_("Error: 名单文件为空，请输入名字（一行一个）后再重新点名！"), _("错误"))
                 self.qtimer(0)
                 self.pushButton_5.setEnabled(True)
                 self.pushButton_5.click()# 名单没有人就自动按结束按钮
@@ -966,7 +757,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             if len(non_repetitive_list) == 0:
                 non_repetitive_list = name_list.copy()
         if namelen == 0:
-            self.show_message(_("名单文件为空，请输入名字（一行一个）后再重新点名！"), _("警告"))
+            self.show_message(_("Error: 名单文件为空，请输入名字（一行一个）后再重新点名！"), _("错误"))
             name = ""
             try:
                 self.opentext(file_path)
@@ -991,7 +782,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         metrics = QFontMetrics(font)
 
         # 计算每行最大可以容纳的字符数
-        # a 代表最大行数的估算值
         max_width = self.label_3.width()
         max_height = self.label_3.height()
 
@@ -1488,19 +1278,20 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.setMinimumSize(667, 539)
         self.resize(667, 539)
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
-        self.pushButton_2.setText(_("保存"))
+        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowMinimizeButtonHint) # 禁止最小化
         self.pushButton.setText(_("取消"))
+        self.pushButton_2.setText(_("保存"))
         self.groupBox_6.setTitle(_("快捷访问"))
         self.pushButton_12.setText(_("名单文件目录"))
         self.pushButton_10.setText(_("背景音乐目录"))
         self.pushButton_8.setText(_("历史记录目录"))
         self.groupBox.setTitle(_("功能开关"))
-        self.checkBox.setText(_("不放回模式(单抽结果不重复)"))
-        self.checkBox_3.setText(_("检查更新"))
         self.checkBox_4.setText(_("背景音乐"))
-        self.checkBox_2.setText(_("语音播报"))
         self.radioButton.setText(_("正常模式"))
         self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
+        self.checkBox.setText(_("不放回模式(单抽结果不重复)"))
+        self.checkBox_2.setText(_("语音播报"))
+        self.checkBox_3.setText(_("检查更新"))
         self.label.setText(_("背景图片"))
         self.radioButton_3.setText(_("默认背景"))
         self.radioButton_4.setText(_("自定义"))
@@ -1508,12 +1299,12 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_9.setText(_("背景图片目录"))
         self.groupBox_3.setTitle(_("语言设置"))
         self.groupBox_5.setTitle(_("关于"))
-        self.label_2.setText(_("沉梦课堂点名器 V%s" % dmversion))
-        self.label_3.setText(_("<html><head/><body><p align=\"center\"></p><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具</p><p align=\"center\"><br/><a href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a><br/></p><p align=\"center\">Developers: Yish1, QQB-Roy, limuy2022</p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><br/></p></body></html>"))
+        self.label_2.setText(_("沉梦课堂点名器 V%s") % dmversion)
+        self.label_3.setText(_("<html><head/><body><p align=\"center\"></p><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具</p><p align=\"center\"><br/><a href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a><br/></p><p align=\"center\">Contributors: Yish1, QQB-Roy, limuy2022</p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><br/></p></body></html>"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("基本设置"))
         self.groupBox_2.setTitle(_("名单管理"))
         self.pushButton_3.setText(_("新建名单"))
-        self.pushButton_4.setText(_("删除所选名单"))
+        self.pushButton_4.setText(_("删除名单"))
         self.pushButton_15.setText(_("访问名单文件目录"))
         self.pushButton_13.setText(_("撤销未保存的修改"))
         self.pushButton_11.setText(_("保存修改"))
@@ -1521,12 +1312,13 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("名单管理"))
         self.groupBox_4.setTitle(_("历史记录列表"))
         self.pushButton_5.setText(_("统计所选历史记录"))
+        self.pushButton_16.setText(_("访问历史记录目录"))
+        self.pushButton_17.setText(_("删除历史记录"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("历史记录"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
-        self.checkBox_5.setText(_("名单修改感知(Beta)"))
         self.pushButton_6.setText(_("反馈"))
         self.pushButton_14.setText(_("定制"))
         self.label_4.setText(_("本来这地方应该直接内嵌相应的网页，但是自带Chromium会浪费您70mb，所以暂时用现在简约的界面"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
         self.setWindowTitle(QCoreApplication.translate(
             "MainWindow", _("沉梦课堂点名器设置")))
 
@@ -1541,7 +1333,6 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.enable_bgimg = None
         self.language_value = None
         self.disable_repetitive = None
-        self.enable_name_mod = None
         self.enable_bgmusic = None
         self.file_path = None
         self.isload = None
@@ -1550,7 +1341,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.window.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
         self.pushButton.clicked.connect(self.close)
         self.pushButton_3.clicked.connect(self.add_new_list)
-        self.pushButton_4.clicked.connect(self.delete_list)
+        self.pushButton_4.clicked.connect(self.delete_file)
         self.pushButton_2.clicked.connect(self.save_settings)
         self.pushButton_5.clicked.connect(self.count_name)
         self.pushButton_6.clicked.connect(lambda: os.system("start https://cmxz.top/ktdmq#%E5%8F%8D%E9%A6%88"))
@@ -1563,12 +1354,15 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_11.clicked.connect(self.save_name_list)
         self.pushButton_13.clicked.connect(self.read_name_inlist)
         self.pushButton_14.clicked.connect(lambda:os.system("start https://cmxz.top/ktdmq#%E5%AE%9A%E5%88%B6%E7%89%88%E6%9C%AC"))
+        self.pushButton_16.clicked.connect(lambda: self.open_fold("history"))
+        self.pushButton_17.clicked.connect(lambda: self.delete_file("history"))
         self.listWidget.itemSelectionChanged.connect(self.read_name_inlist)
         self.listWidget_2.itemSelectionChanged.connect(lambda:self.find_history(1))
         self.tabWidget.currentChanged.connect(self.tab_changed)
 
         self.pushButton_11.setEnabled(False)
         self.pushButton_13.setEnabled(False)
+        self.pushButton_17.setEnabled(False)
         self.pushButton_5.setEnabled(False)
 
         self.checkBox.toggled.connect(
@@ -1583,8 +1377,6 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             lambda checked: self.process_config("enable_update", checked))
         self.checkBox_4.toggled.connect(
             lambda checked: self.process_config("enable_bgmusic", checked))
-        self.checkBox_5.toggled.connect(
-            lambda checked: self.process_config("enable_name_mod", checked))
         self.radioButton_3.toggled.connect(
             lambda checked: self.process_config("enable_bgimg", checked))
         self.radioButton_4.toggled.connect(
@@ -1633,7 +1425,10 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         
         else:
             file_content = self.read_txt()
-            self.textEdit.setPlainText(file_content)       
+            lines = file_content.splitlines()
+            non_empty_lines = [line for line in lines if line.strip()]
+            file_content = "\n".join(non_empty_lines)
+            self.textEdit.setPlainText(file_content)
    
     def read_txt(self):
         file_content = None
@@ -1663,20 +1458,32 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 QMessageBox.information(
                     self.window, _("新建成功"), message, QMessageBox.Ok)
             else:
-                self.main_instance.show_message(_("同名文件已存在，请勿重复创建！"), _("警告！"))
+                self.main_instance.show_message(_("Error: 同名文件已存在，请勿重复创建！"), _("错误"))
             txt_name = self.refresh_name_list()
             self.listWidget.clear()  # 清空下拉框的选项
             self.listWidget.addItems(txt_name)  # 添加新的文件名到下拉框
 
-    def delete_list(self):
+    def delete_file(self, mode = None):
+        if mode == "history":
+            target_folder = "history"
+            text1 = _("删除历史记录")
+            text2 = _("输入要删除的历史记录名称：(无需输入\"中奖记录\")")
+        else:
+            target_folder = "name"
+            text1 = _("删除名单")
+            text2 = _("输入要删除的名单名称：")
+
         target_filename, ok_pressed = QInputDialog.getText(
-            self.window, _("删除名单"), _("输入要删除的名单名称："))
+            self.window, text1, text2)
+        
+        target_filename += "中奖记录" if mode == "history" else ""
+
         if ok_pressed and target_filename:
             target_filepath = os.path.join(
-                "name", f"{target_filename}.txt")
+                target_folder, f"{target_filename}.txt")
             try:
                 os.remove(target_filepath)  # 删除文件
-                message = (_("已成功删除名单： '%s.txt' ") % target_filename)
+                message = (_("已成功删除文件： '%s.txt' ") % target_filename)
                 QMessageBox.information(
                     self.window, _("删除成功"), message, QMessageBox.Ok)
                 txt_name = self.refresh_name_list()
@@ -1684,53 +1491,77 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 self.listWidget.addItems(txt_name)  # 添加新的文件名到下拉框
             except Exception as e:
                 QMessageBox.warning(
-                    self.window, _('警告'), _('名单文件不存在，或已被删除！\n%s') % e, QMessageBox.Ok)
+                    self.window, _('错误'), _('Error: 目标文件不存在，或已被删除！\n%s') % e, QMessageBox.Ok)
+
+        if mode == "history":
+            self.listWidget_2.clear()
+            self.find_history()
 
     def save_name_list(self):
-        file_content = self.textEdit.toPlainText()
-        
-        current_name_list = file_content.splitlines()
-        current_name_count = len(current_name_list)
+        current_name = self.textEdit.toPlainText()
+        current_name_count = len(current_name.splitlines())
 
-        # 计算源文件中的名字数目（假设文件已存在并读取其内容）
-        original_name_count = 0
         if os.path.isfile(self.file_path):
             try:
                 with open(self.file_path, 'r', encoding='utf-8') as f:
-                    original_name_list = f.read().splitlines()
-                    original_name_count = len(original_name_list)
+                    original_name = f.read()
             except Exception as e:
-                self.main_instance.show_message(_("无法读取源文件！\n%s" % e), _("错误"))
+                self.main_instance.show_message(_("Error: 无法读取源文件！\n%s" % e), _("错误"))
+                return
 
-        # 计算增加/减少的名字数量
-        name_diff = current_name_count - original_name_count
-        if name_diff > 0:
-            change_message = _("增加了 %d 个名字" % name_diff)
-        elif name_diff < 0:
-            change_message = _("减少了 %d 个名字" % abs(name_diff))
-        else:
-            change_message = _("名单人数没有变化")
+        change_message = ""
+        # 去除内容中的空行
+        current_lines = [
+            line for line in original_name.splitlines() if line.strip()]
+        original_lines = [
+            line for line in current_name.splitlines() if line.strip()]
+        diff = difflib.unified_diff(
+            current_lines, original_lines)
+        diff_str = '\n'.join(diff)
+        diff_str = diff_str[11:]
 
-        # 弹出确认窗口，询问用户是否继续保存
+        minus_lines = []
+        plus_lines = []
+        
+        text = diff_str.strip().split('\n')
+        for lines in text:
+            lines = lines.strip()  # 去掉行首尾的空白字符
+            if lines.startswith('-'):
+                minus_lines.append(lines[1:].strip())
+            elif lines.startswith('+'):
+                plus_lines.append(lines[1:].strip())
+
+        if plus_lines:
+            formatted_plus = '\n'.join(', '.join(
+                f'"{item}"' for item in plus_lines[i:i+8]) for i in range(0, len(plus_lines), 8))
+            change_message += _("新增了：\n%s\n\n") % formatted_plus
+
+        if minus_lines:
+            formatted_minus = '\n'.join(', '.join(
+                f'"{item}"' for item in minus_lines[i:i+8]) for i in range(0, len(minus_lines), 8))
+            change_message += _("删除了：\n%s\n\n") % formatted_minus
+
+        if change_message == "":
+            change_message = _("未进行任何修改。\n\n")
+
         msg = QMessageBox(self)
         msg.setIcon(QMessageBox.Question)
         msg.setWindowTitle(_("保存确认"))
         msg.setText(f"您正在保存文件：{os.path.basename(self.file_path)}\n"
-                    f"名单中共有 {current_name_count} 个名字，\n"
-                    f"与源文件相比，{change_message}。\n"
+                    f"修改后的名单中共有 {current_name_count} 个名字，\n"
+                    f"与源文件相比:\n\n{change_message}"
                     f"是否继续保存？")
         msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         result = msg.exec_()
 
-        # 根据用户选择继续保存或取消
         if result == QMessageBox.Yes:
             try:
                 # 写入文件内容
                 with open(self.file_path, 'w', encoding='utf-8') as f:
-                    f.write(file_content)
+                    f.write(current_name)
                 self.main_instance.show_message(_("名单保存成功！"), _("提示"))
             except Exception as e:
-                self.main_instance.show_message(_("名单保存出现错误！\n%s" % e), _("错误"))
+                self.main_instance.show_message(_("Error: 名单保存出现错误！\n%s" % e), _("错误"))
         else:
             self.main_instance.show_message(_("已取消保存！"), _("提示"))
 
@@ -1741,9 +1572,11 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             selected_items = self.listWidget_2.selectedItems()
             if not selected_items:
                 self.pushButton_5.setEnabled(False)
+                self.pushButton_17.setEnabled(False)
                 return
             else:
                 self.pushButton_5.setEnabled(True)
+                self.pushButton_17.setEnabled(True)
             
             # 获取列表选择的文件
             for item in selected_items:
@@ -1848,11 +1681,6 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         elif bgmusic == 0:
             self.checkBox_4.setChecked(False)
 
-        if enable_name_mod == 1:
-            self.checkBox_5.setChecked(True)
-        elif enable_name_mod == 0:
-            self.checkBox_5.setChecked(False)
-
     def open_fold(self, value):
         os.makedirs(value, exist_ok=True)
         self.main_instance.opentext(value)
@@ -1878,7 +1706,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                             self.radioButton.setChecked(True)
                         else:
                             self.main_instance.show_message(
-                                _("语音播报无法在此设备上开启，可能是您使用的系统为精简版，删除了自带的语音库！\n%s") % e, _("错误"))
+                                _("Error: 语音播报无法在此设备上开启，可能是您使用的系统为精简版，删除了自带的语音库！\n%s") % e, _("错误"))
                             self.checkBox_2.setChecked(False)
                             self.radioButton.setEnabled(False)
                             self.radioButton_2.setEnabled(False)
@@ -1944,15 +1772,6 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                     _("开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n程序将随机选取一首，播放随机的音乐进度\n\n注：程序自带几首默认音频，当您在音乐目录下放入音乐后，默认音频将不会再进入候选列表！"), _("提示"))
                 self.open_fold("dmmusic")
 
-        elif key == "enable_name_mod":
-            self.enable_name_mod = 1 if checked else 0
-            if not checked:
-                self.main_instance.show_message(
-                    _("您正在关闭名单篡改监测功能！程序不会再监测名单是否被修改！"), _("警告"))
-                print("正在关闭名单检测")
-            else:
-                print("正在开启检查检测")
-
     def save_settings(self):
         if self.enable_tts == 1:
             self.main_instance.update_config("allownametts", 2)
@@ -1986,17 +1805,13 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         elif self.enable_bgmusic == 0:
             self.main_instance.update_config("bgmusic", 0)
 
-        if self.enable_name_mod == 1:
-            self.main_instance.update_config("enable_name_mod", 1)
-        elif self.enable_name_mod == 0:
-            self.main_instance.update_config("enable_name_mod", 0)
-
         self.close()
 
     def count_name(self):
         name_counts = {}  # 存储名字出现次数的字典
 
         selected_items = self.listWidget_2.selectedItems()
+        self.listWidget_2.setCurrentItem(None)
 
         if not selected_items:
             print("未知错误")
@@ -2021,19 +1836,18 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                                    key=lambda x: x[1], reverse=True)
             # 保存文本
             print("正在保存为文本")
-            cresult = _("中奖名单统计(统计会覆盖上一次结果):\n")
+            cresult = _("\"%s\" 名单中奖统计:\n\n" % (count_target.replace("中奖记录", "")))
             for name, count in sorted_counts:
                 cresult += "%s 出现了 %s 次\n" % (name, count)
                 with open('中奖统计.txt', 'w', encoding="utf-8") as file:
                     file.write(cresult)
-            QMessageBox.information(self, _("保存结果"), _("统计结果已保存到'/中奖统计.txt'"))
 
-            self.textEdit_2.setPlainText(cresult)
-            self.main_instance.opentext('中奖统计.txt')
+            self.textEdit_2.setPlainText(_("统计已保存至安装目录下的/中奖统计.txt中\n(每次统计会覆盖上一次统计结果)\n\n")+cresult)
+
         except Exception as e:
             print("读取文件时发生错误:", e)
             self.main_instance.show_message(
-                _("历史记录文件不存在，无法统计次数！\n%s") % e, _("错误"))
+                _("Error: 历史记录文件不存在，无法统计次数！\n%s") % e, _("错误"))
 
 class SpeakerThread(QRunnable):
     def __init__(self, mode=None):
@@ -2123,7 +1937,7 @@ class FrameWithLines(QtWidgets.QFrame):
 
         # 设置直角的起点和终点
         line_length = 13  # 直角标志的长度
-        margin = 18
+        margin = 20
         x_start = self.width() - margin - line_length  # 水平线起点
         y_start = self.height() - margin - line_length  # 垂直线起点
 

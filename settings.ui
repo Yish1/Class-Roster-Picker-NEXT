@@ -247,10 +247,17 @@
              <enum>QFrame::Raised</enum>
             </property>
             <layout class="QGridLayout" name="gridLayout_4">
-             <item row="2" column="0">
-              <widget class="QCheckBox" name="checkBox_4">
+             <item row="3" column="0">
+              <widget class="QCheckBox" name="checkBox_2">
                <property name="text">
-                <string>背景音乐</string>
+                <string>语音播报</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QCheckBox" name="checkBox">
+               <property name="text">
+                <string>不放回模式(单抽结果不重复)</string>
                </property>
               </widget>
              </item>
@@ -286,20 +293,6 @@
                </layout>
               </widget>
              </item>
-             <item row="0" column="0">
-              <widget class="QCheckBox" name="checkBox">
-               <property name="text">
-                <string>不放回模式(单抽结果不重复)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QCheckBox" name="checkBox_2">
-               <property name="text">
-                <string>语音播报</string>
-               </property>
-              </widget>
-             </item>
              <item row="6" column="0">
               <widget class="QCheckBox" name="checkBox_3">
                <property name="minimumSize">
@@ -313,10 +306,10 @@
                </property>
               </widget>
              </item>
-             <item row="7" column="0">
-              <widget class="QCheckBox" name="checkBox_5">
+             <item row="2" column="0">
+              <widget class="QCheckBox" name="checkBox_4">
                <property name="text">
-                <string>名单修改感知(Beta)</string>
+                <string>背景音乐</string>
                </property>
               </widget>
              </item>
@@ -519,7 +512,7 @@ QComboBox QAbstractItemView {
                <x>0</x>
                <y>0</y>
                <width>248</width>
-               <height>316</height>
+               <height>330</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout">
@@ -565,7 +558,7 @@ QPushButton{
               <item>
                <widget class="QLabel" name="label_3">
                 <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;一个支持 单抽，连抽的课堂点名小工具&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;a href=&quot;https://cmxz.top/ktdmq&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;沉梦小站&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Developers: Yish1, QQB-Roy, limuy2022&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://github.com/Yish1/Class-Roster-Picker-NEXT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Yish1/Class-Roster-Picker-NEXT: 课堂点名器&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;一个支持 单抽，连抽的课堂点名小工具&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;a href=&quot;https://cmxz.top/ktdmq&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;沉梦小站&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Contributors: Yish1, QQB-Roy, limuy2022&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://github.com/Yish1/Class-Roster-Picker-NEXT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Yish1/Class-Roster-Picker-NEXT: 课堂点名器&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="textFormat">
                  <enum>Qt::AutoText</enum>
@@ -720,7 +713,7 @@ QPushButton{
                     </size>
                    </property>
                    <property name="text">
-                    <string>删除所选名单</string>
+                    <string>删除名单</string>
                    </property>
                   </widget>
                  </item>
@@ -855,6 +848,9 @@ p, li { white-space: pre-wrap; }
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
                    </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -950,6 +946,20 @@ p, li { white-space: pre-wrap; }
               </item>
               <item row="0" column="0">
                <widget class="QListWidget" name="listWidget_2"/>
+              </item>
+              <item row="3" column="0">
+               <widget class="QPushButton" name="pushButton_16">
+                <property name="text">
+                 <string>访问历史记录目录</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QPushButton" name="pushButton_17">
+                <property name="text">
+                 <string>删除历史记录</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -1048,7 +1058,7 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>20</x>
          <y>60</y>
-         <width>75</width>
+         <width>131</width>
          <height>23</height>
         </rect>
        </property>
@@ -1059,9 +1069,9 @@ p, li { white-space: pre-wrap; }
       <widget class="QPushButton" name="pushButton_14">
        <property name="geometry">
         <rect>
-         <x>110</x>
+         <x>170</x>
          <y>60</y>
-         <width>75</width>
+         <width>141</width>
          <height>23</height>
         </rect>
        </property>
@@ -1074,7 +1084,7 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>20</x>
          <y>10</y>
-         <width>341</width>
+         <width>601</width>
          <height>41</height>
         </rect>
        </property>
