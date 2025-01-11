@@ -750,7 +750,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
     def setname(self):
         global name, non_repetitive_list, origin_name_list
         font = QtGui.QFont()
-        font.setPointSize(80)  # 字体大小
+        font.setPointSize(150)  # 字体大小
         self.label_3.setFont(font)
         if non_repetitive == 1:
             if len(non_repetitive_list) == 0:
@@ -1917,7 +1917,7 @@ class FrameWithLines(QtWidgets.QFrame):
         painter.setClipPath(path)
 
         # 设置遮罩画笔
-        pen = QtGui.QPen(QtGui.QColor(0, 0, 0, 150))  # 半透明黑色
+        pen = QtGui.QPen(QtGui.QColor(0, 0, 0, 90))  # 半透明黑色
         pen.setWidth(int(1.3))  # 横线宽度
         painter.setPen(pen)
 
