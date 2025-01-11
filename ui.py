@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'e:\class roster picker\picker.ui'
+# Form implementation generated from reading ui file 'picker.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -11,71 +11,304 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_Form(object):
-    def setupUi(self, Form):
-        Form.setObjectName("Form")
-        Form.resize(701, 410)
+class Ui_CRPmain(object):
+    def setupUi(self, CRPmain):
+        CRPmain.setObjectName("CRPmain")
+        CRPmain.resize(780, 445)
+        CRPmain.setMinimumSize(QtCore.QSize(780, 445))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/picker.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        Form.setWindowIcon(icon)
-        self.label = QtWidgets.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(10, 10, 681, 391))
-        self.label.setStyleSheet("background-color: rgba(42, 45, 47, 0.81);\n"
-"border-radius: 28px;")
-        self.label.setText("")
-        self.label.setObjectName("label")
-        self.label_2 = QtWidgets.QLabel(Form)
-        self.label_2.setGeometry(QtCore.QRect(10, 10, 681, 391))
-        self.label_2.setStyleSheet("border-image: url(:/images/(1070).webp);\n"
-"border-radius: 28px;")
-        self.label_2.setText("")
-        self.label_2.setObjectName("label_2")
-        self.frame = QtWidgets.QFrame(Form)
-        self.frame.setGeometry(QtCore.QRect(600, 20, 81, 40))
-        self.frame.setStyleSheet("\n"
+        CRPmain.setWindowIcon(icon)
+        CRPmain.setStyleSheet("")
+        self.gridLayout_4 = QtWidgets.QGridLayout(CRPmain)
+        self.gridLayout_4.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
+        self.gridLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_4.setObjectName("gridLayout_4")
+        self.frame = QtWidgets.QFrame(CRPmain)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
+        self.frame.setSizePolicy(sizePolicy)
+        self.frame.setMinimumSize(QtCore.QSize(0, 0))
+        self.frame.setStyleSheet("#frame {\n"
+"    border-radius: 28px;\n"
+"    border-image: url(:/images/(1070).webp); \n"
+"}\n"
+"")
+        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame.setObjectName("frame")
+        self.gridLayout = QtWidgets.QGridLayout(self.frame)
+        self.gridLayout.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout.setObjectName("gridLayout")
+        self.frame_4 = QtWidgets.QFrame(self.frame)
+        self.frame_4.setMinimumSize(QtCore.QSize(780, 445))
+        self.frame_4.setStyleSheet("#frame_4{\n"
+"background-color: rgba(42, 45, 47, 0.81);\n"
+"border-radius: 28px;\n"
+"}")
+        self.frame_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_4.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_4.setObjectName("frame_4")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.frame_4)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.pushButton_4 = QtWidgets.QPushButton(self.frame_4)
+        self.pushButton_4.setMinimumSize(QtCore.QSize(80, 0))
+        self.pushButton_4.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.pushButton_4.setStyleSheet("\n"
+"QPushButton{\n"
+"    border:none;\n"
+"}\n"
+"QPushButton:hover{\n"
+"    padding-bottom:3px;\n"
+"}")
+        self.pushButton_4.setText("")
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/icons/setting.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_4.setIcon(icon1)
+        self.pushButton_4.setIconSize(QtCore.QSize(20, 20))
+        self.pushButton_4.setObjectName("pushButton_4")
+        self.gridLayout_2.addWidget(self.pushButton_4, 0, 0, 1, 1)
+        self.frame_3 = QtWidgets.QFrame(self.frame_4)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frame_3.sizePolicy().hasHeightForWidth())
+        self.frame_3.setSizePolicy(sizePolicy)
+        self.frame_3.setStyleSheet("QPushButton {\n"
+"    font-size: 16px;\n"
+"}\n"
+"")
+        self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_3.setObjectName("frame_3")
+        self.gridLayout_5 = QtWidgets.QGridLayout(self.frame_3)
+        self.gridLayout_5.setContentsMargins(0, -1, -1, -1)
+        self.gridLayout_5.setObjectName("gridLayout_5")
+        self.label_4 = QtWidgets.QLabel(self.frame_3)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_4.sizePolicy().hasHeightForWidth())
+        self.label_4.setSizePolicy(sizePolicy)
+        self.label_4.setMinimumSize(QtCore.QSize(0, 30))
+        self.label_4.setStyleSheet("QLabel {\n"
+"    color: #FFFFFF;\n"
+"}")
+        self.label_4.setObjectName("label_4")
+        self.gridLayout_5.addWidget(self.label_4, 4, 1, 1, 1)
+        spacerItem = QtWidgets.QSpacerItem(15, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_5.addItem(spacerItem, 4, 4, 1, 1)
+        self.comboBox = QtWidgets.QComboBox(self.frame_3)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBox.sizePolicy().hasHeightForWidth())
+        self.comboBox.setSizePolicy(sizePolicy)
+        self.comboBox.setMinimumSize(QtCore.QSize(125, 30))
+        self.comboBox.setMaximumSize(QtCore.QSize(260, 30))
+        self.comboBox.setSizeIncrement(QtCore.QSize(0, 0))
+        self.comboBox.setStyleSheet("QComboBox {\n"
+"    font-size: 15px;\n"
+"}\n"
+"\n"
+"QComboBox QAbstractItemView {\n"
+"    font-size: 15px;\n"
+"}\n"
+"")
+        self.comboBox.setEditable(False)
+        self.comboBox.setMaxVisibleItems(8)
+        self.comboBox.setMinimumContentsLength(0)
+        self.comboBox.setDuplicatesEnabled(False)
+        self.comboBox.setFrame(True)
+        self.comboBox.setObjectName("comboBox")
+        self.gridLayout_5.addWidget(self.comboBox, 2, 1, 1, 1)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_5.addItem(spacerItem1, 4, 2, 1, 1)
+        self.label_5 = QtWidgets.QLabel(self.frame_3)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_5.sizePolicy().hasHeightForWidth())
+        self.label_5.setSizePolicy(sizePolicy)
+        self.label_5.setMinimumSize(QtCore.QSize(0, 30))
+        self.label_5.setStyleSheet("QLabel {\n"
+"    color: #FFFFFF;\n"
+"}")
+        self.label_5.setObjectName("label_5")
+        self.gridLayout_5.addWidget(self.label_5, 1, 1, 1, 1)
+        spacerItem2 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_5.addItem(spacerItem2, 0, 4, 1, 1)
+        self.pushButton_5 = QtWidgets.QPushButton(self.frame_3)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pushButton_5.sizePolicy().hasHeightForWidth())
+        self.pushButton_5.setSizePolicy(sizePolicy)
+        self.pushButton_5.setMinimumSize(QtCore.QSize(165, 45))
+        self.pushButton_5.setMaximumSize(QtCore.QSize(200, 80))
+        self.pushButton_5.setBaseSize(QtCore.QSize(0, 0))
+        self.pushButton_5.setStyleSheet("QPushButton{background:rgba(237, 237, 237, 1);border-radius:5px;}QPushButton:hover{background:rgba(210, 210, 210, 0.6);}")
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/icons/swindow.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_5.setIcon(icon2)
+        self.pushButton_5.setIconSize(QtCore.QSize(16, 18))
+        self.pushButton_5.setObjectName("pushButton_5")
+        self.gridLayout_5.addWidget(self.pushButton_5, 2, 3, 1, 1)
+        self.frame_5 = QtWidgets.QFrame(self.frame_3)
+        self.frame_5.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_5.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_5.setObjectName("frame_5")
+        self.gridLayout_5.addWidget(self.frame_5, 5, 0, 1, 1)
+        self.label_6 = QtWidgets.QLabel(self.frame_3)
+        self.label_6.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.label_6.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.label_6.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.label_6.setObjectName("label_6")
+        self.gridLayout_5.addWidget(self.label_6, 6, 1, 1, 1)
+        self.spinBox = QtWidgets.QSpinBox(self.frame_3)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.spinBox.sizePolicy().hasHeightForWidth())
+        self.spinBox.setSizePolicy(sizePolicy)
+        self.spinBox.setMinimumSize(QtCore.QSize(0, 30))
+        self.spinBox.setMaximumSize(QtCore.QSize(260, 30))
+        self.spinBox.setStyleSheet("* {\n"
+"    font-size: 15px;\n"
+"}")
+        self.spinBox.setMinimum(1)
+        self.spinBox.setMaximum(999999)
+        self.spinBox.setObjectName("spinBox")
+        self.gridLayout_5.addWidget(self.spinBox, 5, 1, 1, 1)
+        self.pushButton_2 = QtWidgets.QPushButton(self.frame_3)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pushButton_2.sizePolicy().hasHeightForWidth())
+        self.pushButton_2.setSizePolicy(sizePolicy)
+        self.pushButton_2.setMinimumSize(QtCore.QSize(0, 45))
+        self.pushButton_2.setMaximumSize(QtCore.QSize(200, 80))
+        self.pushButton_2.setBaseSize(QtCore.QSize(0, 0))
+        self.pushButton_2.setStyleSheet("QPushButton {\n"
+"    font-size: 18px;\n"
+"}\n"
+"QPushButton{background:rgba(118, 218, 96, 1);border-radius:5px;}QPushButton:hover{background:rgba(80, 182, 84, 1);}")
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_2.setIcon(icon3)
+        self.pushButton_2.setIconSize(QtCore.QSize(19, 19))
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.gridLayout_5.addWidget(self.pushButton_2, 5, 3, 1, 1)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_5.addItem(spacerItem3, 2, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.frame_3, 14, 3, 1, 3)
+        self.frame_2 = QtWidgets.QFrame(self.frame_4)
+        self.frame_2.setMinimumSize(QtCore.QSize(80, 0))
+        self.frame_2.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.frame_2.setStyleSheet("\n"
 "QPushButton{\n"
 "    border:none;\n"
 "}\n"
 "QPushButton:hover{\n"
 "    padding-bottom:4px;\n"
 "}")
-        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame.setObjectName("frame")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.frame)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.pushButton = QtWidgets.QPushButton(self.frame)
+        self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_2.setObjectName("frame_2")
+        self.gridLayout_6 = QtWidgets.QGridLayout(self.frame_2)
+        self.gridLayout_6.setObjectName("gridLayout_6")
+        self.pushButton = QtWidgets.QPushButton(self.frame_2)
         self.pushButton.setText("")
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/icons/hide.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton.setIcon(icon1)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/hide.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton.setIcon(icon4)
         self.pushButton.setIconSize(QtCore.QSize(20, 20))
         self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout.addWidget(self.pushButton)
-        self.pushButton_3 = QtWidgets.QPushButton(self.frame)
+        self.gridLayout_6.addWidget(self.pushButton, 0, 0, 1, 1)
+        self.pushButton_3 = QtWidgets.QPushButton(self.frame_2)
         self.pushButton_3.setText("")
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton_3.setIcon(icon2)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_3.setIcon(icon5)
         self.pushButton_3.setIconSize(QtCore.QSize(20, 20))
         self.pushButton_3.setObjectName("pushButton_3")
-        self.horizontalLayout.addWidget(self.pushButton_3)
-        self.label_3 = QtWidgets.QLabel(Form)
-        self.label_3.setGeometry(QtCore.QRect(60, 70, 591, 121))
-        self.label_3.setStyleSheet("QLabel {\n"
-"    color: #FFFFFF;\n"
-"}")
-        self.label_3.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.label_3.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_3.setWordWrap(True)
-        self.label_3.setObjectName("label_3")
-        self.listWidget = QtWidgets.QListWidget(Form)
-        self.listWidget.setGeometry(QtCore.QRect(60, 213, 244, 151))
-        self.listWidget.setStyleSheet("QListWidget {\n"
-"    background-color: rgba(43, 43, 43, 0.9);\n"
-"    color: rgba(255, 255, 255, 1);\n"
-"}\n"
+        self.gridLayout_6.addWidget(self.pushButton_3, 0, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.frame_2, 0, 5, 1, 1)
+        self.progressBar = QtWidgets.QProgressBar(self.frame_4)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.progressBar.sizePolicy().hasHeightForWidth())
+        self.progressBar.setSizePolicy(sizePolicy)
+        self.progressBar.setStyleSheet(" QProgressBar {\n"
+"        border: 2px solid rgba(75, 75, 75, 0.9);\n"
+"        border-radius: 2px;\n"
+"        background-color: rgba(0, 0, 0, 0);\n"
+"    }\n"
 "\n"
+"    QProgressBar::chunk {\n"
+"        background-color: QLinearGradient(\n"
+"            x1: 0, y1: 0, x2: 1, y2: 1,\n"
+"            stop: 0 #00BCD4, stop: 1 #8BC34A\n"
+"        );\n"
+"        border-radius: 8px;\n"
+"    }")
+        self.progressBar.setMaximum(0)
+        self.progressBar.setProperty("value", -1)
+        self.progressBar.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.progressBar.setTextVisible(False)
+        self.progressBar.setOrientation(QtCore.Qt.Horizontal)
+        self.progressBar.setInvertedAppearance(False)
+        self.progressBar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
+        self.progressBar.setObjectName("progressBar")
+        self.gridLayout_2.addWidget(self.progressBar, 0, 1, 1, 4)
+        self.frame_6 = QtWidgets.QFrame(self.frame_4)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frame_6.sizePolicy().hasHeightForWidth())
+        self.frame_6.setSizePolicy(sizePolicy)
+        self.frame_6.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_6.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_6.setObjectName("frame_6")
+        self.gridLayout_3 = QtWidgets.QGridLayout(self.frame_6)
+        self.gridLayout_3.setContentsMargins(-1, -1, 0, -1)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        spacerItem4 = QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        self.gridLayout_3.addItem(spacerItem4, 4, 1, 1, 1)
+        spacerItem5 = QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_3.addItem(spacerItem5, 1, 0, 1, 1)
+        self.commandLinkButton = QtWidgets.QCommandLinkButton(self.frame_6)
+        self.commandLinkButton.setMaximumSize(QtCore.QSize(16777215, 40))
+        self.commandLinkButton.setObjectName("commandLinkButton")
+        self.gridLayout_3.addWidget(self.commandLinkButton, 3, 1, 1, 1)
+        self.label_7 = QtWidgets.QLabel(self.frame_6)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_7.sizePolicy().hasHeightForWidth())
+        self.label_7.setSizePolicy(sizePolicy)
+        self.label_7.setMaximumSize(QtCore.QSize(16777215, 50))
+        self.label_7.setStyleSheet("QLabel {\n"
+"    color: #B4B4B4;\n"
+"}\n"
+"* {\n"
+"    font-size: 10px;\n"
+"}")
+        self.label_7.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.label_7.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.label_7.setObjectName("label_7")
+        self.gridLayout_3.addWidget(self.label_7, 0, 1, 1, 1)
+        self.listWidget = QtWidgets.QListWidget(self.frame_6)
+        self.listWidget.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.listWidget.setStyleSheet("QListWidget {\n"
+"    background-color: rgba(43, 43, 43, 0.85);\n"
+"    color: rgba(255, 255, 255, 1);\n"
+"    border: 1px solid rgba(75, 75, 75, 0.9);\n"
+"}\n"
 "QScrollBar:vertical {\n"
 "    width: 12px;\n"
 "    border: 1px solid rgba(43, 43, 43, 0.9);\n"
@@ -132,7 +365,8 @@ class Ui_Form(object):
 "    font-size: 18px;\n"
 "}\n"
 "")
-        self.listWidget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.listWidget.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.listWidget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.listWidget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.listWidget.setProperty("showDropIndicator", False)
         self.listWidget.setDragEnabled(False)
@@ -144,143 +378,43 @@ class Ui_Form(object):
         self.listWidget.setMovement(QtWidgets.QListView.Static)
         self.listWidget.setResizeMode(QtWidgets.QListView.Fixed)
         self.listWidget.setObjectName("listWidget")
-        self.frame_2 = QtWidgets.QFrame(Form)
-        self.frame_2.setGeometry(QtCore.QRect(337, 207, 131, 142))
-        self.frame_2.setStyleSheet("* {\n"
-"    font-size: 11px;\n"
-"}")
-        self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_2.setObjectName("frame_2")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.frame_2)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.label_5 = QtWidgets.QLabel(self.frame_2)
-        self.label_5.setMinimumSize(QtCore.QSize(0, 30))
-        self.label_5.setStyleSheet("QLabel {\n"
+        self.gridLayout_3.addWidget(self.listWidget, 1, 1, 2, 1)
+        self.gridLayout_2.addWidget(self.frame_6, 14, 0, 2, 3)
+        self.label_3 = QtWidgets.QLabel(self.frame_4)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
+        self.label_3.setSizePolicy(sizePolicy)
+        self.label_3.setMinimumSize(QtCore.QSize(0, 130))
+        self.label_3.setStyleSheet("QLabel {\n"
 "    color: #FFFFFF;\n"
 "}")
-        self.label_5.setObjectName("label_5")
-        self.verticalLayout.addWidget(self.label_5)
-        self.comboBox = QtWidgets.QComboBox(self.frame_2)
-        self.comboBox.setMinimumSize(QtCore.QSize(0, 30))
-        self.comboBox.setStyleSheet("QComboBox {\n"
-"    font-size: 15px;\n"
-"}\n"
-"\n"
-"QComboBox QAbstractItemView {\n"
-"    font-size: 15px;\n"
-"}\n"
-"")
-        self.comboBox.setEditable(False)
-        self.comboBox.setMaxVisibleItems(8)
-        self.comboBox.setMinimumContentsLength(0)
-        self.comboBox.setDuplicatesEnabled(False)
-        self.comboBox.setFrame(True)
-        self.comboBox.setObjectName("comboBox")
-        self.verticalLayout.addWidget(self.comboBox)
-        self.label_4 = QtWidgets.QLabel(self.frame_2)
-        self.label_4.setMinimumSize(QtCore.QSize(0, 30))
-        self.label_4.setStyleSheet("QLabel {\n"
-"    color: #FFFFFF;\n"
-"}")
-        self.label_4.setObjectName("label_4")
-        self.verticalLayout.addWidget(self.label_4)
-        self.spinBox = QtWidgets.QSpinBox(self.frame_2)
-        self.spinBox.setMinimumSize(QtCore.QSize(0, 30))
-        self.spinBox.setStyleSheet("* {\n"
-"    font-size: 15px;\n"
-"}")
-        self.spinBox.setMinimum(1)
-        self.spinBox.setMaximum(999999)
-        self.spinBox.setObjectName("spinBox")
-        self.verticalLayout.addWidget(self.spinBox)
-        self.pushButton_4 = QtWidgets.QPushButton(Form)
-        self.pushButton_4.setGeometry(QtCore.QRect(30, 30, 31, 23))
-        self.pushButton_4.setStyleSheet("\n"
-"QPushButton{\n"
-"    border:none;\n"
-"}\n"
-"QPushButton:hover{\n"
-"    padding-bottom:4px;\n"
-"}")
-        self.pushButton_4.setText("")
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/icons/setting.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton_4.setIcon(icon3)
-        self.pushButton_4.setIconSize(QtCore.QSize(20, 20))
-        self.pushButton_4.setObjectName("pushButton_4")
-        self.progressBar = QtWidgets.QProgressBar(Form)
-        self.progressBar.setGeometry(QtCore.QRect(90, 30, 491, 21))
-        self.progressBar.setStyleSheet(" QProgressBar {\n"
-"        border: 2px solid rgba(88, 88, 88, 0.81);\n"
-"        border-radius: 2px;\n"
-"        background-color: rgba(0, 0, 0, 0);\n"
-"    }\n"
-"\n"
-"    QProgressBar::chunk {\n"
-"        background-color: QLinearGradient(\n"
-"            x1: 0, y1: 0, x2: 1, y2: 1,\n"
-"            stop: 0 #00BCD4, stop: 1 #8BC34A\n"
-"        );\n"
-"        border-radius: 8px;\n"
-"    }")
-        self.progressBar.setMaximum(0)
-        self.progressBar.setProperty("value", -1)
-        self.progressBar.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
-        self.progressBar.setTextVisible(False)
-        self.progressBar.setOrientation(QtCore.Qt.Horizontal)
-        self.progressBar.setInvertedAppearance(False)
-        self.progressBar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
-        self.progressBar.setObjectName("progressBar")
-        self.frame_3 = QtWidgets.QFrame(Form)
-        self.frame_3.setGeometry(QtCore.QRect(490, 207, 161, 181))
-        self.frame_3.setStyleSheet("* {\n"
-"    font-size: 16px; \n"
-"}")
-        self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_3.setObjectName("frame_3")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.frame_3)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.pushButton_5 = QtWidgets.QPushButton(self.frame_3)
-        self.pushButton_5.setMinimumSize(QtCore.QSize(0, 45))
-        self.pushButton_5.setStyleSheet("QPushButton{background:rgba(237, 237, 237, 1);border-radius:5px;}QPushButton:hover{background:rgba(210, 210, 210, 0.6);}")
-        self.pushButton_5.setText("")
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/icons/swindow.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton_5.setIcon(icon4)
-        self.pushButton_5.setIconSize(QtCore.QSize(16, 18))
-        self.pushButton_5.setObjectName("pushButton_5")
-        self.verticalLayout_2.addWidget(self.pushButton_5)
-        self.pushButton_2 = QtWidgets.QPushButton(self.frame_3)
-        self.pushButton_2.setMinimumSize(QtCore.QSize(0, 45))
-        self.pushButton_2.setStyleSheet("QPushButton {\n"
-"    font-size: 18px;\n"
-"}\n"
-"QPushButton{background:rgba(118, 218, 96, 1);border-radius:5px;}QPushButton:hover{background:rgba(80, 182, 84, 1);}")
-        self.pushButton_2.setText("")
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton_2.setIcon(icon5)
-        self.pushButton_2.setIconSize(QtCore.QSize(19, 19))
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.verticalLayout_2.addWidget(self.pushButton_2)
-        self.label_6 = QtWidgets.QLabel(Form)
-        self.label_6.setGeometry(QtCore.QRect(270, 370, 191, 20))
-        self.label_6.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_6.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
-        self.label_6.setObjectName("label_6")
-        self.label_2.raise_()
-        self.label.raise_()
-        self.frame.raise_()
-        self.label_3.raise_()
-        self.listWidget.raise_()
-        self.frame_2.raise_()
-        self.pushButton_4.raise_()
-        self.progressBar.raise_()
-        self.frame_3.raise_()
-        self.label_6.raise_()
+        self.label_3.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.label_3.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.label_3.setScaledContents(False)
+        self.label_3.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_3.setWordWrap(True)
+        self.label_3.setOpenExternalLinks(False)
+        self.label_3.setObjectName("label_3")
+        self.gridLayout_2.addWidget(self.label_3, 1, 1, 1, 4)
+        self.gridLayout.addWidget(self.frame_4, 0, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.frame, 0, 0, 1, 1)
+
+        self.retranslateUi(CRPmain)
         self.comboBox.setCurrentIndex(-1)
-        self.pushButton_3.clicked.connect(Form.close) # type: ignore
-        QtCore.QMetaObject.connectSlotsByName(Form)
-import res
+        self.pushButton_3.clicked.connect(CRPmain.close) # type: ignore
+        QtCore.QMetaObject.connectSlotsByName(CRPmain)
+
+    def retranslateUi(self, CRPmain):
+        _translate = QtCore.QCoreApplication.translate
+        CRPmain.setWindowTitle(_translate("CRPmain", "Class Roster Picker"))
+        self.label_4.setText(_translate("CRPmain", "抽取人数："))
+        self.label_5.setText(_translate("CRPmain", "当前名单："))
+        self.pushButton_5.setText(_translate("CRPmain", " 小窗模式"))
+        self.label_6.setText(_translate("CRPmain", "自定义背景"))
+        self.pushButton_2.setText(_translate("CRPmain", " 开始"))
+        self.commandLinkButton.setText(_translate("CRPmain", "恢复默认大小"))
+        self.label_7.setText(_translate("CRPmain", "正在播放:"))
+        self.label_3.setText(_translate("CRPmain", "恭喜xxx"))
+import ui1_rc

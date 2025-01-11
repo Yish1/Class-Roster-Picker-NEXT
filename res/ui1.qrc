@@ -9,6 +9,16 @@
     <file>picker.ico</file>
   </qresource>
   <qresource prefix="mid">
+    <file>april.mid</file>
+    <file>hyl.mid</file>
+    <file>hzt.mid</file>
+    <file>lemon.mid</file>
+    <file>level5.mid</file>
+    <file>ltinat.mid</file>
+    <file>qby.mid</file>
+    <file>qqss.mid</file>
+    <file>xxlg.mid</file>
+    <file>ydh.mid</file>
     <file>olg.mid</file>
   </qresource>
   <qresource prefix="images">
