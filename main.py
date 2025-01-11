@@ -22,7 +22,6 @@ from datetime import datetime, timedelta
 from ui import Ui_CRPmain  # 导入ui文件
 from smallwindow import Ui_smallwindow
 from settings import Ui_Settings
-from Crypto.Cipher import ARC4
 
 # debugpy.listen(("0.0.0.0", 5678))
 # debugpy.wait_for_client()  # 等待调试器连接
