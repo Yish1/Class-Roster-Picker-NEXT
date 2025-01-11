@@ -18,7 +18,7 @@ from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QShortcut
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
-from datetime import datetime, timedelta
+from datetime import datetime
 from ui import Ui_CRPmain  # 导入ui文件
 from smallwindow import Ui_smallwindow
 from settings import Ui_Settings
