@@ -18,10 +18,13 @@ from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QShortcut
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
+from qtrangeslider import QRangeSlider
 from datetime import datetime
+
 from ui import Ui_CRPmain  # 导入ui文件
 from smallwindow import Ui_smallwindow
 from settings import Ui_Settings
+from msgbox import Ui_msgbox
 
 # debugpy.listen(("0.0.0.0", 5678))
 # debugpy.wait_for_client()  # 等待调试器连接
@@ -68,17 +71,19 @@ except:
         user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
 
 # version
-dmversion = 6.4
+dmversion = 6.5
 
 # config变量
-allownametts = None
-checkupdate = None
-bgimg = None
+allownametts = None   # 1关闭 2正常模式 3听写模式
+checkupdate = None    # 0/1关闭 2开启
+bgimg = None         # 1默认 2自定义 3无
 latest_version = None
-last_name_list = None
-non_repetitive = None
-bgmusic = None
-first_use = None
+last_name_list = None # 记录上次选中的名单
+non_repetitive = None # 0关闭 1开启
+bgmusic = None        # 0关闭 1开启
+first_use = None      
+roll_speed = None
+inertia_roll = None   # 0关闭 1开启
 
 # 全局变量
 name = None
@@ -367,43 +372,72 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         config = {}
         if not os.path.exists('config.ini'):
             with open('config.ini', 'w', encoding='utf-8') as file:
-                file.write(
-                    '[language]=zh_CN\n[allownametts]=1\n[checkupdate]=2\n[bgimg]=1\n[last_name_list]=None\n[latest_version]=0\n[non_repetitive]=1\n[bgmusic]=0\n[first_use]=0')
+                file.write("")
+                
         with open('config.ini', 'r', encoding='utf-8') as file:
             for line in file:
                 if '=' in line:
                     key, value = line.strip().split('=', 1)
                     config[key.strip('[]')] = value.strip()
         try:
-            language_value = config.get('language')
-            allownametts = int(config.get('allownametts'))
-            checkupdate = int(config.get('checkupdate'))
-            bgimg = int(config.get('bgimg'))
-            last_name_list = config.get('last_name_list')
-            latest_version = config.get('latest_version')
-            non_repetitive = int(config.get('non_repetitive'))
-            bgmusic = int(config.get('bgmusic'))
-            first_use = int(config.get('first_use'))
+            language_value = config.get('language') if config.get('language') else self.update_config("language", "zh_CN", "w!")
+            allownametts = int(config.get('allownametts')) if config.get('allownametts') else self.update_config("allownametts", 1, "w!")
+            checkupdate = int(config.get('checkupdate')) if config.get('checkupdate') else self.update_config("checkupdate", 2, "w!")
+            bgimg = int(config.get('bgimg')) if config.get('bgimg') else self.update_config("bgimg", 1, "w!")
+            last_name_list = config.get('last_name_list') if config.get('last_name_list') else self.update_config("last_name_list", "None", "w!")
+            latest_version = config.get('latest_version') if config.get('latest_version') else self.update_config("latest_version", 0, "w!")
+            non_repetitive = int(config.get('non_repetitive')) if config.get('non_repetitive') else self.update_config("non_repetitive", 1, "w!")
+            bgmusic = int(config.get('bgmusic')) if config.get('bgmusic') else self.update_config("bgmusic", 0, "w!")
+            first_use = int(config.get('first_use')) if config.get('first_use') else self.update_config("first_use", 0, "w!")
 
         except Exception as e:
-            print(f"配置文件读取失败，已重置为默认值！{e}")
+            print(f"配置文件读取失败，已重置无效为默认值！{e}") 
             self.show_message(_("配置文件读取失败，已重置为默认值！\n%s") % e, _("读取配置文件失败！"))
             os.remove("config.ini")
             self.read_config()
         return config
 
-    def update_config(self, variable, new_value):
-        config = self.read_config()
-        config[variable] = new_value
-        with open('config.ini', 'w', encoding='utf-8') as file:
-            for key, value in config.items():
-                file.write(f"[{key}]={value}\n")
-        print(f"写入配置{variable} = {new_value} 成功！")
-        self.read_config()
+    def update_config(self, variable, new_value, mode=None):
+        lines = []
+        with open('config.ini', 'r+', encoding='utf-8') as file:
+            lines = file.readlines()
+        updated = False
+        seen_keys = set()   # 防止重复项
+
+        for i in range(len(lines)): # 确保每个值都有\n结尾
+            if not lines[i].endswith('\n'):
+                lines[i] += '\n'
+
+        for i, line in enumerate(lines):
+            if '=' in line:
+                key, value = line.strip().split('=', 1)
+                key = key.strip('[]')
+                if key == variable: # 如果存在，则替换现有的值
+                    lines[i] = f"[{key}]={new_value}\n"  # 替换成新的值，带上中括号
+                    updated = True
+                    seen_keys.add(key.strip('[]'))  # 记录当前配置项的key
+
+                elif key.strip('[]') in seen_keys:
+                    lines[i] = ''  # 将重复项标记为空行，后续可以过滤掉
+
+                else:
+                    seen_keys.add(key.strip('[]'))  # 新配置项，记录该key
+        # 如不存在，则在文件末尾添加
+        if not updated:
+            lines.append(f"[{variable}]={new_value}\n")
+
+        lines = [line for line in lines if line != '']  # 过滤重复行
+
+        with open('config.ini', 'w+', encoding='utf-8') as file:
+            file.writelines(lines)
+            print(f"更新配置文件：[{variable}]={new_value}\n")
+
+        if mode == "w!":
+            pass
+        else:
+            self.read_config()
         if variable == 'bgimg':
             self.set_bgimg()
-        else:
-            pass
 
     def process_name_file(self, file_path):
         global name_list, namelen, non_repetitive_list
@@ -736,7 +770,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                                       file_path, "\n%s" % e)
             else:
                 self.timer = QTimer(self)
-                time = random.randint(99, 130)
+                time = random.randint(50, 51)
                 self.timer.start(time)
                 self.timer.timeout.connect(self.setname)
 
@@ -1274,32 +1308,43 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         central_widget = QtWidgets.QWidget(self)  # 创建一个中央小部件
         self.setCentralWidget(central_widget)  # 设置中央小部件为QMainWindow的中心区域
         self.setupUi(central_widget)  # 初始化UI到中央小部件上
-        self.setMinimumSize(667, 539)
-        self.resize(667, 539)
+        self.setMinimumSize(658, 513)
+        self.resize(658, 513)
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowMinimizeButtonHint) # 禁止最小化
+
+        self.horizontalSlider = QRangeSlider(self.frame_8)
+        self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSlider.setRange(0, 160)   # 设置范围(必须从0开始，不然有bug)
+        self.horizontalSlider.setValue((90, 130))  # 默认选中的范围
+        self.horizontalSlider.setSingleStep(1)  # 设置步长
+        current_range = self.horizontalSlider.value()
+        self.label_6.setText(f"{current_range[0]}-{current_range[1]} ms") 
+        self.gridLayout_4.addWidget(self.horizontalSlider, 14, 0, 1, 2)
+
         self.pushButton.setText(_("取消"))
         self.pushButton_2.setText(_("保存"))
+        self.groupBox_5.setTitle(_("关于"))
+        self.label_2.setText(_("沉梦课堂点名器 V6.5"))
+        self.label_3.setText(_("<html><head/><body><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具</p><p align=\"center\"><br/><a href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a><br/></p><p align=\"center\">Contributors: Yish1, QQB-Roy, limuy2022</p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><br/></p></body></html>"))
         self.groupBox_6.setTitle(_("快捷访问"))
         self.pushButton_12.setText(_("名单文件目录"))
         self.pushButton_10.setText(_("背景音乐目录"))
         self.pushButton_8.setText(_("历史记录目录"))
-        self.groupBox.setTitle(_("功能开关"))
+        self.groupBox_3.setTitle(_("语言设置"))
+        self.groupBox.setTitle(_("功能设置"))
         self.checkBox_4.setText(_("背景音乐"))
-        self.radioButton.setText(_("正常模式"))
-        self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
+        self.label_5.setText(_("名单滚动速度(范围):"))
         self.checkBox.setText(_("不放回模式(单抽结果不重复)"))
         self.checkBox_2.setText(_("语音播报"))
+        self.radioButton.setText(_("正常模式"))
+        self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
         self.checkBox_3.setText(_("检查更新"))
         self.label.setText(_("背景图片"))
         self.radioButton_3.setText(_("默认背景"))
         self.radioButton_4.setText(_("自定义"))
         self.radioButton_5.setText(_("无"))
         self.pushButton_9.setText(_("背景图片目录"))
-        self.groupBox_3.setTitle(_("语言设置"))
-        self.groupBox_5.setTitle(_("关于"))
-        self.label_2.setText(_("沉梦课堂点名器 V%s") % dmversion)
-        self.label_3.setText(_("<html><head/><body><p align=\"center\"></p><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具</p><p align=\"center\"><br/><a href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a><br/></p><p align=\"center\">Contributors: Yish1, QQB-Roy, limuy2022</p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><br/></p></body></html>"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("基本设置"))
         self.groupBox_2.setTitle(_("名单管理"))
         self.pushButton_3.setText(_("新建名单"))
@@ -1333,6 +1378,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.language_value = None
         self.disable_repetitive = None
         self.enable_bgmusic = None
+        self.file_path_bak = None
         self.file_path = None
         self.isload = None
 
@@ -1358,6 +1404,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.listWidget.itemSelectionChanged.connect(self.read_name_inlist)
         self.listWidget_2.itemSelectionChanged.connect(lambda:self.find_history(1))
         self.tabWidget.currentChanged.connect(self.tab_changed)
+        self.horizontalSlider.valueChanged.connect(self.slider_value_changed)
 
         self.pushButton_11.setEnabled(False)
         self.pushButton_13.setEnabled(False)
@@ -1382,10 +1429,22 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             lambda checked: self.process_config("enable_bgimg", checked))
         self.radioButton_5.toggled.connect(
             lambda checked: self.process_config("enable_bgimg", checked))
+        
+    def slider_value_changed(self):
+        current_range = self.horizontalSlider.value()
+        if current_range[0] <= 29:
+            self.horizontalSlider.setValue((30, current_range[1]))
+        else:
+            self.label_6.setText(f"{current_range[0]}-{current_range[1]} ms") 
+        if current_range[0] >= current_range[1]:# 防止点炒饭
+            self.horizontalSlider.setValue((current_range[0], current_range[0]+1))
+        # (30, 60)
 
     def tab_changed(self, index):
         if index != 0:
             self.frame.hide()
+            if index == 1:
+                self.file_path = self.file_path_bak
         else:
             self.frame.show()
 
@@ -1428,6 +1487,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             non_empty_lines = [line for line in lines if line.strip()]
             file_content = "\n".join(non_empty_lines)
             self.textEdit.setPlainText(file_content)
+            self.file_path_bak = self.file_path
    
     def read_txt(self):
         file_content = None
@@ -1543,17 +1603,11 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         if change_message == "":
             change_message = _("未进行任何修改。\n\n")
 
-        msg = QMessageBox(self)
-        msg.setIcon(QMessageBox.Question)
-        msg.setWindowTitle(_("保存确认"))
-        msg.setText(f"您正在保存文件：{os.path.basename(self.file_path)}\n"
-                    f"修改后的名单中共有 {current_name_count} 个名字，\n"
-                    f"与源文件相比:\n\n{change_message}"
-                    f"是否继续保存？")
-        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        result = msg.exec_()
+        text = _("您正在保存文件：\"%s\" |修改后的名单中共有 %s 个名字|与源文件相比:|%s" % (os.path.basename(self.file_path), current_name_count, change_message))
+        msg = msgbox(text)
+        msg.exec_()
 
-        if result == QMessageBox.Yes:
+        if msg.get_result() == 1:
             try:
                 # 写入文件内容
                 with open(self.file_path, 'w', encoding='utf-8') as f:
@@ -1561,9 +1615,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 self.main_instance.show_message(_("名单保存成功！"), _("提示"))
             except Exception as e:
                 self.main_instance.show_message(_("Error: 名单保存出现错误！\n%s" % e), _("错误"))
-        else:
+        elif msg.get_result() == 0:
             self.main_instance.show_message(_("已取消保存！"), _("提示"))
-
 
     def find_history(self,mode = None):
         if mode == 1:
@@ -1947,6 +2000,37 @@ class FrameWithLines(QtWidgets.QFrame):
 
         painter.end()
 
+
+class msgbox(QtWidgets.QDialog, Ui_msgbox):  # 保存弹窗 
+    def __init__(self, text):
+        super().__init__()
+
+        self.setWindowModality(QtCore.Qt.ApplicationModal)  # 设置为模态窗口
+        self.setupUi(self)  # 初始化UI到这个中央控件
+        self.setWindowTitle(_("保存确认"))
+        self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
+
+        text_list = text.split("|")
+
+        self.label.setText(text_list[0])
+        self.label_2.setText(text_list[1])
+        self.label_3.setText(text_list[2])
+        self.textBrowser.setText(text_list[3])
+        self.pushButton_2.clicked.connect(self.cancel)
+        self.pushButton.clicked.connect(self.save)
+
+        self.result = None
+
+    def cancel(self):
+        self.result = 0
+        self.close()
+    
+    def save(self):
+        self.result = 1
+        self.close()
+
+    def get_result(self):
+        return self.result
 
 if __name__ == "__main__":
     try:
