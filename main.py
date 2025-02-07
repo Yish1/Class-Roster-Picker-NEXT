@@ -454,7 +454,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         elif variable == 'title_text':
             self.label_3.setText(new_value)
         elif variable == 'roll_speed':
-            self.dynamic_speed_preview(int(roll_speed[0]))
+            try:
+                self.dynamic_speed_preview(int(roll_speed[0]))
+            except:
+                pass
 
     def process_name_file(self, file_path):
         global name_list, namelen, non_repetitive_list
@@ -1366,22 +1369,17 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
         self.pushButton.setText(_("取消"))
         self.pushButton_2.setText(_("保存"))
-        self.groupBox_5.setTitle(_("关于"))
-        self.label_2.setText(_("沉梦课堂点名器 V6.5"))
-        self.groupBox_6.setTitle(_("快捷访问"))
-        self.pushButton_12.setText(_("名单文件目录"))
-        self.pushButton_10.setText(_("背景音乐目录"))
-        self.pushButton_8.setText(_("历史记录目录"))
         self.groupBox_3.setTitle(_("语言设置"))
         self.groupBox.setTitle(_("功能设置"))
+        self.checkBox_3.setText(_("检查更新"))
         self.checkBox_4.setText(_("背景音乐"))
         self.label_5.setText(_("名单滚动速度(范围):"))
         self.checkBox.setText(_("不放回模式(单抽结果不重复)"))
         self.checkBox_2.setText(_("语音播报"))
         self.radioButton.setText(_("正常模式"))
         self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
-        self.label_3.setText(_("<html><head/><body><p align=\"center\"><span style=\" font-size:7pt; text-decoration: underline;\">一个支持 单抽，连抽的课堂点名小工具</span></p><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-size:8pt; font-weight:600;\">Contributors: Yish1, QQB-Roy, limuy2022</span></p><p align=\"center\"><span style=\" font-size:7pt; font-weight:600; font-style:italic;\"><br/></span><a href=\"https://cmxz.top/ktdmq\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><span style=\" font-size:7pt;\"><br/></span></p></body></html>"))
-        self.checkBox_3.setText(_("检查更新"))
+        self.label_6.setText(_("30-60 ms"))
+        self.checkBox_5.setText(_("惯性滚动"))
         self.label.setText(_("背景图片"))
         self.radioButton_3.setText(_("默认背景"))
         self.radioButton_4.setText(_("自定义"))
@@ -1389,6 +1387,14 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_9.setText(_("背景图片目录"))
         self.label_7.setText(_("启动时标题:"))
         self.lineEdit.setPlaceholderText(_("幸运儿是:"))
+        self.groupBox_5.setTitle(_("关于"))
+        self.label_2.setText(_("沉梦课堂点名器 V6.5"))
+        self.label_3.setText(_("<html><head/><body><p align=\"center\"><span style=\" font-size:7pt; text-decoration: underline;\">一个支持 单抽，连抽的课堂点名小工具</span></p><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-size:8pt; font-weight:600;\">Contributors: Yish1, QQB-Roy, limuy2022</span></p><p align=\"center\"><span style=\" font-size:7pt; font-weight:600; font-style:italic;\"><br/></span><a href=\"https://cmxz.top/ktdmq\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><span style=\" font-size:7pt;\"><br/></span></p></body></html>"))
+        self.label_10.setText(_("Tips: 按下空格键可以快捷开始/结束！"))
+        self.groupBox_6.setTitle(_("快捷访问"))
+        self.pushButton_12.setText(_("名单文件目录"))
+        self.pushButton_10.setText(_("背景音乐目录"))
+        self.pushButton_8.setText(_("历史记录目录"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("基本设置"))
         self.groupBox_2.setTitle(_("名单管理"))
         self.pushButton_3.setText(_("新建名单"))
@@ -1405,7 +1411,13 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("历史记录"))
         self.pushButton_6.setText(_("反馈"))
         self.pushButton_14.setText(_("定制"))
+        self.label_4.setText(_("本来这地方应该直接内嵌相应的网页，但是自带Chromium会浪费您70mb，所以暂时用现在简约的界面\n"
+"\n"
+"此页面仍在装修中...\\n\n"
+"\n"
+"?广?告位?招租???"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
+
         self.setWindowTitle(QCoreApplication.translate(
             "MainWindow", _("沉梦课堂点名器设置")))
 
@@ -2105,6 +2117,12 @@ class msgbox(QtWidgets.QDialog, Ui_msgbox):  # 保存弹窗
         self.setupUi(self)  # 初始化UI到这个中央控件
         self.setWindowTitle(_("保存确认"))
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
+
+        self.pushButton.setText(_("确认保存"))
+        self.pushButton_2.setText(_("取消"))
+        self.label.setText(_("您正在保存:xxx"))
+        self.label_2.setText(_("修改后的名单中共有xxx个名字"))
+        self.label_3.setText(_("与源文件相比："))
 
         text_list = text.split("|")
 
