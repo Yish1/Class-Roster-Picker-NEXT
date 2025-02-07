@@ -11,7 +11,6 @@ import pygame
 import ctypes
 import msvcrt
 import pythoncom
-# import debugpy
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence
@@ -26,6 +25,7 @@ from smallwindow import Ui_smallwindow
 from settings import Ui_Settings
 from msgbox import Ui_msgbox
 
+# import debugpy
 # debugpy.listen(("0.0.0.0", 5678))
 # debugpy.wait_for_client()  # 等待调试器连接
 
@@ -84,9 +84,11 @@ bgmusic = None        # 0关闭 1开启
 first_use = None      
 roll_speed = None
 inertia_roll = None   # 0关闭 1开启
+title_text = None     # 标题文字: 幸运儿是:
 
 # 全局变量
 name = None
+speed = 160
 mrunning = False
 running = False
 default_music = False
@@ -125,10 +127,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             "MainWindow", _("沉梦课堂点名器 %s") % dmversion))
         self.pushButton_2.setText(_(" 开始"))
         self.pushButton_5.setText(_(" 小窗模式"))
-        font = QtGui.QFont()
-        font.setPointSize(45)  # 字体大小
-        self.label_3.setFont(font)
-        self.label_3.setText(_("幸运儿是:"))
         self.spinBox.setValue(1)
         self.label_5.setText(_("当前名单："))
         self.label_4.setText(_("抽取人数："))
@@ -171,6 +169,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         if first_use == 0:
             self.first_use_introduce()
 
+        font = QtGui.QFont()
+        font.setPointSize(45)  # 字体大小
+        self.label_3.setFont(font)
+        self.label_3.setText(title_text)
 
     def mouseMoveEvent(self, event):
         # 获取鼠标相对于窗口的坐标
@@ -368,7 +370,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.listWidget.setCurrentRow(self.listWidget.count() - 1)
 
     def read_config(self):
-        global allownametts, checkupdate, bgimg, last_name_list, language_value, latest_version, non_repetitive, bgmusic, first_use
+        global allownametts, checkupdate, bgimg, last_name_list, language_value, latest_version, non_repetitive, bgmusic, first_use, inertia_roll, roll_speed, title_text
         config = {}
         if not os.path.exists('config.ini'):
             with open('config.ini', 'w', encoding='utf-8') as file:
@@ -389,6 +391,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             non_repetitive = int(config.get('non_repetitive')) if config.get('non_repetitive') else self.update_config("non_repetitive", 1, "w!")
             bgmusic = int(config.get('bgmusic')) if config.get('bgmusic') else self.update_config("bgmusic", 0, "w!")
             first_use = int(config.get('first_use')) if config.get('first_use') else self.update_config("first_use", 0, "w!")
+            inertia_roll = int(config.get('inertia_roll')) if config.get('inertia_roll') else self.update_config("inertia_roll", 1, "w!")
+            roll_speed = config.get('roll_speed') if config.get('roll_speed') else self.update_config("roll_speed", "50,90", "w!")
+            title_text = config.get('title_text') if config.get('title_text') else _("幸运儿是:")
+
+            if roll_speed:
+                roll_speed = roll_speed.strip("()").replace(" ", "").split(",")
+            else:pass
 
         except Exception as e:
             print(f"配置文件读取失败，已重置无效为默认值！{e}") 
@@ -407,6 +416,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         for i in range(len(lines)): # 确保每个值都有\n结尾
             if not lines[i].endswith('\n'):
                 lines[i] += '\n'
+            if not lines[i].startswith('['):
+                lines[i] = '' # 删除无效行
 
         for i, line in enumerate(lines):
             if '=' in line:
@@ -415,6 +426,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 if key == variable: # 如果存在，则替换现有的值
                     lines[i] = f"[{key}]={new_value}\n"  # 替换成新的值，带上中括号
                     updated = True
+                    if key in seen_keys:
+                        lines[i] = ''
                     seen_keys.add(key.strip('[]'))  # 记录当前配置项的key
 
                 elif key.strip('[]') in seen_keys:
@@ -426,7 +439,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         if not updated:
             lines.append(f"[{variable}]={new_value}\n")
 
-        lines = [line for line in lines if line != '']  # 过滤重复行
+        lines = [line for line in lines if line != '']  # 配置文件防拉屎
 
         with open('config.ini', 'w+', encoding='utf-8') as file:
             file.writelines(lines)
@@ -438,6 +451,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.read_config()
         if variable == 'bgimg':
             self.set_bgimg()
+        elif variable == 'title_text':
+            self.label_3.setText(new_value)
+        elif variable == 'roll_speed':
+            self.dynamic_speed_preview(int(roll_speed[0]))
 
     def process_name_file(self, file_path):
         global name_list, namelen, non_repetitive_list
@@ -524,6 +541,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.thread.signals.save_history.connect(self.save_history)
             self.thread.signals.key_space.connect(self.change_space)
             self.thread.signals.tts_read.connect(self.tts_read)
+            self.thread.signals.change_speed.connect(self.dynamic_speed_preview)
             self.thread.signals.finished.connect(
                 lambda: print("结束点名") or self.ttsinitialize())
 
@@ -587,7 +605,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 target_line = num - 2 if num > 2 else num - 1
                 self.listWidget.setCurrentRow(
                     self.listWidget.count() - target_line)
-                self.label_3.setText(_("幸运儿是:"))
+                self.label_3.setText(title_text)
             else:
                 print("连抽中...")
 
@@ -753,7 +771,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.label_7.setText(value)
 
     def qtimer(self, start):
-        global non_repetitive_list, name, origin_name_list
+        global non_repetitive_list, name, origin_name_list, speed
         if start == 1:
             if len(name_list) == 0:
                 self.show_message(_("Error: 名单文件为空，请输入名字（一行一个）后再重新点名！"), _("错误"))
@@ -770,8 +788,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                                       file_path, "\n%s" % e)
             else:
                 self.timer = QTimer(self)
-                time = random.randint(50, 51)
-                self.timer.start(time)
+                speed = random.randint(int(roll_speed[0]), int(roll_speed[1]))
+                print(f"滚动速度:{speed}")
+                self.timer.start(speed)
                 self.timer.timeout.connect(self.setname)
 
         elif start == 0:
@@ -871,6 +890,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         except Exception as e:
             print(f"语音播报失败，原因：{e}")
 
+    def dynamic_speed_preview(self, speed):
+        try:
+            self.timer.setInterval(speed)
+        except:pass
+
 class WorkerSignals(QObject):
     # 定义信号
     show_progress = pyqtSignal(int, int, int, str)
@@ -884,6 +908,7 @@ class WorkerSignals(QObject):
     speakertest = pyqtSignal(int, str)
     key_space = pyqtSignal(int)
     tts_read = pyqtSignal()
+    change_speed = pyqtSignal(int)
 
 
 class WorkerThread(QRunnable):
@@ -903,7 +928,7 @@ class WorkerThread(QRunnable):
 
     def run(self):
         # debugpy.breakpoint()
-        global running, default_music
+        global running, default_music, speed
 
         def stop():
             self.signals.update_pushbotton.emit(_(" 小窗模式"), 2)
@@ -938,16 +963,12 @@ class WorkerThread(QRunnable):
                 self.signals.update_pushbotton.emit(_(" 小窗模式"), 2)
 
         if running:  # 结束按钮
-            self.signals.qtimer.emit(0)
-            self.signals.show_progress.emit(0, 0, 100, "default")
-            self.signals.enable_button.emit(1)
-            self.signals.key_space.emit(1)# 调整空格为开始
-            self.signals.enable_button.emit(7)# 恢复spinbox
-            running = False
-            stop()
+            self.signals.update_pushbotton.emit(_(" 请稍后..."), 2)
+            self.signals.enable_button.emit(3)
+            self.signals.enable_button.emit(2)
+
             if bgmusic == 1 or pygame.mixer.music.get_busy():
                 try:
-                    # debugpy.breakpoint()
                     if default_music == True:
                         pass
                     else:
@@ -959,6 +980,27 @@ class WorkerThread(QRunnable):
                         pass
                 except Exception as e:
                     print(f"停止音乐播放时发生错误：{str(e)}")
+
+            # debugpy.breakpoint()
+            if inertia_roll == 1:
+                roll_speed = speed
+                s = 50
+                r = 0
+                while roll_speed <= 650:
+                    s += random.randint(100, 120)
+                    s = s if s <= 280 else 150
+                    roll_speed += s
+                    self.signals.change_speed.emit(roll_speed)
+                    time.sleep((roll_speed+100) / 1000)
+                    
+            self.signals.qtimer.emit(0)
+            self.signals.show_progress.emit(0, 0, 100, "default")
+            self.signals.enable_button.emit(1)
+            self.signals.key_space.emit(1)# 调整空格为开始
+            self.signals.enable_button.emit(7)# 恢复spinbox
+            running = False
+
+            stop()
             self.signals.finished.emit()
             # 向主线程发送终止信号
 
@@ -1085,8 +1127,9 @@ class UpdateThread(QRunnable):
     def run(self):
         global newversion, checkupdate, latest_version, connect
         # debugpy.breakpoint()  # 在此线程启动断点调试
+        title_text_emit = title_text if title_text not in ["幸运儿是:", "Lucky dog is:"] else "d"
         headers = {
-            'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s,%s,%s%s_%s' % (dmversion, allownametts, bgimg, bgmusic, language_value, platform.system(), platform.release(), platform.machine())
+            'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s,%s,%s,%s%s_%s' % (dmversion, allownametts, bgimg, bgmusic, title_text_emit, language_value, platform.system(), platform.release(), platform.machine())
         }
         updatecheck = "https://cmxz.top/programs/dm/check.php"
         # try:
@@ -1308,15 +1351,14 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         central_widget = QtWidgets.QWidget(self)  # 创建一个中央小部件
         self.setCentralWidget(central_widget)  # 设置中央小部件为QMainWindow的中心区域
         self.setupUi(central_widget)  # 初始化UI到中央小部件上
-        self.setMinimumSize(658, 513)
-        self.resize(658, 513)
+        self.setMinimumSize(658, 565)
+        self.resize(658, 565)
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowMinimizeButtonHint) # 禁止最小化
 
         self.horizontalSlider = QRangeSlider(self.frame_8)
         self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSlider.setRange(0, 160)   # 设置范围(必须从0开始，不然有bug)
-        self.horizontalSlider.setValue((90, 130))  # 默认选中的范围
         self.horizontalSlider.setSingleStep(1)  # 设置步长
         current_range = self.horizontalSlider.value()
         self.label_6.setText(f"{current_range[0]}-{current_range[1]} ms") 
@@ -1326,7 +1368,6 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_2.setText(_("保存"))
         self.groupBox_5.setTitle(_("关于"))
         self.label_2.setText(_("沉梦课堂点名器 V6.5"))
-        self.label_3.setText(_("<html><head/><body><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具</p><p align=\"center\"><br/><a href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a><br/></p><p align=\"center\">Contributors: Yish1, QQB-Roy, limuy2022</p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><br/></p></body></html>"))
         self.groupBox_6.setTitle(_("快捷访问"))
         self.pushButton_12.setText(_("名单文件目录"))
         self.pushButton_10.setText(_("背景音乐目录"))
@@ -1339,12 +1380,15 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.checkBox_2.setText(_("语音播报"))
         self.radioButton.setText(_("正常模式"))
         self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
+        self.label_3.setText(_("<html><head/><body><p align=\"center\"><span style=\" font-size:7pt; text-decoration: underline;\">一个支持 单抽，连抽的课堂点名小工具</span></p><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-size:8pt; font-weight:600;\">Contributors: Yish1, QQB-Roy, limuy2022</span></p><p align=\"center\"><span style=\" font-size:7pt; font-weight:600; font-style:italic;\"><br/></span><a href=\"https://cmxz.top/ktdmq\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><span style=\" font-size:7pt;\"><br/></span></p></body></html>"))
         self.checkBox_3.setText(_("检查更新"))
         self.label.setText(_("背景图片"))
         self.radioButton_3.setText(_("默认背景"))
         self.radioButton_4.setText(_("自定义"))
         self.radioButton_5.setText(_("无"))
         self.pushButton_9.setText(_("背景图片目录"))
+        self.label_7.setText(_("启动时标题:"))
+        self.lineEdit.setPlaceholderText(_("幸运儿是:"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("基本设置"))
         self.groupBox_2.setTitle(_("名单管理"))
         self.pushButton_3.setText(_("新建名单"))
@@ -1361,7 +1405,6 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("历史记录"))
         self.pushButton_6.setText(_("反馈"))
         self.pushButton_14.setText(_("定制"))
-        self.label_4.setText(_("本来这地方应该直接内嵌相应的网页，但是自带Chromium会浪费您70mb，所以暂时用现在简约的界面"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
         self.setWindowTitle(QCoreApplication.translate(
             "MainWindow", _("沉梦课堂点名器设置")))
@@ -1371,14 +1414,18 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.read_config()
         self.find_langluge()
         self.find_history()
+        self.slider_value_changed("init")
 
         self.enable_tts = None
+        self.title_text = None
         self.enable_update = None
         self.enable_bgimg = None
         self.language_value = None
         self.disable_repetitive = None
         self.enable_bgmusic = None
+        self.inertia_roll = None
         self.file_path_bak = None
+        self.roll_speed = None
         self.file_path = None
         self.isload = None
 
@@ -1410,6 +1457,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_13.setEnabled(False)
         self.pushButton_17.setEnabled(False)
         self.pushButton_5.setEnabled(False)
+        self.label_9.hide()
 
         self.checkBox.toggled.connect(
             lambda checked: self.process_config("disable_repetitive", checked))
@@ -1423,22 +1471,38 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             lambda checked: self.process_config("enable_update", checked))
         self.checkBox_4.toggled.connect(
             lambda checked: self.process_config("enable_bgmusic", checked))
+        self.checkBox_5.toggled.connect(
+            lambda checked: self.process_config("inertia_roll", checked))
         self.radioButton_3.toggled.connect(
             lambda checked: self.process_config("enable_bgimg", checked))
         self.radioButton_4.toggled.connect(
             lambda checked: self.process_config("enable_bgimg", checked))
         self.radioButton_5.toggled.connect(
             lambda checked: self.process_config("enable_bgimg", checked))
-        
-    def slider_value_changed(self):
-        current_range = self.horizontalSlider.value()
-        if current_range[0] <= 29:
-            self.horizontalSlider.setValue((30, current_range[1]))
+    
+        self.lineEdit.textChanged.connect(
+            lambda text: self.process_config("title_text", text))
+
+    def slider_value_changed(self, mode = None):
+        global roll_speed
+        self.label_9.show()
+        self.label_9.setText(_("程序随机选择范围内速度，滑动最小值立即预览速度"))
+        if mode == "init":
+            self.horizontalSlider.setValue((int(roll_speed[0]), int(roll_speed[1])))
+            self.label_6.setText(f"{roll_speed[0]}-{roll_speed[1]} ms") 
         else:
-            self.label_6.setText(f"{current_range[0]}-{current_range[1]} ms") 
-        if current_range[0] >= current_range[1]:# 防止点炒饭
-            self.horizontalSlider.setValue((current_range[0], current_range[0]+1))
-        # (30, 60)
+            current_range = self.horizontalSlider.value()
+            if current_range[0] <= 29:
+                self.horizontalSlider.setValue((30, current_range[1]))
+            else:
+                self.label_6.setText(f"{current_range[0]}-{current_range[1]} ms") 
+            if current_range[0] >= current_range[1]:# 防止点炒饭
+                self.horizontalSlider.setValue((current_range[0], current_range[0]+1))
+            # (30, 60)
+            current_range = self.horizontalSlider.value()
+            self.process_config("roll_speed", current_range)
+            self.main_instance.dynamic_speed_preview(int(current_range[0]))
+        
 
     def tab_changed(self, index):
         if index != 0:
@@ -1733,6 +1797,14 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         elif bgmusic == 0:
             self.checkBox_4.setChecked(False)
 
+        if inertia_roll == 1:
+            self.checkBox_5.setChecked(True)
+        else:
+            self.checkBox_5.setChecked(False)
+
+        if title_text:
+            self.lineEdit.setText(title_text)
+
     def open_fold(self, value):
         os.makedirs(value, exist_ok=True)
         self.main_instance.opentext(value)
@@ -1824,6 +1896,19 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                     _("开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n程序将随机选取一首，播放随机的音乐进度\n\n注：程序自带几首默认音频，当您在音乐目录下放入音乐后，默认音频将不会再进入候选列表！"), _("提示"))
                 self.open_fold("dmmusic")
 
+        elif key == "inertia_roll":
+            self.inertia_roll = 1 if checked else 0
+            if not checked:
+                print("正在关闭惯性滚动")
+            else:
+                print("正在开启惯性滚动")
+
+        elif key == "title_text":
+            self.title_text = checked
+
+        elif key == "roll_speed":
+            self.roll_speed = checked
+
     def save_settings(self):
         if self.enable_tts == 1:
             self.main_instance.update_config("allownametts", 2)
@@ -1856,6 +1941,17 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.main_instance.update_config("bgmusic", 1)
         elif self.enable_bgmusic == 0:
             self.main_instance.update_config("bgmusic", 0)
+        
+        if self.inertia_roll == 1:
+            self.main_instance.update_config("inertia_roll", 1)
+        elif self.inertia_roll == 0:
+            self.main_instance.update_config("inertia_roll", 0)
+
+        if self.title_text:
+            self.main_instance.update_config("title_text", self.title_text)
+
+        if self.roll_speed:
+            self.main_instance.update_config("roll_speed", self.roll_speed)
 
         self.close()
 

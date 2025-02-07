@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>658</width>
-    <height>514</height>
+    <height>562</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>CRP Settings</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
+   <item row="1" column="1">
     <widget class="QFrame" name="frame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -92,7 +92,603 @@
        <string>基本设置</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="1" rowspan="2">
+       <item row="0" column="1">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>55</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>65</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>语言设置</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QComboBox" name="comboBox_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>21</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>236</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QComboBox {
+    font-size: 13px;
+}
+
+QComboBox QAbstractItemView {
+    font-size: 15px;
+}
+</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="0" rowspan="6">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>340</width>
+           <height>280</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="title">
+          <string>功能设置</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QFrame" name="frame_8">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>225</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_4">
+             <item row="5" column="0" colspan="2">
+              <widget class="QCheckBox" name="checkBox_3">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>检查更新</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0" colspan="2">
+              <widget class="QCheckBox" name="checkBox_4">
+               <property name="text">
+                <string>背景音乐</string>
+               </property>
+              </widget>
+             </item>
+             <item row="13" column="0">
+              <widget class="QLabel" name="label_5">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>名单滚动速度(范围):</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0" colspan="2">
+              <widget class="QCheckBox" name="checkBox">
+               <property name="text">
+                <string>不放回模式(单抽结果不重复)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0" colspan="2">
+              <widget class="QCheckBox" name="checkBox_2">
+               <property name="text">
+                <string>语音播报</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0" colspan="2">
+              <widget class="QFrame" name="frame_2">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout">
+                <item>
+                 <widget class="QRadioButton" name="radioButton">
+                  <property name="text">
+                   <string>正常模式</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="radioButton_2">
+                  <property name="text">
+                   <string>听写模式(不说&quot;恭喜&quot;)</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="12" column="0" colspan="2">
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>15</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="13" column="1">
+              <widget class="QLabel" name="label_6">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>30-60 ms</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="11" column="0" colspan="2">
+              <widget class="QCheckBox" name="checkBox_5">
+               <property name="text">
+                <string>惯性滚动</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="frame_12">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <widget class="QLabel" name="label_9">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QLabel {
+    color: rgb(255, 0, 0);
+}</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>背景图片</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="frame_3">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <item>
+                 <widget class="QRadioButton" name="radioButton_3">
+                  <property name="text">
+                   <string>默认背景</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="radioButton_4">
+                  <property name="text">
+                   <string>自定义</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="radioButton_5">
+                  <property name="text">
+                   <string>无</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_9">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>背景图片目录</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>5</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_7">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>启动时标题:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="contextMenuPolicy">
+                <enum>Qt::DefaultContextMenu</enum>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="placeholderText">
+                <string>幸运儿是:</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="1" rowspan="3">
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="minimumSize">
+          <size>
+           <width>270</width>
+           <height>195</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>关于</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_13">
+          <item row="0" column="0">
+           <widget class="QScrollArea" name="scrollArea">
+            <property name="styleSheet">
+             <string notr="true">QScrollArea {
+    border: none;
+    background: transparent;
+}
+
+QScrollBar:vertical {
+    width: 2px;  /* 设置垂直滚动条宽度 */
+    background: transparent; /* 使滚动条背景透明 */
+    margin: 0px; /* 去除滚动条与内容之间的间距 */
+}
+
+QScrollBar::handle:vertical {
+    background: rgba(100, 100, 100, 150); /* 半透明滚动条 */
+    border-radius: 1px;
+    min-height: 20px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: rgba(80, 80, 80, 180); /* 鼠标悬停时变色 */
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    background: none; /* 隐藏上下箭头 */
+    border: none;
+}
+
+QScrollBar::up-arrow:vertical,
+QScrollBar::down-arrow:vertical {
+    background: none;
+}
+
+QScrollBar:horizontal {
+    height: 2px; /* 设置水平滚动条高度 */
+    background: transparent;
+    margin: 0px;
+}
+
+QScrollBar::handle:horizontal {
+    background: rgba(100, 100, 100, 150);
+    border-radius: 1px;
+    min-width: 20px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background: rgba(80, 80, 80, 180);
+}
+
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
+    background: none;
+    border: none;
+}
+
+QScrollBar::left-arrow:horizontal,
+QScrollBar::right-arrow:horizontal {
+    background: none;
+}
+</string>
+            </property>
+            <property name="verticalScrollBarPolicy">
+             <enum>Qt::ScrollBarAsNeeded</enum>
+            </property>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <widget class="QWidget" name="scrollAreaWidgetContents">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>248</width>
+               <height>318</height>
+              </rect>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <widget class="QPushButton" name="pushButton_7">
+                <property name="styleSheet">
+                 <string notr="true">
+QPushButton{
+	border:none;
+}</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="res/ui1.qrc">
+                  <normaloff>:/icons/picker.ico</normaloff>:/icons/picker.ico</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>100</width>
+                  <height>100</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_2">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>90</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>沉梦课堂点名器 V6.5</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:7pt; text-decoration: underline;&quot;&gt;一个支持 单抽，连抽的课堂点名小工具&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Contributors: Yish1, QQB-Roy, limuy2022&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600; font-style:italic;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;a href=&quot;https://cmxz.top/ktdmq&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;&quot;&gt;沉梦小站&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://github.com/Yish1/Class-Roster-Picker-NEXT&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;&quot;&gt;Yish1/Class-Roster-Picker-NEXT: 课堂点名器&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="textFormat">
+                 <enum>Qt::AutoText</enum>
+                </property>
+                <property name="scaledContents">
+                 <bool>false</bool>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignHCenter|Qt::AlignTop</set>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+                <property name="openExternalLinks">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLabel {
+    color: rgb(138, 138, 138);
+}</string>
+            </property>
+            <property name="text">
+             <string>Tips: 按下空格键可以快捷开始/结束！</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="1" rowspan="2">
         <widget class="QGroupBox" name="groupBox_6">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -103,7 +699,7 @@
          <property name="minimumSize">
           <size>
            <width>235</width>
-           <height>160</height>
+           <height>130</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -125,22 +721,6 @@
           <property name="rightMargin">
            <number>35</number>
           </property>
-          <item row="2" column="2">
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Preferred</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>10</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item row="0" column="1">
            <widget class="QPushButton" name="pushButton_12">
             <property name="sizePolicy">
@@ -187,6 +767,12 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>130</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -214,372 +800,21 @@
             </property>
            </spacer>
           </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0" rowspan="4">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>340</width>
-           <height>280</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="title">
-          <string>功能开关</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_12">
-          <item row="0" column="0" colspan="2">
-           <widget class="QFrame" name="frame_8">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_4">
-             <item row="3" column="0">
-              <widget class="QCheckBox" name="checkBox_2">
-               <property name="text">
-                <string>语音播报</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QCheckBox" name="checkBox">
-               <property name="text">
-                <string>不放回模式(单抽结果不重复)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QFrame" name="frame_2">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>60</height>
-                </size>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QHBoxLayout" name="horizontalLayout">
-                <item>
-                 <widget class="QRadioButton" name="radioButton">
-                  <property name="text">
-                   <string>正常模式</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_2">
-                  <property name="text">
-                   <string>听写模式(不说&quot;恭喜&quot;)</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="6" column="0">
-              <widget class="QCheckBox" name="checkBox_3">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>检查更新</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QCheckBox" name="checkBox_4">
-               <property name="text">
-                <string>背景音乐</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>背景图片</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" colspan="2">
-           <widget class="QFrame" name="frame_3">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>54</height>
-             </size>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QRadioButton" name="radioButton_3">
-               <property name="text">
-                <string>默认背景</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="radioButton_4">
-               <property name="text">
-                <string>自定义</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="radioButton_5">
-               <property name="text">
-                <string>无</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <spacer name="verticalSpacer">
+          <item row="2" column="2">
+           <spacer name="horizontalSpacer_3">
             <property name="orientation">
-             <enum>Qt::Vertical</enum>
+             <enum>Qt::Horizontal</enum>
             </property>
             <property name="sizeType">
-             <enum>QSizePolicy::Expanding</enum>
+             <enum>QSizePolicy::Preferred</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>20</width>
-              <height>40</height>
+              <width>10</width>
+              <height>20</height>
              </size>
             </property>
            </spacer>
-          </item>
-          <item row="4" column="0" colspan="2">
-           <widget class="QPushButton" name="pushButton_9">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>40</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>背景图片目录</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>64</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>64</height>
-          </size>
-         </property>
-         <property name="title">
-          <string>语言设置</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <widget class="QComboBox" name="comboBox_2">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>24</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>236</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QComboBox {
-    font-size: 13px;
-}
-
-QComboBox QAbstractItemView {
-    font-size: 15px;
-}
-</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="2" column="1" rowspan="3">
-        <widget class="QGroupBox" name="groupBox_5">
-         <property name="minimumSize">
-          <size>
-           <width>270</width>
-           <height>237</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="title">
-          <string>关于</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_13">
-          <item row="0" column="0">
-           <widget class="QScrollArea" name="scrollArea">
-            <property name="verticalScrollBarPolicy">
-             <enum>Qt::ScrollBarAlwaysOff</enum>
-            </property>
-            <property name="horizontalScrollBarPolicy">
-             <enum>Qt::ScrollBarAlwaysOff</enum>
-            </property>
-            <property name="widgetResizable">
-             <bool>true</bool>
-            </property>
-            <widget class="QWidget" name="scrollAreaWidgetContents">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>248</width>
-               <height>330</height>
-              </rect>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout">
-              <item>
-               <widget class="QPushButton" name="pushButton_7">
-                <property name="styleSheet">
-                 <string notr="true">
-QPushButton{
-	border:none;
-}</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="res/ui1.qrc">
-                  <normaloff>:/icons/picker.ico</normaloff>:/icons/picker.ico</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>100</width>
-                  <height>100</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_2">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>90</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>沉梦课堂点名器 V6.0</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_3">
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;一个支持 单抽，连抽的课堂点名小工具&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;a href=&quot;https://cmxz.top/ktdmq&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;沉梦小站&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Contributors: Yish1, QQB-Roy, limuy2022&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://github.com/Yish1/Class-Roster-Picker-NEXT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Yish1/Class-Roster-Picker-NEXT: 课堂点名器&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="textFormat">
-                 <enum>Qt::AutoText</enum>
-                </property>
-                <property name="scaledContents">
-                 <bool>false</bool>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignHCenter|Qt::AlignTop</set>
-                </property>
-                <property name="wordWrap">
-                 <bool>true</bool>
-                </property>
-                <property name="openExternalLinks">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </widget>
           </item>
          </layout>
         </widget>
@@ -1056,11 +1291,16 @@ p, li { white-space: pre-wrap; }
       <widget class="QPushButton" name="pushButton_6">
        <property name="geometry">
         <rect>
-         <x>20</x>
-         <y>60</y>
-         <width>131</width>
-         <height>23</height>
+         <x>250</x>
+         <y>30</y>
+         <width>141</width>
+         <height>31</height>
         </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:hover{
+	padding-bottom:10px;
+}</string>
        </property>
        <property name="text">
         <string>反馈</string>
@@ -1069,10 +1309,10 @@ p, li { white-space: pre-wrap; }
       <widget class="QPushButton" name="pushButton_14">
        <property name="geometry">
         <rect>
-         <x>170</x>
-         <y>60</y>
+         <x>250</x>
+         <y>80</y>
          <width>141</width>
-         <height>23</height>
+         <height>31</height>
         </rect>
        </property>
        <property name="text">
@@ -1083,18 +1323,212 @@ p, li { white-space: pre-wrap; }
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>10</y>
+         <y>140</y>
          <width>601</width>
-         <height>41</height>
+         <height>311</height>
         </rect>
        </property>
        <property name="text">
-        <string>本来这地方应该直接内嵌相应的网页，但是自带Chromium会浪费您70mb，所以暂时用现在简约的界面</string>
+        <string>本来这地方应该直接内嵌相应的网页，但是自带Chromium会浪费您70mb，所以暂时用现在简约的界面
+
+此页面仍在装修中...\n
+
+?广?告位?招租???</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignHCenter|Qt::AlignTop</set>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
        </property>
       </widget>
+      <widget class="QSlider" name="horizontalSlider">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>20</y>
+         <width>160</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="maximum">
+        <number>1000</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QSlider" name="verticalSlider">
+       <property name="geometry">
+        <rect>
+         <x>320</x>
+         <y>330</y>
+         <width>171</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QDial" name="dial">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>50</y>
+         <width>50</width>
+         <height>64</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QScrollBar" name="horizontalScrollBar">
+       <property name="geometry">
+        <rect>
+         <x>450</x>
+         <y>50</y>
+         <width>160</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QKeySequenceEdit" name="keySequenceEdit">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>180</y>
+         <width>113</width>
+         <height>20</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QCalendarWidget" name="calendarWidget">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>250</y>
+         <width>248</width>
+         <height>183</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QProgressBar" name="progressBar">
+       <property name="geometry">
+        <rect>
+         <x>320</x>
+         <y>300</y>
+         <width>181</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="value">
+        <number>24</number>
+       </property>
+       <property name="textVisible">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLCDNumber" name="lcdNumber">
+       <property name="geometry">
+        <rect>
+         <x>310</x>
+         <y>370</y>
+         <width>291</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>true</bool>
+       </property>
+       <property name="digitCount">
+        <number>10</number>
+       </property>
+       <property name="mode">
+        <enum>QLCDNumber::Bin</enum>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+       <property name="intValue" stdset="0">
+        <number>666</number>
+       </property>
+      </widget>
+      <widget class="QProgressBar" name="progressBar_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>151</width>
+         <height>391</height>
+        </rect>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+      <widget class="QLCDNumber" name="lcdNumber_2">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>440</y>
+         <width>91</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>10</number>
+       </property>
+       <property name="mode">
+        <enum>QLCDNumber::Hex</enum>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+      <widget class="QLCDNumber" name="lcdNumber_3">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>440</y>
+         <width>81</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="digitCount">
+        <number>10</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+      </widget>
+      <zorder>progressBar_2</zorder>
+      <zorder>pushButton_6</zorder>
+      <zorder>pushButton_14</zorder>
+      <zorder>label_4</zorder>
+      <zorder>horizontalSlider</zorder>
+      <zorder>verticalSlider</zorder>
+      <zorder>dial</zorder>
+      <zorder>horizontalScrollBar</zorder>
+      <zorder>keySequenceEdit</zorder>
+      <zorder>calendarWidget</zorder>
+      <zorder>progressBar</zorder>
+      <zorder>lcdNumber</zorder>
+      <zorder>lcdNumber_2</zorder>
+      <zorder>lcdNumber_3</zorder>
      </widget>
     </widget>
    </item>
@@ -1103,5 +1537,198 @@ p, li { white-space: pre-wrap; }
  <resources>
   <include location="res/ui1.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>verticalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>progressBar</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>335</x>
+     <y>379</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>343</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>verticalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>335</x>
+     <y>379</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>105</x>
+     <y>55</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>verticalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalScrollBar</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>342</x>
+     <y>379</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>492</x>
+     <y>84</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>verticalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>lcdNumber</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>336</x>
+     <y>379</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>470</x>
+     <y>423</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>verticalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>dial</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>337</x>
+     <y>379</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>129</x>
+     <y>107</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>verticalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>calendarWidget</receiver>
+   <slot>showNextMonth()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>343</x>
+     <y>379</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>219</x>
+     <y>376</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>verticalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>progressBar_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>335</x>
+     <y>379</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>171</x>
+     <y>96</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dial</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>progressBar_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>143</x>
+     <y>123</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>70</x>
+     <y>158</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dial</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>progressBar</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>107</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>342</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>lcdNumber</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>61</x>
+     <y>54</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>506</x>
+     <y>446</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>lcdNumber_2</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>84</x>
+     <y>61</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>49</x>
+     <y>491</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>lcdNumber_3</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>60</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>198</x>
+     <y>480</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
