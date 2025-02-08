@@ -3,5 +3,5 @@ pygame
 pywin32
 PyQt5
 datetime
-pycryptodome
 nuitka
+qtrangeslider

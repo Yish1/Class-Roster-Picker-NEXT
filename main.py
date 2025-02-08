@@ -11,7 +11,6 @@ import pygame
 import ctypes
 import msvcrt
 import pythoncom
-# import debugpy
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence
@@ -19,16 +18,21 @@ from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QShortcut
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from datetime import datetime
+
 from ui import Ui_CRPmain  # 导入ui文件
 from smallwindow import Ui_smallwindow
 from settings import Ui_Settings
+from msgbox import Ui_msgbox
 
+# import debugpy
 # debugpy.listen(("0.0.0.0", 5678))
 # debugpy.wait_for_client()  # 等待调试器连接
 
 rewrite_print = print
 
 # print写入log中
+
+
 def print(*arg):
     rewrite_print(*arg)
     rewrite_print(*arg, file=open('log.txt', "a", encoding='utf-8'))
@@ -68,17 +72,20 @@ except:
         user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
 
 # version
-dmversion = 6.4
+dmversion = 6.5
 
 # config变量
-allownametts = None
-checkupdate = None
-bgimg = None
+allownametts = None   # 1关闭 2正常模式 3听写模式
+checkupdate = None    # 0/1关闭 2开启
+bgimg = None         # 1默认 2自定义 3无
 latest_version = None
-last_name_list = None
-non_repetitive = None
-bgmusic = None
+last_name_list = None  # 记录上次选中的名单
+non_repetitive = None  # 0关闭 1开启
+bgmusic = None        # 0关闭 1开启
 first_use = None
+roll_speed = None
+inertia_roll = None   # 0关闭 1开启
+title_text = None     # 标题文字: 幸运儿是:
 
 # 全局变量
 name = None
@@ -110,7 +117,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.setWindowFlag(Qt.FramelessWindowHint)
         # 设置半透明背景
         self.setAttribute(Qt.WA_TranslucentBackground)
-        
+
         # 鼠标拖动标志
         self.m_flag = False
         self.resize_flag = False
@@ -120,10 +127,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             "MainWindow", _("沉梦课堂点名器 %s") % dmversion))
         self.pushButton_2.setText(_(" 开始"))
         self.pushButton_5.setText(_(" 小窗模式"))
-        font = QtGui.QFont()
-        font.setPointSize(45)  # 字体大小
-        self.label_3.setFont(font)
-        self.label_3.setText(_("幸运儿是:"))
         self.spinBox.setValue(1)
         self.label_5.setText(_("当前名单："))
         self.label_4.setText(_("抽取人数："))
@@ -136,7 +139,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.linemask.setObjectName("linemask")
         self.gridLayout.addWidget(self.linemask, 0, 0, 1, 1)
         self.linemask.lower()
-        self.linemask.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.linemask.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 
         self.setCentralWidget(self.frame)
 
@@ -166,6 +170,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         if first_use == 0:
             self.first_use_introduce()
 
+        font = QtGui.QFont()
+        font.setPointSize(45)  # 字体大小
+        self.label_3.setFont(font)
+        self.label_3.setText(title_text)
 
     def mouseMoveEvent(self, event):
         # 获取鼠标相对于窗口的坐标
@@ -174,7 +182,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
         # 判断是否在右下角区域
         if (rect.width() - pos.x() <= 35 and
-            rect.height() - pos.y() <= 35):
+                rect.height() - pos.y() <= 35):
             self.setCursor(QCursor(Qt.SizeFDiagCursor))  # 设置调整大小的鼠标指针
         else:
             self.setCursor(QCursor(Qt.ArrowCursor))  # 恢复默认光标
@@ -196,7 +204,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             if (self.width() - event.pos().x() <= 35 and
-                self.height() - event.pos().y() <= 35):
+                    self.height() - event.pos().y() <= 35):
                 self.resize_flag = True
                 self.m_Position = event.globalPos()
             elif event.pos().y() <= self.height() // 2:
@@ -230,27 +238,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             if not file_list:
                 print("要使用自定义背景功能，请在 %s 中放入图片文件" % folder_path)
                 self.frame.setStyleSheet("#frame {\n"
-                                "border-image: url(:/images/(1070).webp);"
-                                "border-radius: 28px;"
-                                "}")
+                                         "border-image: url(:/images/(1070).webp);"
+                                         "border-radius: 28px;"
+                                         "}")
                 return
             self.label_6.setText(_("自定义背景"))
             random_file = random.choice(file_list)
             print(random_file)
             self.frame.setStyleSheet("#frame {\n"
-                                       f"border-image: url('./images/{random_file}');"
-                                       "border-radius: 28px;"
-                                       "}")
+                                     f"border-image: url('./images/{random_file}');"
+                                     "border-radius: 28px;"
+                                     "}")
         elif bgimg == 1 or bgimg == 0:
             self.frame.setStyleSheet("#frame {\n"
-                                       "border-image: url(:/images/bg.webp);"
-                                       "border-radius: 28px;"
-                                       "}")
+                                     "border-image: url(:/images/bg.webp);"
+                                     "border-radius: 28px;"
+                                     "}")
         elif bgimg == 3:
             self.frame.setStyleSheet("#frame {\n"
-                                    "background-color: rgba(42, 45, 47, 0.92);\n"
-                                    "border-radius: 28px;"
-                                    "}")
+                                     "background-color: rgba(42, 45, 47, 0.92);\n"
+                                     "border-radius: 28px;"
+                                     "}")
 
     def small_mode(self):
         global small_window_flag
@@ -265,13 +273,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         if settings_flag is None:
             settings_window = settingsWindow(mainWindow)
             settings_flag = settings_window.run_settings_window()
-            
+
     def closeEvent(self, event):
         # 关闭其他窗口的代码
         for widget in QApplication.topLevelWidgets():
             if isinstance(widget, QWidget) and widget != self:
                 widget.close()
         event.accept()
+
     def mini(self, mode):
         if mode == 1:
             self.showMinimized()
@@ -363,47 +372,102 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.listWidget.setCurrentRow(self.listWidget.count() - 1)
 
     def read_config(self):
-        global allownametts, checkupdate, bgimg, last_name_list, language_value, latest_version, non_repetitive, bgmusic, first_use
+        global allownametts, checkupdate, bgimg, last_name_list, language_value, latest_version, non_repetitive, bgmusic, first_use, inertia_roll, roll_speed, title_text
         config = {}
         if not os.path.exists('config.ini'):
             with open('config.ini', 'w', encoding='utf-8') as file:
-                file.write(
-                    '[language]=zh_CN\n[allownametts]=1\n[checkupdate]=2\n[bgimg]=1\n[last_name_list]=None\n[latest_version]=0\n[non_repetitive]=1\n[bgmusic]=0\n[first_use]=0')
+                file.write("")
+
         with open('config.ini', 'r', encoding='utf-8') as file:
             for line in file:
                 if '=' in line:
                     key, value = line.strip().split('=', 1)
                     config[key.strip('[]')] = value.strip()
         try:
-            language_value = config.get('language')
-            allownametts = int(config.get('allownametts'))
-            checkupdate = int(config.get('checkupdate'))
-            bgimg = int(config.get('bgimg'))
-            last_name_list = config.get('last_name_list')
-            latest_version = config.get('latest_version')
-            non_repetitive = int(config.get('non_repetitive'))
-            bgmusic = int(config.get('bgmusic'))
-            first_use = int(config.get('first_use'))
+            language_value = config.get('language') if config.get(
+                'language') else self.update_config("language", "zh_CN", "w!")
+            allownametts = int(config.get('allownametts')) if config.get(
+                'allownametts') else self.update_config("allownametts", 1, "w!")
+            checkupdate = int(config.get('checkupdate')) if config.get(
+                'checkupdate') else self.update_config("checkupdate", 2, "w!")
+            bgimg = int(config.get('bgimg')) if config.get(
+                'bgimg') else self.update_config("bgimg", 1, "w!")
+            last_name_list = config.get('last_name_list') if config.get(
+                'last_name_list') else self.update_config("last_name_list", "None", "w!")
+            latest_version = config.get('latest_version') if config.get(
+                'latest_version') else self.update_config("latest_version", 0, "w!")
+            non_repetitive = int(config.get('non_repetitive')) if config.get(
+                'non_repetitive') else self.update_config("non_repetitive", 1, "w!")
+            bgmusic = int(config.get('bgmusic')) if config.get(
+                'bgmusic') else self.update_config("bgmusic", 0, "w!")
+            first_use = int(config.get('first_use')) if config.get(
+                'first_use') else self.update_config("first_use", 0, "w!")
+            inertia_roll = int(config.get('inertia_roll')) if config.get(
+                'inertia_roll') else self.update_config("inertia_roll", 1, "w!")
+            roll_speed = int(config.get('roll_speed')) if config.get(
+                'roll_speed') else self.update_config("roll_speed", "80", "w!")
+            title_text = config.get('title_text') if config.get(
+                'title_text') else _("幸运儿是:")
 
         except Exception as e:
-            print(f"配置文件读取失败，已重置为默认值！{e}")
+            print(f"配置文件读取失败，已重置无效为默认值！{e}")
             self.show_message(_("配置文件读取失败，已重置为默认值！\n%s") % e, _("读取配置文件失败！"))
             os.remove("config.ini")
             self.read_config()
         return config
 
-    def update_config(self, variable, new_value):
-        config = self.read_config()
-        config[variable] = new_value
-        with open('config.ini', 'w', encoding='utf-8') as file:
-            for key, value in config.items():
-                file.write(f"[{key}]={value}\n")
-        print(f"写入配置{variable} = {new_value} 成功！")
-        self.read_config()
+    def update_config(self, variable, new_value, mode=None):
+        lines = []
+        with open('config.ini', 'r+', encoding='utf-8') as file:
+            lines = file.readlines()
+        updated = False
+        seen_keys = set()   # 防止重复项
+
+        for i in range(len(lines)):  # 确保每个值都有\n结尾
+            if not lines[i].endswith('\n'):
+                lines[i] += '\n'
+            if not lines[i].startswith('['):
+                lines[i] = ''  # 删除无效行
+
+        for i, line in enumerate(lines):
+            if '=' in line:
+                key, value = line.strip().split('=', 1)
+                key = key.strip('[]')
+                if key == variable:  # 如果存在，则替换现有的值
+                    lines[i] = f"[{key}]={new_value}\n"  # 替换成新的值，带上中括号
+                    updated = True
+                    if key in seen_keys:
+                        lines[i] = ''
+                    seen_keys.add(key.strip('[]'))  # 记录当前配置项的key
+
+                elif key.strip('[]') in seen_keys:
+                    lines[i] = ''  # 将重复项标记为空行，后续可以过滤掉
+
+                else:
+                    seen_keys.add(key.strip('[]'))  # 新配置项，记录该key
+        # 如不存在，则在文件末尾添加
+        if not updated:
+            lines.append(f"[{variable}]={new_value}\n")
+
+        lines = [line for line in lines if line != '']  # 配置文件防拉屎
+
+        with open('config.ini', 'w+', encoding='utf-8') as file:
+            file.writelines(lines)
+            print(f"更新配置文件：[{variable}]={new_value}\n")
+
+        if mode == "w!":
+            pass
+        else:
+            self.read_config()
         if variable == 'bgimg':
             self.set_bgimg()
-        else:
-            pass
+        elif variable == 'title_text':
+            self.label_3.setText(new_value)
+        elif variable == 'roll_speed':
+            try:
+                self.dynamic_speed_preview(roll_speed)
+            except:
+                pass
 
     def process_name_file(self, file_path):
         global name_list, namelen, non_repetitive_list
@@ -490,6 +554,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.thread.signals.save_history.connect(self.save_history)
             self.thread.signals.key_space.connect(self.change_space)
             self.thread.signals.tts_read.connect(self.tts_read)
+            self.thread.signals.change_speed.connect(
+                self.dynamic_speed_preview)
             self.thread.signals.finished.connect(
                 lambda: print("结束点名") or self.ttsinitialize())
 
@@ -553,7 +619,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 target_line = num - 2 if num > 2 else num - 1
                 self.listWidget.setCurrentRow(
                     self.listWidget.count() - target_line)
-                self.label_3.setText(_("幸运儿是:"))
+                self.label_3.setText(title_text)
             else:
                 print("连抽中...")
 
@@ -566,7 +632,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
     def update_progress_bar_mulit(self):
         global mrunning
         mrunning = True
-        self.update_progress_bar("","","","mulit")# 金色传说
+        self.update_progress_bar("", "", "", "mulit")  # 金色传说
         if self.progressBar.value() < 100:
             self.value += 1
             self.progressBar.setValue(self.value)
@@ -575,11 +641,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             mrunning = False
             self.value = 0
             self.progressBar.setValue(self.value)
-            self.update_progress_bar(0,"","","default")# 隐藏并恢复默认进度条样式
+            self.update_progress_bar(0, "", "", "default")  # 隐藏并恢复默认进度条样式
             self.ptimer.stop()  # 停止定时器
-            
 
-    def update_progress_bar(self, mode, value, value2, style = None):
+    def update_progress_bar(self, mode, value, value2, style=None):
         if value == "" and value2 == "":
             pass
         else:
@@ -625,8 +690,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                     );
                     {radius_style}
                 }}
-            """)              
-            
+            """)
 
     def update_pushbotton(self, text, mode=None):
         if mode == 1:
@@ -696,16 +760,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.pushButton_2.clicked.connect(self.reset_repetive_list)
 
         elif value == 6:
-            self.spinBox.setEnabled(False)# 开始单抽后不允许选择人数
+            self.spinBox.setEnabled(False)  # 开始单抽后不允许选择人数
 
         elif value == 7:
             self.spinBox.setEnabled(True)
+
     def update_list(self, mode, value):
         if mode == 2:
             mode = 1
             value = f" {origin_name_list}" if origin_name_list else ""
             if non_repetitive == 1:
-                value += _(" (还剩%s人)") % (len(non_repetitive_list)) if origin_name_list else ""
+                value += _(" (还剩%s人)") % (len(non_repetitive_list)
+                                          ) if origin_name_list else ""
         if mode == 1:
             if value == "":
                 pass
@@ -722,10 +788,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         global non_repetitive_list, name, origin_name_list
         if start == 1:
             if len(name_list) == 0:
-                self.show_message(_("Error: 名单文件为空，请输入名字（一行一个）后再重新点名！"), _("错误"))
+                self.show_message(
+                    _("Error: 名单文件为空，请输入名字（一行一个）后再重新点名！"), _("错误"))
                 self.qtimer(0)
                 self.pushButton_5.setEnabled(True)
-                self.pushButton_5.click()# 名单没有人就自动按结束按钮
+                self.pushButton_5.click()  # 名单没有人就自动按结束按钮
                 origin_name_list = None
                 self.label_3.setText(_("名单文件为空！"))
                 name = ""
@@ -736,8 +803,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                                       file_path, "\n%s" % e)
             else:
                 self.timer = QTimer(self)
-                time = random.randint(99, 130)
-                self.timer.start(time)
+                print(f"滚动速度:{roll_speed}")
+                self.timer.start(roll_speed)
                 self.timer.timeout.connect(self.setname)
 
         elif start == 0:
@@ -766,7 +833,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             finally:
                 self.label_3.setText(_("名单文件为空！"))
                 self.pushButton_5.setEnabled(True)
-                self.pushButton_5.click()# 名单没有人就自动按结束按钮(中途切换名单)
+                self.pushButton_5.click()  # 名单没有人就自动按结束按钮(中途切换名单)
                 origin_name_list = None
                 self.qtimer(0)
                 return
@@ -788,13 +855,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         a = int(metrics.width(name) / max_width) + 2  # 根据文本的总宽度和标签宽度来估算行数
 
         # 如果文本换行后的高度超出了标签高度，逐步减小字体
-        while metrics.height() * a *1.1 > max_height and font_size > 0:           
+        while metrics.height() * a * 1.1 > max_height and font_size > 0:
             font_size -= 1
             font.setPointSize(font_size)
             self.label_3.setFont(font)
             metrics = QFontMetrics(font)
-            
-            
+
             # 再次计算换行后估算行数
             a = int(metrics.width(name) / max_width) + 2  # 更新行数
         origin_name_list = name
@@ -837,6 +903,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         except Exception as e:
             print(f"语音播报失败，原因：{e}")
 
+    def dynamic_speed_preview(self, speed):
+        try:
+            self.timer.setInterval(speed)
+        except:
+            pass
+
+
 class WorkerSignals(QObject):
     # 定义信号
     show_progress = pyqtSignal(int, int, int, str)
@@ -850,6 +923,7 @@ class WorkerSignals(QObject):
     speakertest = pyqtSignal(int, str)
     key_space = pyqtSignal(int)
     tts_read = pyqtSignal()
+    change_speed = pyqtSignal(int)
 
 
 class WorkerThread(QRunnable):
@@ -869,7 +943,7 @@ class WorkerThread(QRunnable):
 
     def run(self):
         # debugpy.breakpoint()
-        global running, default_music
+        global running, default_music, roll_speed
 
         def stop():
             self.signals.update_pushbotton.emit(_(" 小窗模式"), 2)
@@ -897,23 +971,18 @@ class WorkerThread(QRunnable):
             if allownametts != 1:
                 self.signals.tts_read.emit()
 
-
             self.signals.update_pushbotton.emit(_(" 开始"), 1)
             self.signals.update_list.emit(7, "")
             if namelen == 0:
                 self.signals.update_pushbotton.emit(_(" 小窗模式"), 2)
 
         if running:  # 结束按钮
-            self.signals.qtimer.emit(0)
-            self.signals.show_progress.emit(0, 0, 100, "default")
-            self.signals.enable_button.emit(1)
-            self.signals.key_space.emit(1)# 调整空格为开始
-            self.signals.enable_button.emit(7)# 恢复spinbox
-            running = False
-            stop()
+            self.signals.update_pushbotton.emit(_(" 请稍后..."), 2)
+            self.signals.enable_button.emit(3)
+            self.signals.enable_button.emit(2)
+
             if bgmusic == 1 or pygame.mixer.music.get_busy():
                 try:
-                    # debugpy.breakpoint()
                     if default_music == True:
                         pass
                     else:
@@ -925,13 +994,33 @@ class WorkerThread(QRunnable):
                         pass
                 except Exception as e:
                     print(f"停止音乐播放时发生错误：{str(e)}")
+
+            # debugpy.breakpoint()
+            if inertia_roll == 1:
+                s = 50
+                speed = random.randint(roll_speed-30, roll_speed+30)
+                while speed <= 650:
+                    s += random.randint(100, 120)
+                    s = s if s <= 280 else 150
+                    speed += s
+                    self.signals.change_speed.emit(speed)
+                    time.sleep((speed+100) / 1000)
+
+            self.signals.qtimer.emit(0)
+            self.signals.show_progress.emit(0, 0, 100, "default")
+            self.signals.enable_button.emit(1)
+            self.signals.key_space.emit(1)  # 调整空格为开始
+            self.signals.enable_button.emit(7)  # 恢复spinbox
+            running = False
+
+            stop()
             self.signals.finished.emit()
             # 向主线程发送终止信号
 
         else:  # 开始按钮
             running = True
             self.signals.qtimer.emit(1)
-            self.signals.enable_button.emit(6)# 禁用人数选择框spinbox
+            self.signals.enable_button.emit(6)  # 禁用人数选择框spinbox
             print("开始点名")
             if non_repetitive == 1 and len(non_repetitive_list) == 1:
                 self.signals.show_progress.emit(1, 0, 0, "mulit_radius")
@@ -950,7 +1039,7 @@ class WorkerThread(QRunnable):
                 file_list = os.listdir(folder_path)
                 if not file_list:
                     try:
-                        if non_repetitive == 1 and len(non_repetitive_list) == 1 :
+                        if non_repetitive == 1 and len(non_repetitive_list) == 1:
                             mid_file = ['hyl.mid']
                         else:
                             mid_file = ['olg.mid', 'qqss.mid', 'april.mid', 'hyl.mid', 'hzt.mid',
@@ -959,32 +1048,42 @@ class WorkerThread(QRunnable):
                         file_path = f":/mid/{mid_load}"
                         file = QFile(file_path)
                         file.open(QFile.ReadOnly)
-                        ctypes.windll.kernel32.SetFileAttributesW("tmp.cmxz", 0x80)
+                        ctypes.windll.kernel32.SetFileAttributesW(
+                            "tmp.cmxz", 0x80)
                         with open("tmp.cmxz", "wb") as f:
                             f.write(file.readAll())
-                        ctypes.windll.kernel32.SetFileAttributesW("tmp.cmxz", 2)
+                        ctypes.windll.kernel32.SetFileAttributesW(
+                            "tmp.cmxz", 2)
                         default_music = True
 
                         mid_load = mid_load.rsplit('.mid', 1)[0]
                         mid_name = {
                             "olg": "Only My Railgun",
-                            "qqss": "前前前世(ぜんぜんぜんせ)", # https://www.midishow.com/en/midi/47670.html
-                            "april": "若能绽放光芒(光るなら)",  # https://www.midishow.com/en/midi/ff14-op-midi-download-151208
-                            "hyl": "好运来(Good Luck Comes)",  # https://www.midishow.com/en/midi/1115.html
-                            "hzt": "花の塔",                   # https://www.midishow.com/en/midi/ff14-lycoris-recoil-ed-midi-download-158585
-                            "lemon": "Lemon",                 # https://www.midishow.com/en/midi/71733.html#删除部分前奏_Yish_
-                            "ltinat": "Late in autumn",       # https://www.midishow.com/en/midi/late-in-autumn-midi-download-148678删除部分前奏_Yish_
+                            # https://www.midishow.com/en/midi/47670.html
+                            "qqss": "前前前世(ぜんぜんぜんせ)",
+                            # https://www.midishow.com/en/midi/ff14-op-midi-download-151208
+                            "april": "若能绽放光芒(光るなら)",
+                            # https://www.midishow.com/en/midi/1115.html
+                            "hyl": "好运来(Good Luck Comes)",
+                            # https://www.midishow.com/en/midi/ff14-lycoris-recoil-ed-midi-download-158585
+                            "hzt": "花の塔",
+                            # https://www.midishow.com/en/midi/71733.html#删除部分前奏_Yish_
+                            "lemon": "Lemon",
+                            # https://www.midishow.com/en/midi/late-in-autumn-midi-download-148678删除部分前奏_Yish_
+                            "ltinat": "Late in autumn",
                             "qby": "千本桜",                     # https://www.midishow.com/en/midi/71765.html
                             "xxlg": "小小恋歌",                  # https://www.midishow.com/en/midi/71740.html
                             "ydh": "运动员进行曲",               # https://www.midishow.com/en/midi/140621.html
                             "level5": "LEVEL5 -Judgelight-",    # https://www.midishow.com/en/midi/23834.html
-                            "zyzy": "自言自语(ヒトリゴト)-ClariS"# https://www.midishow.com/en/midi/ff14-8-op-claris-midi-download-171600
+                            # https://www.midishow.com/en/midi/ff14-8-op-claris-midi-download-171600
+                            "zyzy": "自言自语(ヒトリゴト)-ClariS"
                         }
                         mid_load = mid_name.get(mid_load, mid_load)
 
                         print(
                             "正在播放默认音频:%s\n请在 %s 中放入mp3格式的音乐" % (mid_load, folder_path))
-                        self.signals.update_list.emit(7, _("正在播放(默认音频):%s") % mid_load)
+                        self.signals.update_list.emit(
+                            7, _("正在播放(默认音频):%s") % mid_load)
                     except Exception as e:
                         default_music = True
                         print("err: %s" % str(e))
@@ -1008,7 +1107,8 @@ class WorkerThread(QRunnable):
                         start_time = round(music_length / random_play, 1)
                         self.signals.update_pushbotton.emit(_(" 加载音乐.."), 2)
                         music_name = random_file.rsplit('.', 1)[0]
-                        self.signals.update_list.emit(7, _("正在播放:%s") % music_name)
+                        self.signals.update_list.emit(
+                            7, _("正在播放:%s") % music_name)
                         self.volume = 0.0
                         pygame.mixer.music.set_volume(self.volume)
                         pygame.mixer.music.play(-1, start=start_time)
@@ -1051,8 +1151,10 @@ class UpdateThread(QRunnable):
     def run(self):
         global newversion, checkupdate, latest_version, connect
         # debugpy.breakpoint()  # 在此线程启动断点调试
+        title_text_emit = title_text if title_text not in [
+            "幸运儿是:", "Lucky dog is:"] else "d"
         headers = {
-            'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s,%s,%s%s_%s' % (dmversion, allownametts, bgimg, bgmusic, language_value, platform.system(), platform.release(), platform.machine())
+            'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s,%s,%s,%s%s_%s' % (dmversion, allownametts, bgimg, bgmusic, title_text_emit, language_value, platform.system(), platform.release(), platform.machine())
         }
         updatecheck = "https://cmxz.top/programs/dm/check.php"
         # try:
@@ -1233,7 +1335,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
             max_height = self.label_2.height()
             # 估算一行字符数
             a = int(metrics.width(name) / max_width) + 2
-            while metrics.height() * a *1.1 > max_height and font_size > 0:           
+            while metrics.height() * a * 1.1 > max_height and font_size > 0:
                 font_size -= 1
                 font.setPointSize(font_size)
                 self.label_2.setFont(font)
@@ -1274,32 +1376,43 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         central_widget = QtWidgets.QWidget(self)  # 创建一个中央小部件
         self.setCentralWidget(central_widget)  # 设置中央小部件为QMainWindow的中心区域
         self.setupUi(central_widget)  # 初始化UI到中央小部件上
-        self.setMinimumSize(667, 539)
-        self.resize(667, 539)
+        self.setMinimumSize(658, 565)
+        self.resize(658, 565)
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
-        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowMinimizeButtonHint) # 禁止最小化
+        self.setWindowFlags(self.windowFlags() & ~
+                            QtCore.Qt.WindowMinimizeButtonHint)  # 禁止最小化
+
+        current_range = self.horizontalSlider.value()
+        self.label_6.setText(f"{current_range} ms")
+
         self.pushButton.setText(_("取消"))
         self.pushButton_2.setText(_("保存"))
-        self.groupBox_6.setTitle(_("快捷访问"))
-        self.pushButton_12.setText(_("名单文件目录"))
-        self.pushButton_10.setText(_("背景音乐目录"))
-        self.pushButton_8.setText(_("历史记录目录"))
-        self.groupBox.setTitle(_("功能开关"))
+        self.groupBox_3.setTitle(_("语言设置"))
+        self.groupBox.setTitle(_("功能设置"))
+        self.checkBox_2.setText(_("语音播报"))
+        self.label_5.setText(_("名单滚动速度:"))
+        self.checkBox_3.setText(_("检查更新"))
         self.checkBox_4.setText(_("背景音乐"))
+        self.checkBox_5.setText(_("惯性滚动"))
+        self.label_6.setText("60 ms")
+        self.checkBox.setText(_("不放回模式(单抽结果不重复)"))
         self.radioButton.setText(_("正常模式"))
         self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
-        self.checkBox.setText(_("不放回模式(单抽结果不重复)"))
-        self.checkBox_2.setText(_("语音播报"))
-        self.checkBox_3.setText(_("检查更新"))
         self.label.setText(_("背景图片"))
         self.radioButton_3.setText(_("默认背景"))
         self.radioButton_4.setText(_("自定义"))
         self.radioButton_5.setText(_("无"))
         self.pushButton_9.setText(_("背景图片目录"))
-        self.groupBox_3.setTitle(_("语言设置"))
+        self.label_7.setText(_("启动时标题:"))
+        self.lineEdit.setPlaceholderText(_("幸运儿是:"))
         self.groupBox_5.setTitle(_("关于"))
-        self.label_2.setText(_("沉梦课堂点名器 V%s") % dmversion)
-        self.label_3.setText(_("<html><head/><body><p align=\"center\"></p><p align=\"center\">一个支持 单抽，连抽的课堂点名小工具</p><p align=\"center\"><br/><a href=\"https://cmxz.top/ktdmq\"><span style=\" text-decoration: underline; color:#0000ff;\">沉梦小站</span></a><br/></p><p align=\"center\">Contributors: Yish1, QQB-Roy, limuy2022</p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><br/></p></body></html>"))
+        self.label_2.setText(_("沉梦课堂点名器 V6.5"))
+        self.label_3.setText(_("<html><head/><body><p align=\"center\"><span style=\" font-size:7pt; text-decoration: underline;\">一个支持 单抽，连抽的课堂点名小工具</span></p><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-size:8pt; font-weight:600;\">Contributors: Yish1, QQB-Roy, limuy2022</span></p><p align=\"center\"><span style=\" font-size:7pt; font-weight:600; font-style:italic;\"><br/></span><a href=\"https://cmxz.top/ktdmq\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><span style=\" font-size:7pt;\"><br/></span></p></body></html>"))
+        self.label_10.setText(_("Tips: 按下空格键可以快捷开始/结束！"))
+        self.groupBox_6.setTitle(_("快捷访问"))
+        self.pushButton_12.setText(_("名单文件目录"))
+        self.pushButton_10.setText(_("背景音乐目录"))
+        self.pushButton_8.setText(_("历史记录目录"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("基本设置"))
         self.groupBox_2.setTitle(_("名单管理"))
         self.pushButton_3.setText(_("新建名单"))
@@ -1308,16 +1421,24 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_13.setText(_("撤销未保存的修改"))
         self.pushButton_11.setText(_("保存修改"))
         self.label_8.setText(_("！！！编辑名单时请确保名字为 一行一个！！！"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("名单管理"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_2), _("名单管理"))
         self.groupBox_4.setTitle(_("历史记录列表"))
         self.pushButton_5.setText(_("统计所选历史记录"))
         self.pushButton_16.setText(_("访问历史记录目录"))
         self.pushButton_17.setText(_("删除历史记录"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("历史记录"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_4), _("历史记录"))
         self.pushButton_6.setText(_("反馈"))
         self.pushButton_14.setText(_("定制"))
-        self.label_4.setText(_("本来这地方应该直接内嵌相应的网页，但是自带Chromium会浪费您70mb，所以暂时用现在简约的界面"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
+        self.label_4.setText(_("本来这地方应该直接内嵌相应的网页，但是自带Chromium会浪费您70mb，所以暂时用现在简约的界面\n"
+                               "\n"
+                               "此页面仍在装修中...\\n\n"
+                               "\n"
+                               "?广?告位?招租???"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
+
         self.setWindowTitle(QCoreApplication.translate(
             "MainWindow", _("沉梦课堂点名器设置")))
 
@@ -1326,13 +1447,18 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.read_config()
         self.find_langluge()
         self.find_history()
+        self.slider_value_changed("init")
 
         self.enable_tts = None
+        self.title_text = None
         self.enable_update = None
         self.enable_bgimg = None
         self.language_value = None
         self.disable_repetitive = None
         self.enable_bgmusic = None
+        self.inertia_roll = None
+        self.file_path_bak = None
+        self.roll_speed = None
         self.file_path = None
         self.isload = None
 
@@ -1343,7 +1469,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_4.clicked.connect(self.delete_file)
         self.pushButton_2.clicked.connect(self.save_settings)
         self.pushButton_5.clicked.connect(self.count_name)
-        self.pushButton_6.clicked.connect(lambda: os.system("start https://cmxz.top/ktdmq#%E5%8F%8D%E9%A6%88"))
+        self.pushButton_6.clicked.connect(lambda: os.system(
+            "start https://cmxz.top/ktdmq#%E5%8F%8D%E9%A6%88"))
         self.comboBox_2.currentIndexChanged.connect(self.change_langluge)
         self.pushButton_12.clicked.connect(lambda: self.open_fold("name"))
         self.pushButton_15.clicked.connect(lambda: self.open_fold("name"))
@@ -1352,17 +1479,21 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_8.clicked.connect(lambda: self.open_fold("history"))
         self.pushButton_11.clicked.connect(self.save_name_list)
         self.pushButton_13.clicked.connect(self.read_name_inlist)
-        self.pushButton_14.clicked.connect(lambda:os.system("start https://cmxz.top/ktdmq#%E5%AE%9A%E5%88%B6%E7%89%88%E6%9C%AC"))
+        self.pushButton_14.clicked.connect(lambda: os.system(
+            "start https://cmxz.top/ktdmq#%E5%AE%9A%E5%88%B6%E7%89%88%E6%9C%AC"))
         self.pushButton_16.clicked.connect(lambda: self.open_fold("history"))
         self.pushButton_17.clicked.connect(lambda: self.delete_file("history"))
         self.listWidget.itemSelectionChanged.connect(self.read_name_inlist)
-        self.listWidget_2.itemSelectionChanged.connect(lambda:self.find_history(1))
+        self.listWidget_2.itemSelectionChanged.connect(
+            lambda: self.find_history(1))
         self.tabWidget.currentChanged.connect(self.tab_changed)
+        self.horizontalSlider.valueChanged.connect(self.slider_value_changed)
 
         self.pushButton_11.setEnabled(False)
         self.pushButton_13.setEnabled(False)
         self.pushButton_17.setEnabled(False)
         self.pushButton_5.setEnabled(False)
+        self.label_9.hide()
 
         self.checkBox.toggled.connect(
             lambda checked: self.process_config("disable_repetitive", checked))
@@ -1376,6 +1507,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             lambda checked: self.process_config("enable_update", checked))
         self.checkBox_4.toggled.connect(
             lambda checked: self.process_config("enable_bgmusic", checked))
+        self.checkBox_5.toggled.connect(
+            lambda checked: self.process_config("inertia_roll", checked))
         self.radioButton_3.toggled.connect(
             lambda checked: self.process_config("enable_bgimg", checked))
         self.radioButton_4.toggled.connect(
@@ -1383,9 +1516,29 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.radioButton_5.toggled.connect(
             lambda checked: self.process_config("enable_bgimg", checked))
 
+        self.lineEdit.textChanged.connect(
+            lambda text: self.process_config("title_text", text))
+
+    def slider_value_changed(self, mode=None):
+        global roll_speed
+        self.label_9.show()
+        self.label_9.setText(_("可以开始点名后调整滑块预览速度"))
+        if mode == "init":
+            self.horizontalSlider.setValue(roll_speed)
+            self.label_6.setText(f"{roll_speed} ms")
+        else:
+            current_range = self.horizontalSlider.value()
+            self.label_6.setText(
+                f"{current_range} ms")
+
+            self.process_config("roll_speed", current_range)
+            self.main_instance.dynamic_speed_preview(current_range)
+
     def tab_changed(self, index):
         if index != 0:
             self.frame.hide()
+            if index == 1:
+                self.file_path = self.file_path_bak
         else:
             self.frame.show()
 
@@ -1400,9 +1553,9 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             filename)[0] for filename in txt_name]
 
         return txt_files_name
-    
-    def read_name_inlist(self, mode = None):
-        
+
+    def read_name_inlist(self, mode=None):
+
         selected_items = self.listWidget.selectedItems()
 
         if not selected_items:
@@ -1412,23 +1565,24 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         else:
             self.pushButton_11.setEnabled(True)
             self.pushButton_13.setEnabled(True)
-        
+
         # huoqu列表选择的文件
         for item in selected_items:
             selected_text_inlist = item.text()
-    
+
         self.file_path = os.path.join("name", selected_text_inlist+".txt")
 
         if not self.file_path or not os.path.isfile(self.file_path):
             return
-        
+
         else:
             file_content = self.read_txt()
             lines = file_content.splitlines()
             non_empty_lines = [line for line in lines if line.strip()]
             file_content = "\n".join(non_empty_lines)
             self.textEdit.setPlainText(file_content)
-   
+            self.file_path_bak = self.file_path
+
     def read_txt(self):
         file_content = None
         try:
@@ -1457,12 +1611,13 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 QMessageBox.information(
                     self.window, _("新建成功"), message, QMessageBox.Ok)
             else:
-                self.main_instance.show_message(_("Error: 同名文件已存在，请勿重复创建！"), _("错误"))
+                self.main_instance.show_message(
+                    _("Error: 同名文件已存在，请勿重复创建！"), _("错误"))
             txt_name = self.refresh_name_list()
             self.listWidget.clear()  # 清空下拉框的选项
             self.listWidget.addItems(txt_name)  # 添加新的文件名到下拉框
 
-    def delete_file(self, mode = None):
+    def delete_file(self, mode=None):
         if mode == "history":
             target_folder = "history"
             text1 = _("删除历史记录")
@@ -1474,7 +1629,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
         target_filename, ok_pressed = QInputDialog.getText(
             self.window, text1, text2)
-        
+
         target_filename += "中奖记录" if mode == "history" else ""
 
         if ok_pressed and target_filename:
@@ -1505,7 +1660,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 with open(self.file_path, 'r', encoding='utf-8') as f:
                     original_name = f.read()
             except Exception as e:
-                self.main_instance.show_message(_("Error: 无法读取源文件！\n%s" % e), _("错误"))
+                self.main_instance.show_message(
+                    _("Error: 无法读取源文件！\n%s" % e), _("错误"))
                 return
 
         change_message = ""
@@ -1521,7 +1677,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
         minus_lines = []
         plus_lines = []
-        
+
         text = diff_str.strip().split('\n')
         for lines in text:
             lines = lines.strip()  # 去掉行首尾的空白字符
@@ -1543,29 +1699,24 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         if change_message == "":
             change_message = _("未进行任何修改。\n\n")
 
-        msg = QMessageBox(self)
-        msg.setIcon(QMessageBox.Question)
-        msg.setWindowTitle(_("保存确认"))
-        msg.setText(f"您正在保存文件：{os.path.basename(self.file_path)}\n"
-                    f"修改后的名单中共有 {current_name_count} 个名字，\n"
-                    f"与源文件相比:\n\n{change_message}"
-                    f"是否继续保存？")
-        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        result = msg.exec_()
+        text = _("您正在保存文件：\"%s\" |修改后的名单中共有 %s 个名字|与源文件相比:|%s" % (
+            os.path.basename(self.file_path), current_name_count, change_message))
+        msg = msgbox(text)
+        msg.exec_()
 
-        if result == QMessageBox.Yes:
+        if msg.get_result() == 1:
             try:
                 # 写入文件内容
                 with open(self.file_path, 'w', encoding='utf-8') as f:
                     f.write(current_name)
                 self.main_instance.show_message(_("名单保存成功！"), _("提示"))
             except Exception as e:
-                self.main_instance.show_message(_("Error: 名单保存出现错误！\n%s" % e), _("错误"))
-        else:
+                self.main_instance.show_message(
+                    _("Error: 名单保存出现错误！\n%s" % e), _("错误"))
+        elif msg.get_result() == 0:
             self.main_instance.show_message(_("已取消保存！"), _("提示"))
 
-
-    def find_history(self,mode = None):
+    def find_history(self, mode=None):
         if mode == 1:
             # Read模式
             selected_items = self.listWidget_2.selectedItems()
@@ -1576,21 +1727,22 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             else:
                 self.pushButton_5.setEnabled(True)
                 self.pushButton_17.setEnabled(True)
-            
+
             # 获取列表选择的文件
             for item in selected_items:
                 selected_text_inlist = item.text()
-        
-            self.file_path = os.path.join("history", selected_text_inlist+".txt")
+
+            self.file_path = os.path.join(
+                "history", selected_text_inlist+".txt")
 
             if not self.file_path or not os.path.isfile(self.file_path):
                 return
-            
+
             else:
                 file_content = self.read_txt()
-                self.textEdit_2.setPlainText(file_content)       
+                self.textEdit_2.setPlainText(file_content)
 
-        else:    
+        else:
             # Find模式，读取指定目录下的文件夹名
             history_dir = "./history"
             try:
@@ -1606,7 +1758,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 else:
                     print(f"目录不存在: {history_dir}")
             except Exception as e:
-                print(f"读取历史文件夹失败: {e}")    
+                print(f"读取历史文件夹失败: {e}")
 
     def find_langluge(self):
         locale_dir = "./locale"
@@ -1621,6 +1773,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
     def change_langluge(self):
         self.language_value = self.comboBox_2.currentText()
+        self.main_instance.show_message(
+            "A program restart is required for the modifications to be applied.", "Tips")
 
     def closeEvent(self, event):
         print("设置被关闭")
@@ -1679,6 +1833,14 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.checkBox_4.setChecked(True)
         elif bgmusic == 0:
             self.checkBox_4.setChecked(False)
+
+        if inertia_roll == 1:
+            self.checkBox_5.setChecked(True)
+        else:
+            self.checkBox_5.setChecked(False)
+
+        if title_text:
+            self.lineEdit.setText(title_text)
 
     def open_fold(self, value):
         os.makedirs(value, exist_ok=True)
@@ -1771,6 +1933,19 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                     _("开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n程序将随机选取一首，播放随机的音乐进度\n\n注：程序自带几首默认音频，当您在音乐目录下放入音乐后，默认音频将不会再进入候选列表！"), _("提示"))
                 self.open_fold("dmmusic")
 
+        elif key == "inertia_roll":
+            self.inertia_roll = 1 if checked else 0
+            if not checked:
+                print("正在关闭惯性滚动")
+            else:
+                print("正在开启惯性滚动")
+
+        elif key == "title_text":
+            self.title_text = checked
+
+        elif key == "roll_speed":
+            self.roll_speed = checked
+
     def save_settings(self):
         if self.enable_tts == 1:
             self.main_instance.update_config("allownametts", 2)
@@ -1804,6 +1979,17 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         elif self.enable_bgmusic == 0:
             self.main_instance.update_config("bgmusic", 0)
 
+        if self.inertia_roll == 1:
+            self.main_instance.update_config("inertia_roll", 1)
+        elif self.inertia_roll == 0:
+            self.main_instance.update_config("inertia_roll", 0)
+
+        if self.title_text:
+            self.main_instance.update_config("title_text", self.title_text)
+
+        if self.roll_speed:
+            self.main_instance.update_config("roll_speed", self.roll_speed)
+
         self.close()
 
     def count_name(self):
@@ -1835,18 +2021,21 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                                    key=lambda x: x[1], reverse=True)
             # 保存文本
             print("正在保存为文本")
-            cresult = _("\"%s\" 名单中奖统计:\n\n" % (count_target.replace("中奖记录", "")))
+            cresult = _("\"%s\" 名单中奖统计:\n\n" %
+                        (count_target.replace("中奖记录", "")))
             for name, count in sorted_counts:
                 cresult += "%s 出现了 %s 次\n" % (name, count)
                 with open('中奖统计.txt', 'w', encoding="utf-8") as file:
                     file.write(cresult)
 
-            self.textEdit_2.setPlainText(_("统计已保存至安装目录下的/中奖统计.txt中\n(每次统计会覆盖上一次统计结果)\n\n")+cresult)
+            self.textEdit_2.setPlainText(
+                _("统计已保存至安装目录下的/中奖统计.txt中\n(每次统计会覆盖上一次统计结果)\n\n")+cresult)
 
         except Exception as e:
             print("读取文件时发生错误:", e)
             self.main_instance.show_message(
                 _("Error: 历史记录文件不存在，无法统计次数！\n%s") % e, _("错误"))
+
 
 class SpeakerThread(QRunnable):
     def __init__(self, mode=None):
@@ -1900,8 +2089,7 @@ class SpeakerThread(QRunnable):
         self.signals.finished.emit()
 
 
-
-class FrameWithLines(QtWidgets.QFrame): 
+class FrameWithLines(QtWidgets.QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.border_radius = 28  # 圆角半径
@@ -1929,7 +2117,7 @@ class FrameWithLines(QtWidgets.QFrame):
             y += line_spacing
 
         # 绘制右下角的直角标志
-        marker_color = QtGui.QColor(140,140,140)
+        marker_color = QtGui.QColor(140, 140, 140)
         marker_pen = QtGui.QPen(marker_color)
         marker_pen.setWidth(int(2.6))  # 设置线条宽度
         painter.setPen(marker_pen)
@@ -1941,11 +2129,51 @@ class FrameWithLines(QtWidgets.QFrame):
         y_start = self.height() - margin - line_length  # 垂直线起点
 
         # 水平线
-        painter.drawLine(x_start, self.height() - margin, self.width() - margin, self.height() - margin)
+        painter.drawLine(x_start, self.height() - margin,
+                         self.width() - margin, self.height() - margin)
         # 垂直线
-        painter.drawLine(self.width() - margin, y_start, self.width() - margin, self.height() - margin)
+        painter.drawLine(self.width() - margin, y_start,
+                         self.width() - margin, self.height() - margin)
 
         painter.end()
+
+
+class msgbox(QtWidgets.QDialog, Ui_msgbox):  # 保存弹窗
+    def __init__(self, text):
+        super().__init__()
+
+        self.setWindowModality(QtCore.Qt.ApplicationModal)  # 设置为模态窗口
+        self.setupUi(self)  # 初始化UI到这个中央控件
+        self.setWindowTitle(_("保存确认"))
+        self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
+
+        self.pushButton.setText(_("确认保存"))
+        self.pushButton_2.setText(_("取消"))
+        self.label.setText(_("您正在保存:xxx"))
+        self.label_2.setText(_("修改后的名单中共有xxx个名字"))
+        self.label_3.setText(_("与源文件相比："))
+
+        text_list = text.split("|")
+
+        self.label.setText(text_list[0])
+        self.label_2.setText(text_list[1])
+        self.label_3.setText(text_list[2])
+        self.textBrowser.setText(text_list[3])
+        self.pushButton_2.clicked.connect(self.cancel)
+        self.pushButton.clicked.connect(self.save)
+
+        self.result = None
+
+    def cancel(self):
+        self.result = 0
+        self.close()
+
+    def save(self):
+        self.result = 1
+        self.close()
+
+    def get_result(self):
+        return self.result
 
 
 if __name__ == "__main__":
@@ -1980,7 +2208,7 @@ if __name__ == "__main__":
         # os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-logging --v=0"  # 禁止日志输出
         # os.environ["QTWEBENGINE_DISABLE_SYSTEM_PROXY"] = "1"  # 关闭系统代理
         # os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] += " --use-angle=gl --ignore-gpu-blacklist"  # 启用 OpenGL 后端，忽略 GPU 黑名单
-        # QCoreApplication.setAttribute(Qt.AA_UseOpenGLES)   
+        # QCoreApplication.setAttribute(Qt.AA_UseOpenGLES)
         # 以上是集成70mb的 QtWebEngine 的解决方案，已弃用
 
         app = QtWidgets.QApplication(sys.argv)

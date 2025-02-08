@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>291</width>
-    <height>174</height>
+    <width>619</width>
+    <height>305</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,32 +31,6 @@ border-bottom-right-radius :28px;</string>
    </property>
    <property name="text">
     <string/>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>27</x>
-     <y>27</y>
-     <width>231</width>
-     <height>113</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">* {
-    color: rgb(98, 105, 112);
-    font-family: 'Microsoft YaHei';
-}
-</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-   <property name="wordWrap">
-    <bool>true</bool>
    </property>
   </widget>
   <widget class="QFrame" name="frame">
@@ -166,6 +140,37 @@ QPushButton{
     <string/>
    </property>
   </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>27</x>
+     <y>49</y>
+     <width>231</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">* {
+    color: rgb(98, 105, 112);
+    font-family: 'Microsoft YaHei';
+}
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <zorder>label</zorder>
+  <zorder>label_2</zorder>
+  <zorder>frame</zorder>
+  <zorder>pushButton_7</zorder>
+  <zorder>label_3</zorder>
  </widget>
  <resources>
   <include location="res/ui1.qrc"/>
