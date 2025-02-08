@@ -17,7 +17,6 @@ from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QShortcut
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
-from qtrangeslider import QRangeSlider
 from datetime import datetime
 
 from ui import Ui_CRPmain  # 导入ui文件
@@ -90,7 +89,6 @@ title_text = None     # 标题文字: 幸运儿是:
 
 # 全局变量
 name = None
-speed = 160
 mrunning = False
 running = False
 default_music = False
@@ -406,15 +404,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 'first_use') else self.update_config("first_use", 0, "w!")
             inertia_roll = int(config.get('inertia_roll')) if config.get(
                 'inertia_roll') else self.update_config("inertia_roll", 1, "w!")
-            roll_speed = config.get('roll_speed') if config.get(
-                'roll_speed') else self.update_config("roll_speed", "50,90", "w!")
+            roll_speed = int(config.get('roll_speed')) if config.get(
+                'roll_speed') else self.update_config("roll_speed", "80", "w!")
             title_text = config.get('title_text') if config.get(
                 'title_text') else _("幸运儿是:")
-
-            if roll_speed:
-                roll_speed = roll_speed.strip("()").replace(" ", "").split(",")
-            else:
-                pass
 
         except Exception as e:
             print(f"配置文件读取失败，已重置无效为默认值！{e}")
@@ -472,7 +465,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.label_3.setText(new_value)
         elif variable == 'roll_speed':
             try:
-                self.dynamic_speed_preview(int(roll_speed[0]))
+                self.dynamic_speed_preview(roll_speed)
             except:
                 pass
 
@@ -792,7 +785,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.label_7.setText(value)
 
     def qtimer(self, start):
-        global non_repetitive_list, name, origin_name_list, speed
+        global non_repetitive_list, name, origin_name_list
         if start == 1:
             if len(name_list) == 0:
                 self.show_message(
@@ -810,9 +803,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                                       file_path, "\n%s" % e)
             else:
                 self.timer = QTimer(self)
-                speed = random.randint(int(roll_speed[0]), int(roll_speed[1]))
-                print(f"滚动速度:{speed}")
-                self.timer.start(speed)
+                print(f"滚动速度:{roll_speed}")
+                self.timer.start(roll_speed)
                 self.timer.timeout.connect(self.setname)
 
         elif start == 0:
@@ -951,7 +943,7 @@ class WorkerThread(QRunnable):
 
     def run(self):
         # debugpy.breakpoint()
-        global running, default_music, speed
+        global running, default_music, roll_speed
 
         def stop():
             self.signals.update_pushbotton.emit(_(" 小窗模式"), 2)
@@ -1005,15 +997,14 @@ class WorkerThread(QRunnable):
 
             # debugpy.breakpoint()
             if inertia_roll == 1:
-                roll_speed = speed
                 s = 50
-                r = 0
-                while roll_speed <= 650:
+                speed = random.randint(roll_speed-30, roll_speed+30)
+                while speed <= 650:
                     s += random.randint(100, 120)
                     s = s if s <= 280 else 150
-                    roll_speed += s
-                    self.signals.change_speed.emit(roll_speed)
-                    time.sleep((roll_speed+100) / 1000)
+                    speed += s
+                    self.signals.change_speed.emit(speed)
+                    time.sleep((speed+100) / 1000)
 
             self.signals.qtimer.emit(0)
             self.signals.show_progress.emit(0, 0, 100, "default")
@@ -1391,27 +1382,22 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.setWindowFlags(self.windowFlags() & ~
                             QtCore.Qt.WindowMinimizeButtonHint)  # 禁止最小化
 
-        self.horizontalSlider = QRangeSlider(self.frame_8)
-        self.horizontalSlider.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalSlider.setRange(0, 160)   # 设置范围(必须从0开始，不然有bug)
-        self.horizontalSlider.setSingleStep(1)  # 设置步长
         current_range = self.horizontalSlider.value()
-        self.label_6.setText(f"{current_range[0]}-{current_range[1]} ms")
-        self.gridLayout_4.addWidget(self.horizontalSlider, 14, 0, 1, 2)
+        self.label_6.setText(f"{current_range} ms")
 
         self.pushButton.setText(_("取消"))
         self.pushButton_2.setText(_("保存"))
         self.groupBox_3.setTitle(_("语言设置"))
         self.groupBox.setTitle(_("功能设置"))
+        self.checkBox_2.setText(_("语音播报"))
+        self.label_5.setText(_("名单滚动速度:"))
         self.checkBox_3.setText(_("检查更新"))
         self.checkBox_4.setText(_("背景音乐"))
-        self.label_5.setText(_("名单滚动速度(范围):"))
+        self.checkBox_5.setText(_("惯性滚动"))
+        self.label_6.setText("60 ms")
         self.checkBox.setText(_("不放回模式(单抽结果不重复)"))
-        self.checkBox_2.setText(_("语音播报"))
         self.radioButton.setText(_("正常模式"))
         self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
-        self.label_6.setText(_("30-60 ms"))
-        self.checkBox_5.setText(_("惯性滚动"))
         self.label.setText(_("背景图片"))
         self.radioButton_3.setText(_("默认背景"))
         self.radioButton_4.setText(_("自定义"))
@@ -1536,25 +1522,17 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
     def slider_value_changed(self, mode=None):
         global roll_speed
         self.label_9.show()
-        self.label_9.setText(_("程序随机选择范围内速度，滑动最小值立即预览速度"))
+        self.label_9.setText(_("可以开始点名后调整滑块预览速度"))
         if mode == "init":
-            self.horizontalSlider.setValue(
-                (int(roll_speed[0]), int(roll_speed[1])))
-            self.label_6.setText(f"{roll_speed[0]}-{roll_speed[1]} ms")
+            self.horizontalSlider.setValue(roll_speed)
+            self.label_6.setText(f"{roll_speed} ms")
         else:
             current_range = self.horizontalSlider.value()
-            if current_range[0] <= 29:
-                self.horizontalSlider.setValue((30, current_range[1]))
-            else:
-                self.label_6.setText(
-                    f"{current_range[0]}-{current_range[1]} ms")
-            if current_range[0] >= current_range[1]:  # 防止点炒饭
-                self.horizontalSlider.setValue(
-                    (current_range[0], current_range[0]+1))
-            # (30, 60)
-            current_range = self.horizontalSlider.value()
+            self.label_6.setText(
+                f"{current_range} ms")
+
             self.process_config("roll_speed", current_range)
-            self.main_instance.dynamic_speed_preview(int(current_range[0]))
+            self.main_instance.dynamic_speed_preview(current_range)
 
     def tab_changed(self, index):
         if index != 0:
@@ -1795,6 +1773,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
     def change_langluge(self):
         self.language_value = self.comboBox_2.currentText()
+        self.main_instance.show_message(
+            "A program restart is required for the modifications to be applied.", "Tips")
 
     def closeEvent(self, event):
         print("设置被关闭")
