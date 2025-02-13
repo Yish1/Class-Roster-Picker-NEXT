@@ -72,7 +72,7 @@ except:
         user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
 
 # version
-dmversion = 6.5
+dmversion = 6.52
 
 # config变量
 allownametts = None   # 1关闭 2正常模式 3听写模式
@@ -101,6 +101,7 @@ newversion = None
 origin_name_list = None
 
 # 窗口标识符
+windows_move_flag = None
 small_window_flag = None
 settings_flag = None
 
@@ -171,7 +172,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.first_use_introduce()
 
         font = QtGui.QFont()
-        font.setPointSize(45)  # 字体大小
+        font.setPointSize(52)  # 字体大小
         self.label_3.setFont(font)
         self.label_3.setText(title_text)
 
@@ -217,6 +218,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.setCursor(QCursor(Qt.ArrowCursor))  # 恢复光标
 
     def resizeEvent(self, event):
+        global windows_move_flag
         super().resizeEvent(event)
         screen_geometry = QApplication.primaryScreen().availableGeometry()
         # 检查窗口尺寸
@@ -226,6 +228,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 self.resize(screen_geometry.width(), screen_geometry.height())
         else:
             self.commandLinkButton.hide()  # 隐藏按钮
+
+        if self.width() > 780 or self.height() > 445:
+            windows_move_flag = True
+        else:
+            windows_move_flag = False
 
     def set_bgimg(self):
         self.label_6.setText("")
@@ -579,15 +586,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         msgBox.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
         okButton = msgBox.addButton("立刻前往", QMessageBox.AcceptRole)
         noButton = msgBox.addButton("下次一定", QMessageBox.RejectRole)
-        ignoreButton = msgBox.addButton("忽略本次更新", QMessageBox.RejectRole)
+        # ignoreButton = msgBox.addButton("忽略本次更新", QMessageBox.RejectRole)
         msgBox.exec_()
         clickedButton = msgBox.clickedButton()
         if clickedButton == okButton:
             os.system("start https://cmxz.top/ktdmq")
             self.update_list(1, title)
-        elif clickedButton == ignoreButton:
-            self.update_list(1, title)
-            self.update_config("latest_version", newversion)
+        # elif clickedButton == ignoreButton:
+        #     self.update_list(1, title)
+        #     self.update_config("latest_version", newversion)
         else:
             self.update_list(1, title)
 
@@ -815,9 +822,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 print(f"停止计时器失败:{e}")
 
     def setname(self):
-        global name, non_repetitive_list, origin_name_list
+        global name, non_repetitive_list, origin_name_list, windows_move_flag
         font = QtGui.QFont()
-        font.setPointSize(150)  # 字体大小
+        if windows_move_flag:
+            font.setPointSize(150)  # 字体大小
+        else:
+            font.setPointSize(52)
+            
         self.label_3.setFont(font)
         if non_repetitive == 1:
             if len(non_repetitive_list) == 0:
@@ -856,7 +867,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
         # 如果文本换行后的高度超出了标签高度，逐步减小字体
         while metrics.height() * a * 1.1 > max_height and font_size > 0:
-            font_size -= 1
+            font_size -= 3
             font.setPointSize(font_size)
             self.label_3.setFont(font)
             metrics = QFontMetrics(font)
@@ -865,6 +876,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             a = int(metrics.width(name) / max_width) + 2  # 更新行数
         origin_name_list = name
         self.label_3.setText(origin_name_list)
+        # print(font_size)
 
     def show_message(self, message, title, first=None):
         msgBox = QMessageBox()
@@ -1151,11 +1163,10 @@ class UpdateThread(QRunnable):
     def run(self):
         global newversion, checkupdate, latest_version, connect
         # debugpy.breakpoint()  # 在此线程启动断点调试
-        title_text_emit = title_text if title_text not in [
-            "幸运儿是:", "Lucky dog is:"] else "d"
         headers = {
-            'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s,%s,%s,%s%s_%s' % (dmversion, allownametts, bgimg, bgmusic, title_text_emit, language_value, platform.system(), platform.release(), platform.machine())
+            'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s,%s,%s%s_%s' % (dmversion, allownametts, bgimg, bgmusic, language_value, platform.system(), platform.release(), platform.machine())
         }
+        print(headers)
         updatecheck = "https://cmxz.top/programs/dm/check.php"
         # try:
         #     check_mode = requests.get(
@@ -1167,12 +1178,12 @@ class UpdateThread(QRunnable):
         # except:
         #     pass
         if checkupdate == 2:
-            try:
+            # try:
                 page = requests.get(updatecheck, timeout=5, headers=headers)
                 newversion = float(page.text)
                 print("云端版本号为:", newversion)
                 findnewversion = _("检测到新版本！")
-                if newversion > dmversion and float(latest_version) < newversion:
+                if newversion > dmversion:# and float(latest_version) < newversion:
                     print("检测到新版本:", newversion,
                           "当前版本为:", dmversion)
                     new_version_detail = requests.get(
@@ -1180,17 +1191,17 @@ class UpdateThread(QRunnable):
                     new_version_detail = new_version_detail.text
                     self.signals.find_new_version.emit(_("云端最新版本为%s，要现在下载新版本吗？<br>您也可以稍后访问沉梦小站官网获取最新版本。<br><br>%s") % (
                         newversion, new_version_detail), findnewversion)
-                else:
-                    if float(latest_version) == newversion and dmversion != newversion:
-                        print("\n已忽略%s版本更新,当前版本：%s" % (newversion, dmversion))
-                        findnewversion += _("(已忽略)")
-                        self.signals.update_list.emit(1, findnewversion)
+                # else:
+                #     if float(latest_version) == newversion and dmversion != newversion:
+                #         print("\n已忽略%s版本更新,当前版本：%s" % (newversion, dmversion))
+                #         findnewversion += _("(已忽略)")
+                #         self.signals.update_list.emit(1, findnewversion)
                 if newversion:
                     connect = True
-            except:
-                print("网络异常,无法检测更新")
-                noconnect = _("网络连接异常，检查更新失败")
-                self.signals.update_list.emit(1, noconnect)
+            # except:
+            #     print("网络异常,无法检测更新")
+            #     noconnect = _("网络连接异常，检查更新失败")
+            #     self.signals.update_list.emit(1, noconnect)
 
         elif checkupdate == 1:
             print("检查更新已关闭")
@@ -1336,7 +1347,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
             # 估算一行字符数
             a = int(metrics.width(name) / max_width) + 2
             while metrics.height() * a * 1.1 > max_height and font_size > 0:
-                font_size -= 1
+                font_size -= 2
                 font.setPointSize(font_size)
                 self.label_2.setFont(font)
                 metrics = QFontMetrics(font)
@@ -1406,7 +1417,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.label_7.setText(_("启动时标题:"))
         self.lineEdit.setPlaceholderText(_("幸运儿是:"))
         self.groupBox_5.setTitle(_("关于"))
-        self.label_2.setText(_("沉梦课堂点名器 V6.5"))
+        self.label_2.setText(_("沉梦课堂点名器 V%s") % dmversion)
         self.label_3.setText(_("<html><head/><body><p align=\"center\"><span style=\" font-size:7pt; text-decoration: underline;\">一个支持 单抽，连抽的课堂点名小工具</span></p><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-size:8pt; font-weight:600;\">Contributors: Yish1, QQB-Roy, limuy2022</span></p><p align=\"center\"><span style=\" font-size:7pt; font-weight:600; font-style:italic;\"><br/></span><a href=\"https://cmxz.top/ktdmq\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><span style=\" font-size:7pt;\"><br/></span></p></body></html>"))
         self.label_10.setText(_("Tips: 按下空格键可以快捷开始/结束！"))
         self.groupBox_6.setTitle(_("快捷访问"))
@@ -1699,8 +1710,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         if change_message == "":
             change_message = _("未进行任何修改。\n\n")
 
-        text = _("您正在保存文件：\"%s\" |修改后的名单中共有 %s 个名字|与源文件相比:|%s" % (
-            os.path.basename(self.file_path), current_name_count, change_message))
+        text = _("您正在保存文件：\"%s\" |修改后的名单中共有 %s 个名字|与源文件相比:|%s") % (
+            os.path.basename(self.file_path), current_name_count, change_message)
         msg = msgbox(text)
         msg.exec_()
 

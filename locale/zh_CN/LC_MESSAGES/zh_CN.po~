@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-02-13 18:15+0800\n"
-"PO-Revision-Date: 2025-02-13 18:15+0800\n"
+"POT-Creation-Date: 2025-02-13 18:12+0800\n"
+"PO-Revision-Date: 2025-02-13 18:12+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -530,10 +530,6 @@ msgstr ""
 msgid ""
 "未进行任何修改。\n"
 "\n"
-msgstr ""
-
-#: F:\Programs\Class-Roster-Picker-NEXT\main.py:1713
-msgid "您正在保存文件：\"%s\" |修改后的名单中共有 %s 个名字|与源文件相比:|%s"
 msgstr ""
 
 #: F:\Programs\Class-Roster-Picker-NEXT\main.py:1723
