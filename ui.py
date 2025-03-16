@@ -14,8 +14,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_CRPmain(object):
     def setupUi(self, CRPmain):
         CRPmain.setObjectName("CRPmain")
-        CRPmain.resize(780, 445)
-        CRPmain.setMinimumSize(QtCore.QSize(780, 445))
+        CRPmain.resize(905, 495)
+        CRPmain.setMinimumSize(QtCore.QSize(905, 495))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/picker.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         CRPmain.setWindowIcon(icon)
@@ -54,33 +54,13 @@ class Ui_CRPmain(object):
         self.frame_4.setObjectName("frame_4")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.frame_4)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.pushButton_4 = QtWidgets.QPushButton(self.frame_4)
-        self.pushButton_4.setMinimumSize(QtCore.QSize(80, 0))
-        self.pushButton_4.setMaximumSize(QtCore.QSize(80, 16777215))
-        self.pushButton_4.setStyleSheet("\n"
-"QPushButton{\n"
-"    border:none;\n"
-"}\n"
-"QPushButton:hover{\n"
-"    padding-bottom:3px;\n"
-"}")
-        self.pushButton_4.setText("")
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/icons/setting.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton_4.setIcon(icon1)
-        self.pushButton_4.setIconSize(QtCore.QSize(20, 20))
-        self.pushButton_4.setObjectName("pushButton_4")
-        self.gridLayout_2.addWidget(self.pushButton_4, 0, 0, 1, 1)
         self.frame_3 = QtWidgets.QFrame(self.frame_4)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.frame_3.sizePolicy().hasHeightForWidth())
         self.frame_3.setSizePolicy(sizePolicy)
-        self.frame_3.setStyleSheet("QPushButton {\n"
-"    font-size: 16px;\n"
-"}\n"
-"")
+        self.frame_3.setStyleSheet("")
         self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_3.setObjectName("frame_3")
@@ -147,14 +127,21 @@ class Ui_CRPmain(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pushButton_5.sizePolicy().hasHeightForWidth())
         self.pushButton_5.setSizePolicy(sizePolicy)
-        self.pushButton_5.setMinimumSize(QtCore.QSize(165, 45))
-        self.pushButton_5.setMaximumSize(QtCore.QSize(200, 80))
+        self.pushButton_5.setMinimumSize(QtCore.QSize(165, 50))
+        self.pushButton_5.setMaximumSize(QtCore.QSize(200, 90))
         self.pushButton_5.setBaseSize(QtCore.QSize(0, 0))
-        self.pushButton_5.setStyleSheet("QPushButton{background:rgba(237, 237, 237, 1);border-radius:5px;}QPushButton:hover{background:rgba(210, 210, 210, 0.6);}")
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/icons/swindow.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton_5.setIcon(icon2)
-        self.pushButton_5.setIconSize(QtCore.QSize(16, 18))
+        self.pushButton_5.setStyleSheet("QPushButton{\n"
+"    font-size: 20px;\n"
+"    color: rgb(58, 58, 58);\n"
+"    background:rgba(237, 237, 237, 1);\n"
+"    border-radius:5px;\n"
+"}\n"
+"QPushButton:hover{background:rgba(210, 210, 210, 0.6);\n"
+"}")
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/icons/swindow.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_5.setIcon(icon1)
+        self.pushButton_5.setIconSize(QtCore.QSize(19, 20))
         self.pushButton_5.setObjectName("pushButton_5")
         self.gridLayout_5.addWidget(self.pushButton_5, 2, 3, 1, 1)
         self.frame_5 = QtWidgets.QFrame(self.frame_3)
@@ -189,54 +176,27 @@ class Ui_CRPmain(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pushButton_2.sizePolicy().hasHeightForWidth())
         self.pushButton_2.setSizePolicy(sizePolicy)
-        self.pushButton_2.setMinimumSize(QtCore.QSize(0, 45))
-        self.pushButton_2.setMaximumSize(QtCore.QSize(200, 80))
+        self.pushButton_2.setMinimumSize(QtCore.QSize(0, 50))
+        self.pushButton_2.setMaximumSize(QtCore.QSize(200, 90))
         self.pushButton_2.setBaseSize(QtCore.QSize(0, 0))
         self.pushButton_2.setStyleSheet("QPushButton {\n"
-"    font-size: 18px;\n"
+"    font-size: 20px;\n"
+"    color: rgb(58, 58, 58);\n"
+"    background:rgba(118, 218, 96, 1);\n"
+"    border-radius:5px;\n"
 "}\n"
-"QPushButton{background:rgba(118, 218, 96, 1);border-radius:5px;}QPushButton:hover{background:rgba(80, 182, 84, 1);}")
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton_2.setIcon(icon3)
-        self.pushButton_2.setIconSize(QtCore.QSize(19, 19))
+"QPushButton:hover{\n"
+"background:rgba(80, 182, 84, 1);\n"
+"}")
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_2.setIcon(icon2)
+        self.pushButton_2.setIconSize(QtCore.QSize(22, 22))
         self.pushButton_2.setObjectName("pushButton_2")
         self.gridLayout_5.addWidget(self.pushButton_2, 5, 3, 1, 1)
         spacerItem3 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_5.addItem(spacerItem3, 2, 0, 1, 1)
         self.gridLayout_2.addWidget(self.frame_3, 14, 3, 1, 3)
-        self.frame_2 = QtWidgets.QFrame(self.frame_4)
-        self.frame_2.setMinimumSize(QtCore.QSize(80, 0))
-        self.frame_2.setMaximumSize(QtCore.QSize(80, 16777215))
-        self.frame_2.setStyleSheet("\n"
-"QPushButton{\n"
-"    border:none;\n"
-"}\n"
-"QPushButton:hover{\n"
-"    padding-bottom:4px;\n"
-"}")
-        self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_2.setObjectName("frame_2")
-        self.gridLayout_6 = QtWidgets.QGridLayout(self.frame_2)
-        self.gridLayout_6.setObjectName("gridLayout_6")
-        self.pushButton = QtWidgets.QPushButton(self.frame_2)
-        self.pushButton.setText("")
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/icons/hide.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton.setIcon(icon4)
-        self.pushButton.setIconSize(QtCore.QSize(20, 20))
-        self.pushButton.setObjectName("pushButton")
-        self.gridLayout_6.addWidget(self.pushButton, 0, 0, 1, 1)
-        self.pushButton_3 = QtWidgets.QPushButton(self.frame_2)
-        self.pushButton_3.setText("")
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton_3.setIcon(icon5)
-        self.pushButton_3.setIconSize(QtCore.QSize(20, 20))
-        self.pushButton_3.setObjectName("pushButton_3")
-        self.gridLayout_6.addWidget(self.pushButton_3, 0, 1, 1, 1)
-        self.gridLayout_2.addWidget(self.frame_2, 0, 5, 1, 1)
         self.progressBar = QtWidgets.QProgressBar(self.frame_4)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -380,6 +340,55 @@ class Ui_CRPmain(object):
         self.listWidget.setObjectName("listWidget")
         self.gridLayout_3.addWidget(self.listWidget, 1, 1, 2, 1)
         self.gridLayout_2.addWidget(self.frame_6, 14, 0, 2, 3)
+        self.pushButton_4 = QtWidgets.QPushButton(self.frame_4)
+        self.pushButton_4.setMinimumSize(QtCore.QSize(80, 0))
+        self.pushButton_4.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.pushButton_4.setStyleSheet("\n"
+"QPushButton{\n"
+"    border:none;\n"
+"}\n"
+"QPushButton:hover{\n"
+"    padding-bottom:3px;\n"
+"}")
+        self.pushButton_4.setText("")
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/icons/setting.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_4.setIcon(icon3)
+        self.pushButton_4.setIconSize(QtCore.QSize(20, 20))
+        self.pushButton_4.setObjectName("pushButton_4")
+        self.gridLayout_2.addWidget(self.pushButton_4, 0, 0, 1, 1)
+        self.frame_2 = QtWidgets.QFrame(self.frame_4)
+        self.frame_2.setMinimumSize(QtCore.QSize(80, 0))
+        self.frame_2.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.frame_2.setStyleSheet("\n"
+"QPushButton{\n"
+"    border:none;\n"
+"}\n"
+"QPushButton:hover{\n"
+"    padding-bottom:4px;\n"
+"}")
+        self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_2.setObjectName("frame_2")
+        self.gridLayout_6 = QtWidgets.QGridLayout(self.frame_2)
+        self.gridLayout_6.setObjectName("gridLayout_6")
+        self.pushButton = QtWidgets.QPushButton(self.frame_2)
+        self.pushButton.setText("")
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/hide.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton.setIcon(icon4)
+        self.pushButton.setIconSize(QtCore.QSize(20, 20))
+        self.pushButton.setObjectName("pushButton")
+        self.gridLayout_6.addWidget(self.pushButton, 0, 0, 1, 1)
+        self.pushButton_3 = QtWidgets.QPushButton(self.frame_2)
+        self.pushButton_3.setText("")
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_3.setIcon(icon5)
+        self.pushButton_3.setIconSize(QtCore.QSize(20, 20))
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.gridLayout_6.addWidget(self.pushButton_3, 0, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.frame_2, 0, 5, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.frame_4)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)

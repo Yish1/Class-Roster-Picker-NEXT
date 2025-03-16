@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>619</width>
-    <height>305</height>
+    <width>291</width>
+    <height>172</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,8 +43,7 @@ border-bottom-right-radius :28px;</string>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">
-QPushButton{
+    <string notr="true">QPushButton{
 	border:none;
 }
 QPushButton:hover{
@@ -133,8 +132,10 @@ QPushButton{
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">font-size: 15px; 
-</string>
+    <string notr="true">Qlabel{
+    color: rgb(98, 105, 112);
+	font-size: 13px; 
+}</string>
    </property>
    <property name="text">
     <string/>
@@ -144,15 +145,14 @@ QPushButton{
    <property name="geometry">
     <rect>
      <x>27</x>
-     <y>49</y>
+     <y>29</y>
      <width>231</width>
-     <height>91</height>
+     <height>111</height>
     </rect>
    </property>
    <property name="styleSheet">
     <string notr="true">* {
     color: rgb(98, 105, 112);
-    font-family: 'Microsoft YaHei';
 }
 </string>
    </property>
@@ -167,10 +167,10 @@ QPushButton{
    </property>
   </widget>
   <zorder>label</zorder>
-  <zorder>label_2</zorder>
-  <zorder>frame</zorder>
   <zorder>pushButton_7</zorder>
   <zorder>label_3</zorder>
+  <zorder>label_2</zorder>
+  <zorder>frame</zorder>
  </widget>
  <resources>
   <include location="res/ui1.qrc"/>

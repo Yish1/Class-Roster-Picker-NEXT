@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>788</width>
-    <height>468</height>
+    <width>905</width>
+    <height>495</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>780</width>
-    <height>445</height>
+    <width>905</width>
+    <height>495</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -106,44 +106,6 @@ border-radius: 28px;
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="0">
-          <widget class="QPushButton" name="pushButton_4">
-           <property name="minimumSize">
-            <size>
-             <width>80</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>80</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">
-QPushButton{
-	border:none;
-}
-QPushButton:hover{
-	padding-bottom:3px;
-}</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="res/ui1.qrc">
-             <normaloff>:/icons/setting.png</normaloff>:/icons/setting.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </widget>
-         </item>
          <item row="14" column="3" colspan="3">
           <widget class="QFrame" name="frame_3">
            <property name="sizePolicy">
@@ -153,10 +115,7 @@ QPushButton:hover{
             </sizepolicy>
            </property>
            <property name="styleSheet">
-            <string notr="true">QPushButton {
-    font-size: 16px;
-}
-</string>
+            <string notr="true"/>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -331,13 +290,13 @@ QComboBox QAbstractItemView {
               <property name="minimumSize">
                <size>
                 <width>165</width>
-                <height>45</height>
+                <height>50</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>200</width>
-                <height>80</height>
+                <height>90</height>
                </size>
               </property>
               <property name="baseSize">
@@ -347,7 +306,14 @@ QComboBox QAbstractItemView {
                </size>
               </property>
               <property name="styleSheet">
-               <string notr="true">QPushButton{background:rgba(237, 237, 237, 1);border-radius:5px;}QPushButton:hover{background:rgba(210, 210, 210, 0.6);}</string>
+               <string notr="true">QPushButton{
+	font-size: 20px;
+	color: rgb(58, 58, 58);
+	background:rgba(237, 237, 237, 1);
+	border-radius:5px;
+}
+QPushButton:hover{background:rgba(210, 210, 210, 0.6);
+}</string>
               </property>
               <property name="text">
                <string> 小窗模式</string>
@@ -358,8 +324,8 @@ QComboBox QAbstractItemView {
               </property>
               <property name="iconSize">
                <size>
-                <width>16</width>
-                <height>18</height>
+                <width>19</width>
+                <height>20</height>
                </size>
               </property>
              </widget>
@@ -434,13 +400,13 @@ QComboBox QAbstractItemView {
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>45</height>
+                <height>50</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>200</width>
-                <height>80</height>
+                <height>90</height>
                </size>
               </property>
               <property name="baseSize">
@@ -451,9 +417,14 @@ QComboBox QAbstractItemView {
               </property>
               <property name="styleSheet">
                <string notr="true">QPushButton {
-    font-size: 18px;
+	font-size: 20px;
+	color: rgb(58, 58, 58);
+	background:rgba(118, 218, 96, 1);
+	border-radius:5px;
 }
-QPushButton{background:rgba(118, 218, 96, 1);border-radius:5px;}QPushButton:hover{background:rgba(80, 182, 84, 1);}</string>
+QPushButton:hover{
+background:rgba(80, 182, 84, 1);
+}</string>
               </property>
               <property name="text">
                <string> 开始</string>
@@ -464,8 +435,8 @@ QPushButton{background:rgba(118, 218, 96, 1);border-radius:5px;}QPushButton:hove
               </property>
               <property name="iconSize">
                <size>
-                <width>19</width>
-                <height>19</height>
+                <width>22</width>
+                <height>22</height>
                </size>
               </property>
              </widget>
@@ -485,73 +456,6 @@ QPushButton{background:rgba(118, 218, 96, 1);border-radius:5px;}QPushButton:hove
                </size>
               </property>
              </spacer>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="5">
-          <widget class="QFrame" name="frame_2">
-           <property name="minimumSize">
-            <size>
-             <width>80</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>80</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">
-QPushButton{
-	border:none;
-}
-QPushButton:hover{
-	padding-bottom:4px;
-}</string>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_6">
-            <item row="0" column="0">
-             <widget class="QPushButton" name="pushButton">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset resource="res/ui1.qrc">
-                <normaloff>:/icons/hide.png</normaloff>:/icons/hide.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QPushButton" name="pushButton_3">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset resource="res/ui1.qrc">
-                <normaloff>:/icons/exit.png</normaloff>:/icons/exit.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </widget>
             </item>
            </layout>
           </widget>
@@ -804,6 +708,111 @@ QScrollBar::sub-page:horizontal {
               </property>
               <property name="resizeMode">
                <enum>QListView::Fixed</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QPushButton" name="pushButton_4">
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>80</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">
+QPushButton{
+	border:none;
+}
+QPushButton:hover{
+	padding-bottom:3px;
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="res/ui1.qrc">
+             <normaloff>:/icons/setting.png</normaloff>:/icons/setting.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="5">
+          <widget class="QFrame" name="frame_2">
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>80</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">
+QPushButton{
+	border:none;
+}
+QPushButton:hover{
+	padding-bottom:4px;
+}</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="0" column="0">
+             <widget class="QPushButton" name="pushButton">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res/ui1.qrc">
+                <normaloff>:/icons/hide.png</normaloff>:/icons/hide.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="pushButton_3">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res/ui1.qrc">
+                <normaloff>:/icons/exit.png</normaloff>:/icons/exit.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
               </property>
              </widget>
             </item>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'e:\class roster picker\smallwindow.ui'
+# Form implementation generated from reading ui file 'smallwindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_smallwindow(object):
     def setupUi(self, smallwindow):
         smallwindow.setObjectName("smallwindow")
-        smallwindow.resize(291, 174)
+        smallwindow.resize(291, 172)
         self.label = QtWidgets.QLabel(smallwindow)
         self.label.setGeometry(QtCore.QRect(10, 10, 271, 151))
         self.label.setStyleSheet("background-color: rgba(194, 194, 194, 0.97);\n"
@@ -24,21 +24,9 @@ class Ui_smallwindow(object):
 "border-bottom-right-radius :28px;")
         self.label.setText("")
         self.label.setObjectName("label")
-        self.label_2 = QtWidgets.QLabel(smallwindow)
-        self.label_2.setGeometry(QtCore.QRect(27, 27, 231, 113))
-        self.label_2.setStyleSheet("* {\n"
-"    color: rgb(98, 105, 112);\n"
-"    font-family: \'Microsoft YaHei\';\n"
-"}\n"
-"")
-        self.label_2.setText("")
-        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_2.setWordWrap(True)
-        self.label_2.setObjectName("label_2")
         self.frame = QtWidgets.QFrame(smallwindow)
         self.frame.setGeometry(QtCore.QRect(205, 13, 71, 40))
-        self.frame.setStyleSheet("\n"
-"QPushButton{\n"
+        self.frame.setStyleSheet("QPushButton{\n"
 "    border:none;\n"
 "}\n"
 "QPushButton:hover{\n"
@@ -79,10 +67,27 @@ class Ui_smallwindow(object):
         self.pushButton_7.setObjectName("pushButton_7")
         self.label_3 = QtWidgets.QLabel(smallwindow)
         self.label_3.setGeometry(QtCore.QRect(37, 26, 64, 16))
-        self.label_3.setStyleSheet("font-size: 15px; \n"
-"")
+        self.label_3.setStyleSheet("Qlabel{\n"
+"    color: rgb(98, 105, 112);\n"
+"    font-size: 13px; \n"
+"}")
         self.label_3.setText("")
         self.label_3.setObjectName("label_3")
+        self.label_2 = QtWidgets.QLabel(smallwindow)
+        self.label_2.setGeometry(QtCore.QRect(27, 29, 231, 111))
+        self.label_2.setStyleSheet("* {\n"
+"    color: rgb(98, 105, 112);\n"
+"}\n"
+"")
+        self.label_2.setText("")
+        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_2.setWordWrap(True)
+        self.label_2.setObjectName("label_2")
+        self.label.raise_()
+        self.pushButton_7.raise_()
+        self.label_3.raise_()
+        self.label_2.raise_()
+        self.frame.raise_()
 
         self.retranslateUi(smallwindow)
         QtCore.QMetaObject.connectSlotsByName(smallwindow)
@@ -90,4 +95,4 @@ class Ui_smallwindow(object):
     def retranslateUi(self, smallwindow):
         _translate = QtCore.QCoreApplication.translate
         smallwindow.setWindowTitle(_translate("smallwindow", "Form"))
-import res
+import ui1_rc

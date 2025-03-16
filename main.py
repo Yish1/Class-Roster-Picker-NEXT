@@ -13,9 +13,9 @@ import msvcrt
 import pythoncom
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence
+from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence, QFontDatabase
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile
-from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QShortcut
+from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QShortcut, QSizePolicy
 from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from datetime import datetime
 
@@ -72,7 +72,7 @@ except:
         user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
 
 # version
-dmversion = 6.52
+dmversion = 6.53
 
 # config变量
 allownametts = None   # 1关闭 2正常模式 3听写模式
@@ -99,6 +99,7 @@ non_repetitive_list = ""
 namelen = 0
 newversion = None
 origin_name_list = None
+cust_font = None
 
 # 窗口标识符
 windows_move_flag = None
@@ -108,6 +109,7 @@ settings_flag = None
 # 初始化
 today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 pygame.mixer.init()
+threadpool = QThreadPool() # 创建线程池
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
@@ -166,13 +168,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.set_bgimg()
         self.check_new_version()
         self.change_space(1)
+        self.init_font()
 
         self.timer = None
         if first_use == 0:
             self.first_use_introduce()
 
-        font = QtGui.QFont()
-        font.setPointSize(52)  # 字体大小
+
+    def init_font(self):
+        global cust_font
+        font_id = QFontDatabase.addApplicationFont("ttf2.ttf")
+        if font_id != -1:  # 确保字体加载成功
+            cust_font = QFontDatabase.applicationFontFamilies(font_id)[0]
+            font = QtGui.QFont(cust_font, 52)
+            self.label_3.setFont(font)
+            self.pushButton_2.setFont(font)
+            self.pushButton_5.setFont(font)
+        else:
+            print("字体加载失败")
         self.label_3.setFont(font)
         self.label_3.setText(title_text)
 
@@ -229,7 +242,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         else:
             self.commandLinkButton.hide()  # 隐藏按钮
 
-        if self.width() > 780 or self.height() > 445:
+        if self.width() > 905 or self.height() > 495:
             windows_move_flag = True
         else:
             windows_move_flag = False
@@ -283,9 +296,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
     def closeEvent(self, event):
         # 关闭其他窗口的代码
-        for widget in QApplication.topLevelWidgets():
-            if isinstance(widget, QWidget) and widget != self:
-                widget.close()
+        try:
+            for widget in QApplication.topLevelWidgets():
+                if isinstance(widget, QWidget) and widget != self:
+                    widget.close()
+        except:
+            pass
         event.accept()
 
     def mini(self, mode):
@@ -296,7 +312,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
     # 功能实现代码
 
     def restoresize(self):
-        self.resize(780, 445)
+        self.resize(905, 495)
         screen_geometry = QApplication.primaryScreen().availableGeometry()
         x = (screen_geometry.width() - self.width()) // 2
         y = (screen_geometry.height() - self.height()) // 2
@@ -550,7 +566,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         if num > 1:
             self.start_mulit()
         else:
-            self.threadpool = QThreadPool()
             self.thread = WorkerThread()
             self.thread.signals.show_progress.connect(self.update_progress_bar)
             self.thread.signals.update_pushbotton.connect(
@@ -566,12 +581,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.thread.signals.finished.connect(
                 lambda: print("结束点名") or self.ttsinitialize())
 
-            self.threadpool.start(self.thread)
+            threadpool.start(self.thread)
 
     def check_new_version(self):
-        self.threadpool1 = QThreadPool()
+        
         self.update_thread = UpdateThread()
-        self.threadpool1.start(self.update_thread)
+        threadpool.start(self.update_thread)
         self.update_thread.signals.find_new_version.connect(
             self.update_message)
         self.update_thread.signals.update_list.connect(
@@ -714,13 +729,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                            QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.pushButton_5.setIcon(icon)
             self.pushButton_2.setStyleSheet("QPushButton {\n"
-                                            "    font-size: 18px;\n"
+                                            "    font-size: 20px;\n"
+                                            "	 color: rgb(58, 58, 58);\n"
                                             "}\n"
                                             "QPushButton{background:rgba(118, 218, 96, 1);border-radius:5px;}QPushButton:hover{background:rgba(80, 182, 84, 1);}")
             self.pushButton_5.clicked.disconnect()
             self.pushButton_5.clicked.connect(self.small_mode)
-            self.pushButton_5.setStyleSheet(
-                "QPushButton{background:rgba(237, 237, 237, 1);border-radius:5px;}QPushButton:hover{background:rgba(210, 210, 210, 0.6);}")
+            self.pushButton_5.setStyleSheet("QPushButton {\n"
+                                            "    font-size: 20px;\n"
+                                            "	 color: rgb(58, 58, 58);\n"
+                                            "}\n"
+                                            "QPushButton{background:rgba(237, 237, 237, 1);border-radius:5px;}QPushButton:hover{background:rgba(210, 210, 210, 0.6);}")
             self.pushButton_2.clicked.disconnect()
             self.pushButton_2.clicked.connect(self.start)
 
@@ -731,11 +750,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                            QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.pushButton_5.setIcon(icon)
             self.pushButton_5.setStyleSheet("QPushButton {\n"
-                                            "    font-size: 18px;\n"
+                                            "    font-size: 20px;\n"
+                                            "	 color: rgb(58, 58, 58);\n"
                                             "}\n"
                                             "QPushButton{background:rgba(249, 117, 83, 1);border-radius:5px;}QPushButton:hover{background:rgba(226, 82, 44, 1);}")
             self.pushButton_2.setStyleSheet("QPushButton {\n"
-                                            "    font-size: 18px;\n"
+                                            "    font-size: 20px;\n"
+                                            "	 color: rgb(58, 58, 58);\n"
                                             "}\n"
                                             "QPushButton{background:rgba(237, 237, 237, 1);border-radius:5px;}QPushButton:hover{background:rgba(80, 182, 84, 1);}")
             self.pushButton_5.clicked.disconnect()
@@ -754,11 +775,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                            QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.pushButton_5.setIcon(icon)
             self.pushButton_5.setStyleSheet("QPushButton {\n"
-                                            "    font-size: 18px;\n"
+                                            "    font-size: 20px;\n"
+                                            "	 color: rgb(58, 58, 58);\n"
                                             "}\n"
                                             "QPushButton{background:rgba(249, 117, 83, 1);border-radius:5px;}QPushButton:hover{background:rgba(226, 82, 44, 1);}")
             self.pushButton_2.setStyleSheet("QPushButton {\n"
-                                            "    font-size: 18px;\n"
+                                            "    font-size: 20px;\n"
+                                            "	 color: rgb(58, 58, 58);\n"
                                             "}\n"
                                             "QPushButton{background:rgba(112, 198, 232, 1);border-radius:5px;}QPushButton:hover{background:rgba(93, 167, 196, 1);}")
             self.pushButton_5.clicked.disconnect()
@@ -823,11 +846,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
     def setname(self):
         global name, non_repetitive_list, origin_name_list, windows_move_flag
-        font = QtGui.QFont()
+        font = QtGui.QFont(cust_font)
+        max_width = self.label_3.width()
+        max_height = self.label_3.height()
+        
         if windows_move_flag:
             font.setPointSize(150)  # 字体大小
+            self.label_3.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)  # 允许 QLabel 扩展
+            self.label_3.setMaximumSize(16777215, 16777215)
         else:
-            font.setPointSize(52)
+            font.setPointSize(90)
+            self.label_3.setMaximumSize(max_width, max_height)
             
         self.label_3.setFont(font)
         if non_repetitive == 1:
@@ -855,25 +884,28 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 name = random.choice(name_list)
         except:
             pass
+
         font_size = font.pointSize()
         metrics = QFontMetrics(font)
 
-        # 计算每行最大可以容纳的字符数
-        max_width = self.label_3.width()
-        max_height = self.label_3.height()
-
         # 估算一行字符数
-        a = int(metrics.width(name) / max_width) + 2  # 根据文本的总宽度和标签宽度来估算行数
+        a = max(1, round(metrics.horizontalAdvance(name) / max_width, 1)) # 估计行数
+        b = metrics.height()# 字体高度
+        c = a * (b * 2)# b*2考虑到字符行间隔
 
         # 如果文本换行后的高度超出了标签高度，逐步减小字体
-        while metrics.height() * a * 1.1 > max_height and font_size > 0:
+        while c > max_height and font_size > 0:
+            
             font_size -= 3
             font.setPointSize(font_size)
             self.label_3.setFont(font)
             metrics = QFontMetrics(font)
+            b = metrics.height()
 
             # 再次计算换行后估算行数
-            a = int(metrics.width(name) / max_width) + 2  # 更新行数
+            a = max(1, round(metrics.horizontalAdvance(name) / max_width, 1))
+            c = a * (b * 2)
+
         origin_name_list = name
         self.label_3.setText(origin_name_list)
         # print(font_size)
@@ -899,7 +931,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
     def tts_read(self):
         try:
             if origin_name_list != "":
-                self.threadpool2 = QThreadPool()
                 self.check_speaker = SpeakerThread(1)
                 self.check_speaker.signals.update_list.connect(
                     self.update_list)
@@ -909,7 +940,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                     self.enable_button)
                 self.check_speaker.signals.save_history.connect(
                     self.save_history)
-                self.threadpool2.start(self.check_speaker)
+                threadpool.start(self.check_speaker)
             else:
                 print("名单文件为空！")
         except Exception as e:
@@ -1009,14 +1040,17 @@ class WorkerThread(QRunnable):
 
             # debugpy.breakpoint()
             if inertia_roll == 1:
-                s = 50
-                speed = random.randint(roll_speed-30, roll_speed+30)
-                while speed <= 650:
-                    s += random.randint(100, 120)
-                    s = s if s <= 280 else 150
-                    speed += s
-                    self.signals.change_speed.emit(speed)
-                    time.sleep((speed+100) / 1000)
+                if len(non_repetitive_list) == 1:
+                    pass
+                else:
+                    s = 50
+                    speed = random.randint(roll_speed-30, roll_speed+30)
+                    while speed <= 650:
+                        s += random.randint(100, 120)
+                        s = s if s <= 280 else 150
+                        speed += s
+                        self.signals.change_speed.emit(speed)
+                        time.sleep((speed+100) / 1000)
 
             self.signals.qtimer.emit(0)
             self.signals.show_progress.emit(0, 0, 100, "default")
@@ -1178,7 +1212,7 @@ class UpdateThread(QRunnable):
         # except:
         #     pass
         if checkupdate == 2:
-            # try:
+            try:
                 page = requests.get(updatecheck, timeout=5, headers=headers)
                 newversion = float(page.text)
                 print("云端版本号为:", newversion)
@@ -1198,10 +1232,10 @@ class UpdateThread(QRunnable):
                 #         self.signals.update_list.emit(1, findnewversion)
                 if newversion:
                     connect = True
-            # except:
-            #     print("网络异常,无法检测更新")
-            #     noconnect = _("网络连接异常，检查更新失败")
-            #     self.signals.update_list.emit(1, noconnect)
+            except:
+                print("网络异常,无法检测更新")
+                noconnect = _("网络连接异常，检查更新失败")
+                self.signals.update_list.emit(1, noconnect)
 
         elif checkupdate == 1:
             print("检查更新已关闭")
@@ -1227,8 +1261,11 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.pushButton_7.mouseMoveEvent = self.mouseMoveEvent
         self.pushButton_7.mouseReleaseEvent = self.mouseReleaseEvent
 
-        font = QtGui.QFont()
-        font.setPointSize(34)  # 字体大小
+
+        font_id = QFontDatabase.addApplicationFont("ttf2.ttf")
+        if font_id != -1:  # 确保字体加载成功
+            cust_font_sw = QFontDatabase.applicationFontFamilies(font_id)[0]
+        font = QtGui.QFont(cust_font_sw, 34)
         self.label_2.setFont(font)
 
         self.label_2.setText(_("开始"))
@@ -1242,6 +1279,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.runflag = None
         self.minimum_flag = False
         self.main_instance = main_instance
+        self.cust_font_sw = cust_font_sw
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -1316,8 +1354,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
 
     def setname(self):
         global name, non_repetitive_list, non_repetitive
-        font = QtGui.QFont()
-        font.setPointSize(34)  # 字体大小
+        font = QtGui.QFont(self.cust_font_sw, 34)
         self.label_2.setFont(font)
         if non_repetitive == 1:
             if len(non_repetitive_list) == 0:
@@ -1340,18 +1377,30 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
             except:
                 pass
 
+
             font_size = font.pointSize()
-            metrics = QFontMetrics(font)
+            metrics = QFontMetrics(font)        
             max_width = self.label_2.width()
             max_height = self.label_2.height()
+
             # 估算一行字符数
-            a = int(metrics.width(name) / max_width) + 2
-            while metrics.height() * a * 1.1 > max_height and font_size > 0:
-                font_size -= 2
+            a = max(1, round(metrics.horizontalAdvance(name) / max_width, 1)) # 估计行数
+            b = metrics.height()# 字体高度
+            c = a * (b * 2)# b*2考虑到字符行间隔
+            
+            # 如果文本换行后的高度超出了标签高度，逐步减小字体
+            while c > max_height and font_size > 0:
+                
+                font_size -= 3
                 font.setPointSize(font_size)
                 self.label_2.setFont(font)
                 metrics = QFontMetrics(font)
-                a = int(metrics.width(name) / max_width) + 2  # 更新行数
+                b = metrics.height()
+
+                # 再次计算换行后估算行数
+                a = max(1, round(metrics.horizontalAdvance(name) / max_width, 1))
+                c = a * (b * 2)
+
             self.small_window_name = name
             self.label_2.setText(name)
 
@@ -1360,7 +1409,10 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
 
     def closeEvent(self, event):
         print("小窗被关闭")
-        self.main_instance.mini(2)
+        try:
+            self.main_instance.mini(2)
+        except:
+            pass # 防止主窗口关闭后，小窗关闭报错
         global small_window_flag
         small_window_flag = None
         event.accept()  # 确保仅关闭子窗口，不影响主窗口
@@ -1387,43 +1439,43 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         central_widget = QtWidgets.QWidget(self)  # 创建一个中央小部件
         self.setCentralWidget(central_widget)  # 设置中央小部件为QMainWindow的中心区域
         self.setupUi(central_widget)  # 初始化UI到中央小部件上
-        self.setMinimumSize(658, 565)
-        self.resize(658, 565)
+        self.setMinimumSize(695, 540)
+        self.resize(695, 540)
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
         self.setWindowFlags(self.windowFlags() & ~
                             QtCore.Qt.WindowMinimizeButtonHint)  # 禁止最小化
 
         current_range = self.horizontalSlider.value()
         self.label_6.setText(f"{current_range} ms")
-
         self.pushButton.setText(_("取消"))
         self.pushButton_2.setText(_("保存"))
         self.groupBox_3.setTitle(_("语言设置"))
+        self.groupBox_6.setTitle(_("快捷访问"))
+        self.pushButton_12.setText(_("名单文件目录"))
+        self.pushButton_10.setText(_("背景音乐目录"))
+        self.pushButton_8.setText(_("历史记录目录"))
+        self.groupBox_5.setTitle(_("关于"))
+        self.label_10.setText(_("Tips: 按下空格键可以快捷开始/结束！"))
+        self.label_2.setText(_("沉梦课堂点名器 V%s") % dmversion)
+        self.label_3.setText(_("<html><head/><body><p align=\"center\"><span style=\" font-size:7pt; text-decoration: underline;\">一个支持 单抽，连抽的课堂点名小工具</span></p><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-size:8pt; font-weight:600;\">Contributors: Yish1, QQB-Roy, limuy2022</span></p><p align=\"center\"><span style=\" font-size:7pt; font-weight:600; font-style:italic;\"><br/></span><a href=\"https://cmxz.top/ktdmq\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><span style=\" font-size:7pt;\"><br/></span></p></body></html>"))
         self.groupBox.setTitle(_("功能设置"))
         self.checkBox_2.setText(_("语音播报"))
         self.label_5.setText(_("名单滚动速度:"))
         self.checkBox_3.setText(_("检查更新"))
         self.checkBox_4.setText(_("背景音乐"))
         self.checkBox_5.setText(_("惯性滚动"))
-        self.label_6.setText("60 ms")
         self.checkBox.setText(_("不放回模式(单抽结果不重复)"))
         self.radioButton.setText(_("正常模式"))
         self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
-        self.label.setText(_("背景图片"))
+        self.groupBox_7.setTitle(_("个性化设置"))
+        self.label_11.setText(_("标题字体："))
+        self.pushButton_9.setText(_("背景图片目录"))
         self.radioButton_3.setText(_("默认背景"))
         self.radioButton_4.setText(_("自定义"))
         self.radioButton_5.setText(_("无"))
-        self.pushButton_9.setText(_("背景图片目录"))
-        self.label_7.setText(_("启动时标题:"))
+        self.label.setText(_("背景图片"))
         self.lineEdit.setPlaceholderText(_("幸运儿是:"))
-        self.groupBox_5.setTitle(_("关于"))
-        self.label_2.setText(_("沉梦课堂点名器 V%s") % dmversion)
-        self.label_3.setText(_("<html><head/><body><p align=\"center\"><span style=\" font-size:7pt; text-decoration: underline;\">一个支持 单抽，连抽的课堂点名小工具</span></p><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-size:8pt; font-weight:600;\">Contributors: Yish1, QQB-Roy, limuy2022</span></p><p align=\"center\"><span style=\" font-size:7pt; font-weight:600; font-style:italic;\"><br/></span><a href=\"https://cmxz.top/ktdmq\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><span style=\" font-size:7pt;\"><br/></span></p></body></html>"))
-        self.label_10.setText(_("Tips: 按下空格键可以快捷开始/结束！"))
-        self.groupBox_6.setTitle(_("快捷访问"))
-        self.pushButton_12.setText(_("名单文件目录"))
-        self.pushButton_10.setText(_("背景音乐目录"))
-        self.pushButton_8.setText(_("历史记录目录"))
+        self.label_7.setText(_("启动时标题:"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("基本设置"))
         self.groupBox_2.setTitle(_("名单管理"))
         self.pushButton_3.setText(_("新建名单"))
@@ -1432,23 +1484,20 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_13.setText(_("撤销未保存的修改"))
         self.pushButton_11.setText(_("保存修改"))
         self.label_8.setText(_("！！！编辑名单时请确保名字为 一行一个！！！"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_2), _("名单管理"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("名单管理"))
         self.groupBox_4.setTitle(_("历史记录列表"))
         self.pushButton_5.setText(_("统计所选历史记录"))
         self.pushButton_16.setText(_("访问历史记录目录"))
         self.pushButton_17.setText(_("删除历史记录"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_4), _("历史记录"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("历史记录"))
         self.pushButton_6.setText(_("反馈"))
         self.pushButton_14.setText(_("定制"))
         self.label_4.setText(_("本来这地方应该直接内嵌相应的网页，但是自带Chromium会浪费您70mb，所以暂时用现在简约的界面\n"
-                               "\n"
-                               "此页面仍在装修中...\\n\n"
-                               "\n"
-                               "?广?告位?招租???"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
+            "\n"
+            "此页面仍在装修中...\\n\n"
+            "\n"
+            "?广?告位?招租???"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
 
         self.setWindowTitle(QCoreApplication.translate(
             "MainWindow", _("沉梦课堂点名器设置")))
@@ -1867,9 +1916,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 # 如果两个 radioButton 都没有被选中，默认选中 radioButton
                 if checked and not self.radioButton.isChecked() and not self.radioButton_2.isChecked():
                     self.checkBox_2.setText(_("正在检测兼容性..."))
-                    self.threadpool = QThreadPool()
                     self.check_speaker = SpeakerThread()
-                    self.threadpool.start(self.check_speaker)
+                    threadpool.start(self.check_speaker)
 
                     def spearker_test(result, e):
                         if result == 1:
