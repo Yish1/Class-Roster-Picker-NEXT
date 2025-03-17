@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>291</width>
-    <height>172</height>
+    <width>277</width>
+    <height>156</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,18 +16,17 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>10</y>
+     <x>3</x>
+     <y>4</y>
      <width>271</width>
      <height>151</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgba(194, 194, 194, 0.97);
-border-top-left-radius :28px;
-border-bottom-left-radius :28px;
-border-top-right-radius :28px;
-border-bottom-right-radius :28px;</string>
+    <string notr="true">QWidget {
+background-color: rgba(194, 194, 194, 0.97);
+border-radius: 28px;
+}</string>
    </property>
    <property name="text">
     <string/>
@@ -36,8 +35,8 @@ border-bottom-right-radius :28px;</string>
   <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
-     <x>205</x>
-     <y>13</y>
+     <x>198</x>
+     <y>7</y>
      <width>71</width>
      <height>40</height>
     </rect>
@@ -96,8 +95,8 @@ QPushButton:hover{
   <widget class="QPushButton" name="pushButton_7">
    <property name="geometry">
     <rect>
-     <x>90</x>
-     <y>30</y>
+     <x>83</x>
+     <y>24</y>
      <width>111</width>
      <height>101</height>
     </rect>
@@ -125,8 +124,8 @@ QPushButton{
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>37</x>
-     <y>26</y>
+     <x>30</x>
+     <y>20</y>
      <width>64</width>
      <height>16</height>
     </rect>
@@ -144,8 +143,8 @@ QPushButton{
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>27</x>
-     <y>29</y>
+     <x>20</x>
+     <y>23</y>
      <width>231</width>
      <height>111</height>
     </rect>

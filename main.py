@@ -13,10 +13,9 @@ import msvcrt
 import pythoncom
 import win32com.client
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence, QFontDatabase
-from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile
+from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence, QFontDatabase, QFont
+from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile, QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QShortcut, QSizePolicy
-from PyQt5.QtCore import QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from datetime import datetime
 
 from ui import Ui_CRPmain  # 导入ui文件
@@ -72,7 +71,7 @@ except:
         user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
 
 # version
-dmversion = 6.53
+dmversion = 6.56
 
 # config变量
 allownametts = None   # 1关闭 2正常模式 3听写模式
@@ -179,17 +178,33 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
     def init_font(self):
         global cust_font
-        font_id = QFontDatabase.addApplicationFont("ttf2.ttf")
+        font_path = ":/fonts/font.ttf"
+        # 读取字体文件
+        font_file = QFile(font_path)
+        if not font_file.open(QFile.ReadOnly):
+            print("字体文件打开失败")
+            return
+        data = font_file.readAll()
+        font_file.close()
+
+        # 临时写入字体文件
+        temp_path = "font.ttf"
+        with open(temp_path, "wb") as f:
+            f.write(data)
+
+        # 加载字体
+        font_id = QFontDatabase.addApplicationFont(temp_path)
         if font_id != -1:  # 确保字体加载成功
             cust_font = QFontDatabase.applicationFontFamilies(font_id)[0]
-            self.font_m = QtGui.QFont(cust_font, 52)
+            self.font_m = QFont(cust_font, 52)
+
             self.label_3.setFont(self.font_m)
             self.pushButton_2.setFont(self.font_m)
             self.pushButton_5.setFont(self.font_m)
         else:
             print("字体加载失败")
-        self.label_3.setFont(self.font_m)
         self.label_3.setText(title_text)
+
 
     def mouseMoveEvent(self, event):
         # 获取鼠标相对于窗口的坐标
@@ -449,9 +464,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         with open('config.ini', 'r+', encoding='utf-8') as file:
             lines = file.readlines()
         updated = False
-        seen_keys = set()   # 防止重复项
+        seen_keys = set()  # 防止重复项
 
-        for i in range(len(lines)):  # 确保每个值都有\n结尾
+        for i in range(len(lines)):
             if not lines[i].endswith('\n'):
                 lines[i] += '\n'
             if not lines[i].startswith('['):
@@ -461,23 +476,34 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             if '=' in line:
                 key, value = line.strip().split('=', 1)
                 key = key.strip('[]')
+                value = value.strip()
+
+                # 删除值为空的项
+                if not value:
+                    lines[i] = ''
+                    continue
+
                 if key == variable:  # 如果存在，则替换现有的值
-                    lines[i] = f"[{key}]={new_value}\n"  # 替换成新的值，带上中括号
-                    updated = True
+                    if new_value:  # 仅在新值非空时替换
+                        lines[i] = f"[{key}]={new_value}\n"
+                        updated = True
+                    else:
+                        lines[i] = ''  # 如果新值为空，则删除此项
+
                     if key in seen_keys:
                         lines[i] = ''
-                    seen_keys.add(key.strip('[]'))  # 记录当前配置项的key
+                    seen_keys.add(key)
 
-                elif key.strip('[]') in seen_keys:
-                    lines[i] = ''  # 将重复项标记为空行，后续可以过滤掉
-
+                elif key in seen_keys:
+                    lines[i] = ''  # 删除重复项
                 else:
-                    seen_keys.add(key.strip('[]'))  # 新配置项，记录该key
-        # 如不存在，则在文件末尾添加
-        if not updated:
+                    seen_keys.add(key)  # 记录新项
+
+        # 如不存在且新值非空，则在文件末尾添加
+        if not updated and new_value is not None: 
             lines.append(f"[{variable}]={new_value}\n")
 
-        lines = [line for line in lines if line != '']  # 配置文件防拉屎
+        lines = [line for line in lines if line.strip()] # 配置文件防拉屎
 
         with open('config.ini', 'w+', encoding='utf-8') as file:
             file.writelines(lines)
@@ -835,7 +861,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 self.pushButton_5.setEnabled(True)
                 self.pushButton_5.click()  # 名单没有人就自动按结束按钮
                 origin_name_list = None
-                self.font_m.setPointSize(54)
+                self.font_m.setPointSize(45)
                 self.label_3.setText(_(" 名单文件为空！"))
                 name = ""
                 try:
@@ -863,7 +889,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                     self.timer.stop()
                     # print("Debug:",name)
                     if allownametts != 1:
-                        self.tts_read(name)
+                        self.tts_read(origin_name_list)
                 
             except Exception as e:
                 print(f"计时器启动语音播报线程失败:{e}")            
@@ -916,7 +942,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         # 估算一行字符数
         a = max(1, round(metrics.horizontalAdvance(name) / max_width, 1)) # 估计行数
         b = metrics.height()# 字体高度
-        d = 1 if font_size < 80 and len(name) < 6 else 2.2
+        d = 1.2 if font_size < 80 and len(name) < 6 else 2.2
         c = a * (b * d)# b*2考虑到字符行间隔
 
         # 如果文本换行后的高度超出了标签高度，逐步减小字体
@@ -927,7 +953,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.label_3.setFont(self.font_m)
             metrics = QFontMetrics(self.font_m)
             b = metrics.height()
-            d = 1 if font_size < 80 and len(name) < 6 else 2.2
+            d = 1.2 if font_size < 80 and len(name) < 6 else 2.2
             # 再次计算换行后估算行数
             a = max(1, round(metrics.horizontalAdvance(name) / max_width, 1))
             c = a * (b * d)
@@ -1212,9 +1238,9 @@ class WorkerThread(QRunnable):
                         self.signals.update_pushbotton.emit(_(" 结束"), 2)
                         self.signals.enable_button.emit(4)
 
-            else:
-                self.signals.update_pushbotton.emit(_(" 结束"), 2)
-                self.signals.enable_button.emit(4)
+            self.signals.update_pushbotton.emit(_(" 结束"), 2)
+            self.signals.enable_button.emit(4)
+
             if non_repetitive == 1:
                 self.signals.enable_button.emit(5)
                 self.signals.update_pushbotton.emit(_(" 重置名单"), 1)
@@ -1263,8 +1289,8 @@ class UpdateThread(QRunnable):
                 #         self.signals.update_list.emit(1, findnewversion)
                 if newversion:
                     connect = True
-            except:
-                print("网络异常,无法检测更新")
+            except Exception as e:
+                print(f"网络异常,无法检测更新:{e}")
                 noconnect = _("网络连接异常，检查更新失败")
                 self.signals.update_list.emit(1, noconnect)
 
@@ -1367,8 +1393,8 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
                         info = self.small_window_name + \
                             _(" (剩%s人)") % len(non_repetitive_list)
                         if len(non_repetitive_list) == 0:
-                            # self.font_m.setPointSize(29)
-                            # self.label_2.setFont(self.font_m)
+                            self.font_s.setPointSize(29)
+                            self.label_2.setFont(self.font_s)
                             self.label_2.setText(_("名单抽取完成"))
                             self.label_3.setText("")
                         else:
@@ -1400,7 +1426,9 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
 
         if name_list == []:
             name = ""
-            self.label_2.setText(_(" 名单为空!"))
+            self.font_s.setPointSize(29)
+            self.label_2.setFont(self.font_s)
+            self.label_2.setText(_("名单为空!"))
             self.main_instance.mini(2)
             self.qtimer(0)
             try:
@@ -1445,7 +1473,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
 
             self.small_window_name = name
             self.label_2.setText(self.small_window_name)
-            print(font_size, d)
+            # print(font_size, d)
 
     def get_name_list(self):
         self.qtimer(1)
@@ -1482,8 +1510,8 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         central_widget = QtWidgets.QWidget(self)  # 创建一个中央小部件
         self.setCentralWidget(central_widget)  # 设置中央小部件为QMainWindow的中心区域
         self.setupUi(central_widget)  # 初始化UI到中央小部件上
-        self.setMinimumSize(695, 540)
-        self.resize(695, 540)
+        self.setMinimumSize(675, 555)
+        self.resize(675, 555)
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
         self.setWindowFlags(self.windowFlags() & ~
                             QtCore.Qt.WindowMinimizeButtonHint)  # 禁止最小化
@@ -1502,22 +1530,21 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.label_2.setText(_("沉梦课堂点名器 V%s") % dmversion)
         self.label_3.setText(_("<html><head/><body><p align=\"center\"><span style=\" font-size:7pt; text-decoration: underline;\">一个支持 单抽，连抽的课堂点名小工具</span></p><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-size:8pt; font-weight:600;\">Contributors: Yish1, QQB-Roy, limuy2022</span></p><p align=\"center\"><span style=\" font-size:7pt; font-weight:600; font-style:italic;\"><br/></span><a href=\"https://cmxz.top/ktdmq\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><span style=\" font-size:7pt;\"><br/></span></p></body></html>"))
         self.groupBox.setTitle(_("功能设置"))
-        self.checkBox_2.setText(_("语音播报"))
-        self.label_5.setText(_("名单滚动速度:"))
-        self.checkBox_3.setText(_("检查更新"))
         self.checkBox_4.setText(_("背景音乐"))
-        self.checkBox_5.setText(_("惯性滚动"))
+        self.checkBox_3.setText(_("检查更新"))
         self.checkBox.setText(_("不放回模式(单抽结果不重复)"))
+        self.label_5.setText(_("名单滚动速度:"))
         self.radioButton.setText(_("正常模式"))
         self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
+        self.checkBox_5.setText(_("惯性滚动"))
+        self.checkBox_2.setText(_("语音播报"))
         self.groupBox_7.setTitle(_("个性化设置"))
-        self.label_11.setText(_("标题字体："))
-        self.pushButton_9.setText(_("背景图片目录"))
+        self.label.setText(_("背景图片"))
         self.radioButton_3.setText(_("默认背景"))
         self.radioButton_4.setText(_("自定义"))
         self.radioButton_5.setText(_("无"))
-        self.label.setText(_("背景图片"))
         self.lineEdit.setPlaceholderText(_("幸运儿是:"))
+        self.pushButton_9.setText(_("背景图片目录"))
         self.label_7.setText(_("启动时标题:"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("基本设置"))
         self.groupBox_2.setTitle(_("名单管理"))
@@ -1535,21 +1562,11 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("历史记录"))
         self.pushButton_6.setText(_("反馈"))
         self.pushButton_14.setText(_("定制"))
-        self.label_4.setText(_("本来这地方应该直接内嵌相应的网页，但是自带Chromium会浪费您70mb，所以暂时用现在简约的界面\n"
-            "\n"
-            "此页面仍在装修中...\\n\n"
-            "\n"
-            "?广?告位?招租???"))
+        self.label_4.setText(_("<html><head/><body><p><span style=\" font-size:8pt;\">感谢您使用 沉梦课堂点名器！欢迎访问沉梦小站博客cmxz.top获取更多有趣的应用！</span></p><p><span style=\" font-size:8pt;\">                —— Yish_</span></p></body></html>"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
 
         self.setWindowTitle(QCoreApplication.translate(
             "MainWindow", _("沉梦课堂点名器设置")))
-
-        self.pushButton_11.setEnabled(False)
-        self.pushButton_13.setEnabled(False)
-        self.pushButton_17.setEnabled(False)
-        self.pushButton_5.setEnabled(False)
-        self.label_9.hide()
 
         self.main_instance = main_instance
         self.read_name_list()
@@ -1621,6 +1638,12 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
         self.lineEdit.textChanged.connect(
             lambda text: self.process_config("title_text", text))
+
+        self.pushButton_11.setEnabled(False)
+        self.pushButton_13.setEnabled(False)
+        self.pushButton_17.setEnabled(False)
+        self.pushButton_5.setEnabled(False)
+        self.label_9.hide()
 
         if target_tab and "&" in target_tab:
             try:
@@ -2306,7 +2329,7 @@ class msgbox(QtWidgets.QDialog, Ui_msgbox):  # 保存弹窗
 
 
 if __name__ == "__main__":
-    # try:
+    try:
         # 防止重复运行
         lock_file = os.path.expanduser("~/.Class_Roster_Picker_lock")
         fd = os.open(lock_file, os.O_RDWR | os.O_CREAT)
@@ -2344,7 +2367,7 @@ if __name__ == "__main__":
         mainWindow = MainWindow()
         mainWindow.show()
         sys.exit(app.exec_())
-    # except Exception as e:
-    #     user32 = ctypes.windll.user32
-    #     user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
-    #     sys.exit()
+    except Exception as e:
+        user32 = ctypes.windll.user32
+        user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
+        sys.exit()

@@ -8,7 +8,11 @@
     <file>swindow.png</file>
     <file>picker.ico</file>
   </qresource>
+  <qresource prefix="fonts">
+    <file>font.ttf</file>
+  </qresource>
   <qresource prefix="mid">
+    <file>zyzy.mid</file>
     <file>april.mid</file>
     <file>hyl.mid</file>
     <file>hzt.mid</file>
