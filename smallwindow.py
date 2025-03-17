@@ -67,7 +67,7 @@ class Ui_smallwindow(object):
         self.pushButton_7.setObjectName("pushButton_7")
         self.label_3 = QtWidgets.QLabel(smallwindow)
         self.label_3.setGeometry(QtCore.QRect(37, 26, 64, 16))
-        self.label_3.setStyleSheet("Qlabel{\n"
+        self.label_3.setStyleSheet("#label_3{\n"
 "    color: rgb(98, 105, 112);\n"
 "    font-size: 13px; \n"
 "}")

@@ -132,7 +132,7 @@ QPushButton{
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">Qlabel{
+    <string notr="true">#label_3{
     color: rgb(98, 105, 112);
 	font-size: 13px; 
 }</string>
