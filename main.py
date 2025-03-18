@@ -1596,7 +1596,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_2.clicked.connect(self.save_settings)
         self.pushButton_5.clicked.connect(self.count_name)
         self.pushButton_6.clicked.connect(lambda: os.system(
-            "start https://cmxz.top/ktdmq#%E5%8F%8D%E9%A6%88"))
+            "start https://cmxz.top/ktdmq#toc-head-17"))
         self.comboBox_2.currentIndexChanged.connect(self.change_langluge)
         self.pushButton_12.clicked.connect(lambda: self.open_fold("name"))
         self.pushButton_15.clicked.connect(lambda: self.open_fold("name"))
@@ -1606,7 +1606,7 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_11.clicked.connect(self.save_name_list)
         self.pushButton_13.clicked.connect(self.read_name_inlist)
         self.pushButton_14.clicked.connect(lambda: os.system(
-            "start https://cmxz.top/ktdmq#%E5%AE%9A%E5%88%B6%E7%89%88%E6%9C%AC"))
+            "start https://cmxz.top/ktdmq#toc-head-8"))
         self.pushButton_16.clicked.connect(lambda: self.open_fold("history"))
         self.pushButton_17.clicked.connect(lambda: self.delete_file("history"))
         self.listWidget.itemSelectionChanged.connect(self.read_name_inlist)
