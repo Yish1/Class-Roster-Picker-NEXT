@@ -23,52 +23,28 @@ from smallwindow import Ui_smallwindow
 from settings import Ui_Settings
 from msgbox import Ui_msgbox
 
+# modular helpers
+from config_manager import read_config_file, update_entry
+from logger_util import init_log, log_print
+from i18n import init_gettext
+
 # import debugpy
 # debugpy.listen(("0.0.0.0", 5678))
 # debugpy.wait_for_client()  # 等待调试器连接
 
-rewrite_print = print
+init_log('log.txt')
 
-# print写入log中
-
-
-def print(*arg):
-    rewrite_print(*arg)
-    rewrite_print(*arg, file=open('log.txt', "a", encoding='utf-8'))
-
-
-with open('log.txt', 'w', encoding='utf-8') as log:
-    log.write(f"OS：{platform.system()}\n")
-    log.write(f"BUILD：{platform.release()}\n")
-    log.write(f"PLATFORM：{platform.machine()}\n")
-    log.write(f"TIME：{datetime.now()}\n\n")
-
+# init i18n with config language if present
 try:
-    config = {}
-    with open('config.ini', 'r', encoding='utf-8') as file:
-        for line in file:
-            if '=' in line:
-                key, value = line.strip().split('=', 1)
-                config[key.strip('[]')] = value.strip()
+    _config_boot = read_config_file('config.ini')
+    language_value = _config_boot.get('language', 'zh_CN')
+    _ = init_gettext(language_value)
+except Exception as e:
     try:
-        language_value = config.get('language')
-    except:
-        language_value = "zh_CN"
-    localedir1 = os.path.join(os.path.abspath(
-        os.path.dirname(__file__)), 'locale')
-    translate = gettext.translation(
-        domain=f"{language_value}", localedir=localedir1, languages=[f"{language_value}"])
-    _ = translate.gettext
-except:
-    try:
-        localedir1 = os.path.join(os.path.abspath(
-            os.path.dirname(__file__)), 'locale')
-        translate = gettext.translation(
-            domain="zh_CN", localedir=localedir1, languages=["zh_CN"])
-        _ = translate.gettext
-    except Exception as e:
+        _ = init_gettext('zh_CN')
+    except Exception as e2:
         user32 = ctypes.windll.user32
-        user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
+        user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e2}", "Warning!", 0x30)
 
 # version
 dmversion = 6.56
@@ -182,7 +158,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         # 读取字体文件
         font_file = QFile(font_path)
         if not font_file.open(QFile.ReadOnly):
-            print("字体文件打开失败")
+            log_print("字体文件打开失败")
             return
         data = font_file.readAll()
         font_file.close()
@@ -197,7 +173,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.pushButton_2.setFont(self.font_m)
             self.pushButton_5.setFont(self.font_m)
         else:
-            print("字体加载失败")
+            log_print("字体加载失败")
         self.label_3.setText(title_text)
 
 
@@ -276,7 +252,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 return
             self.label_6.setText(_("自定义背景"))
             random_file = random.choice(file_list)
-            print(random_file)
+            log_print(random_file)
             self.frame.setStyleSheet("#frame {\n"
                                      f"border-image: url('./images/{random_file}');"
                                      "border-radius: 28px;"
@@ -351,7 +327,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         os.makedirs("name", exist_ok=True)
         if not os.path.exists(folder_name) or not os.listdir(folder_name):
             self.init_name(self.make_name_list())
-            print("first_run")
+            log_print("first_run")
         txt_name = [filename for filename in os.listdir(
             folder_name) if filename.endswith(".txt")]
         # 获取所有txt文件
@@ -359,7 +335,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         if mdnum == 0:
             self.show_message(_("名单文件不存在，且默认名单无法生成，请反馈给我们！"), _("名单生成异常！"))
             sys.exit()
-        print("共读取到 %d 个名单" % mdnum)
+            log_print("共读取到 %d 个名单" % mdnum)
         txt_files_name = [os.path.splitext(
             filename)[0] for filename in txt_name]
         # 去除扩展名
@@ -392,9 +368,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             try:
                 self.comboBox.setCurrentIndex(0)
             except:
-                print("first_run")
+                log_print("first_run")
         else:
-            print(f"所选文件的路径为: {file_path}\n")
+                log_print(f"所选文件的路径为: {file_path}\n")
         self.process_name_file(file_path)
         if first == 1:
             info = _("\'%s'，共 %s 人") % (selected_file, namelen)
@@ -416,11 +392,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             with open('config.ini', 'w', encoding='utf-8') as file:
                 file.write("")
 
-        with open('config.ini', 'r', encoding='utf-8') as file:
-            for line in file:
-                if '=' in line:
-                    key, value = line.strip().split('=', 1)
-                    config[key.strip('[]')] = value.strip()
+        config = read_config_file('config.ini')
         try:
             language_value = config.get('language') if config.get(
                 'language') else self.update_config("language", "zh_CN", "w!")
@@ -448,61 +420,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 'title_text') else _("幸运儿是:")
 
         except Exception as e:
-            print(f"配置文件读取失败，已重置无效为默认值！{e}")
+            log_print(f"配置文件读取失败，已重置无效为默认值！{e}")
             self.show_message(_("配置文件读取失败，已重置为默认值！\n%s") % e, _("读取配置文件失败！"))
             os.remove("config.ini")
             self.read_config()
         return config
 
     def update_config(self, variable, new_value, mode=None):
-        lines = []
-        with open('config.ini', 'r+', encoding='utf-8') as file:
-            lines = file.readlines()
-        updated = False
-        seen_keys = set()  # 防止重复项
-
-        for i in range(len(lines)):
-            if not lines[i].endswith('\n'):
-                lines[i] += '\n'
-            if not lines[i].startswith('['):
-                lines[i] = ''  # 删除无效行
-
-        for i, line in enumerate(lines):
-            if '=' in line:
-                key, value = line.strip().split('=', 1)
-                key = key.strip('[]')
-                value = value.strip()
-
-                # 删除值为空的项
-                if not value:
-                    lines[i] = ''
-                    continue
-
-                if key == variable:  # 如果存在，则替换现有的值
-                    if new_value:  # 仅在新值非空时替换
-                        lines[i] = f"[{key}]={new_value}\n"
-                        updated = True
-                    else:
-                        lines[i] = ''  # 如果新值为空，则删除此项
-
-                    if key in seen_keys:
-                        lines[i] = ''
-                    seen_keys.add(key)
-
-                elif key in seen_keys:
-                    lines[i] = ''  # 删除重复项
-                else:
-                    seen_keys.add(key)  # 记录新项
-
-        # 如不存在且新值非空，则在文件末尾添加
-        if not updated and new_value is not None: 
-            lines.append(f"[{variable}]={new_value}\n")
-
-        lines = [line for line in lines if line.strip()] # 配置文件防拉屎
-
-        with open('config.ini', 'w+', encoding='utf-8') as file:
-            file.writelines(lines)
-            print(f"更新配置文件：[{variable}]={new_value}\n")
+        # delegate to config manager
+        update_entry(variable, str(new_value) if new_value is not None else None, 'config.ini')
+        log_print(f"更新配置文件：[{variable}]={new_value}\n")
 
         if mode == "w!":
             pass
@@ -526,7 +453,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 name_list = [line.strip()
                              for line in f.readlines() if line.strip()]
         except:
-            print("utf8解码失败，尝试gbk")
+            log_print("utf8解码失败，尝试gbk")
             try:
                 with open(file_path, encoding='gbk') as f:
                     name_list = [line.strip()
@@ -577,7 +504,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                             today, dmversion, write_name)
                 file.write(content)
 
-            print(today, "幸运儿是： %s " % write_name)
+                log_print(today, "幸运儿是： %s " % write_name)
         else:
             pass
 
@@ -609,7 +536,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.thread.signals.change_speed.connect(
                 self.dynamic_speed_preview)
             self.thread.signals.finished.connect(
-                lambda: print("结束点名") or self.ttsinitialize())
+                lambda: log_print("结束点名") or self.ttsinitialize())
 
             threadpool.start(self.thread)
 
@@ -622,7 +549,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.update_thread.signals.update_list.connect(
             self.update_list)
         self.update_thread.signals.finished.connect(
-            lambda: print("检查更新线程结束"))
+            lambda: log_print("检查更新线程结束"))
 
     def update_message(self, message, title):  # 更新弹窗
         msgBox = QMessageBox()
@@ -661,7 +588,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 try:
                     self.save_history(1, name_set)
                 except:
-                    print("无法写入历史记录")
+                    log_print("无法写入历史记录")
                 print(today, "幸运儿是： %s " % name_set)
                 self.listWidget.addItem("----------------------------")
                 self.listWidget.addItem(_("连抽：%d 人") % num)
@@ -673,7 +600,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                     self.listWidget.count() - target_line)
                 self.label_3.setText(title_text)
             else:
-                print("连抽中...")
+                log_print("连抽中...")
 
     def reset_repetive_list(self):
         global non_repetitive_list
