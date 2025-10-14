@@ -187,8 +187,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         data = font_file.readAll()
         font_file.close()
 
-        # 直接从内存加载字体，无需写入临时文件
-        font_id = QFontDatabase.addApplicationFontFromData(data)
+        # 临时写入字体文件
+        temp_path = "font.ttf"
+        with open(temp_path, "wb") as f:
+            f.write(data)
+
+        # 加载字体
+        font_id = QFontDatabase.addApplicationFont(temp_path)
         if font_id != -1:  # 确保字体加载成功
             cust_font = QFontDatabase.applicationFontFamilies(font_id)[0]
             self.font_m = QFont(cust_font, 52)
