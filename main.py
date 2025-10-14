@@ -26,7 +26,7 @@ from msgbox import Ui_msgbox
 # modular helpers
 from moudles.config_manager import read_config_file, update_entry
 from moudles.logger_util import init_log, log_print
-from moudles.i18n import init_gettext
+from moudles.i18n import init_gettext, set_language, _
 
 # import debugpy
 # debugpy.listen(("0.0.0.0", 5678))
@@ -38,10 +38,10 @@ init_log('log.txt')
 try:
     _config_boot = read_config_file('config.ini')
     language_value = _config_boot.get('language', 'zh_CN')
-    _ = init_gettext(language_value)
+    init_gettext(language_value)
 except Exception as e:
     try:
-        _ = init_gettext('zh_CN')
+        init_gettext('zh_CN')
     except Exception as e2:
         user32 = ctypes.windll.user32
         user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e2}", "Warning!", 0x30)
@@ -176,6 +176,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             log_print("字体加载失败")
         self.label_3.setText(title_text)
 
+    def apply_translations(self):
+        """Update runtime UI texts to the current language."""
+        try:
+            self.setWindowTitle(QCoreApplication.translate(
+                "MainWindow", _("沉梦课堂点名器 %s") % dmversion))
+            self.pushButton_2.setText(_(" 开始"))
+            self.pushButton_5.setText(_(" 小窗模式"))
+            self.label_5.setText(_("当前名单："))
+            self.label_4.setText(_("抽取人数："))
+            # Update background label if needed
+            if bgimg == 2:
+                self.label_6.setText(_("自定义背景"))
+            # Update title text from config
+            if title_text:
+                self.label_3.setText(title_text)
+        except Exception as e:
+            log_print(f"apply_translations error: {e}")
 
     def mouseMoveEvent(self, event):
         # 获取鼠标相对于窗口的坐标
@@ -1835,9 +1852,24 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             print(f"读取语言失败:{e}")
 
     def change_langluge(self):
-        self.language_value = self.comboBox_2.currentText()
-        self.main_instance.show_message(
-            "A program restart is required for the modifications to be applied.", "Tips")
+        """Change language at runtime without restart."""
+        try:
+            self.language_value = self.comboBox_2.currentText()
+            # Set module-level gettext to new language
+            set_language(self.language_value)
+            # Persist selection to config
+            update_entry('language', self.language_value)
+            # Refresh main window and settings window texts
+            try:
+                self.main_instance.apply_translations()
+            except Exception as e:
+                log_print(f"Error applying main window translations: {e}")
+            try:
+                self.apply_translations()
+            except Exception as e:
+                log_print(f"Error applying settings translations: {e}")
+        except Exception as e:
+            self.main_instance.show_message(str(e), "Error")
 
     def closeEvent(self, event):
         print("设置被关闭")
@@ -1854,6 +1886,61 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
     def run_settings_window(self):
         self.show()
         return self
+
+    def apply_translations(self):
+        """Refresh texts in the settings window after a language change."""
+        try:
+            current_range = self.horizontalSlider.value()
+            self.label_6.setText(f"{current_range} ms")
+            self.pushButton.setText(_("取消"))
+            self.pushButton_2.setText(_("保存"))
+            self.groupBox_3.setTitle(_("语言设置"))
+            self.groupBox_6.setTitle(_("快捷访问"))
+            self.pushButton_12.setText(_("名单文件目录"))
+            self.pushButton_10.setText(_("背景音乐目录"))
+            self.pushButton_8.setText(_("历史记录目录"))
+            self.groupBox_5.setTitle(_("关于"))
+            self.label_10.setText(_("Tips: 按下空格键可以快捷开始/结束！"))
+            self.label_2.setText(_("沉梦课堂点名器 V%s") % dmversion)
+            self.groupBox.setTitle(_("功能设置"))
+            self.checkBox_4.setText(_("背景音乐"))
+            self.checkBox_3.setText(_("检查更新"))
+            self.checkBox.setText(_("不放回模式(单抽结果不重复)"))
+            self.label_5.setText(_("名单滚动速度:"))
+            self.radioButton.setText(_("正常模式"))
+            self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
+            self.checkBox_5.setText(_("惯性滚动"))
+            self.checkBox_2.setText(_("语音播报"))
+            self.groupBox_7.setTitle(_("个性化设置"))
+            self.label.setText(_("背景图片"))
+            self.radioButton_3.setText(_("默认背景"))
+            self.radioButton_4.setText(_("自定义"))
+            self.radioButton_5.setText(_("无"))
+            self.lineEdit.setPlaceholderText(_("幸运儿是:"))
+            self.pushButton_9.setText(_("背景图片目录"))
+            self.label_7.setText(_("启动时标题:"))
+            self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("基本设置"))
+            self.groupBox_2.setTitle(_("名单管理"))
+            self.pushButton_3.setText(_("新建名单"))
+            self.pushButton_4.setText(_("删除名单"))
+            self.pushButton_15.setText(_("访问名单文件目录"))
+            self.pushButton_13.setText(_("撤销未保存的修改"))
+            self.pushButton_11.setText(_("保存修改"))
+            self.label_8.setText(_("！！！编辑名单时请确保名字为 一行一个！！！"))
+            self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("名单管理"))
+            self.groupBox_4.setTitle(_("历史记录列表"))
+            self.pushButton_5.setText(_("统计所选历史记录"))
+            self.pushButton_16.setText(_("访问历史记录目录"))
+            self.pushButton_17.setText(_("删除历史记录"))
+            self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("历史记录"))
+            self.pushButton_6.setText(_("反馈"))
+            self.pushButton_14.setText(_("定制"))
+            self.label_4.setText(_("感谢您使用 沉梦课堂点名器！欢迎访问沉梦小站博客cmxz.top获取更多有趣的应用！\n                —— Yish_"))
+            self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
+            self.setWindowTitle(QCoreApplication.translate(
+                "MainWindow", _("沉梦课堂点名器设置")))
+        except Exception as e:
+            log_print(f"settings apply_translations error: {e}")
 
     def read_config(self):
         if allownametts == 2:
