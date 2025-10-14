@@ -26,3 +26,4 @@ def log_print(*args: Any, log_path: str = 'log.txt') -> None:
     except Exception:
         pass
 
+

@@ -24,9 +24,9 @@ from settings import Ui_Settings
 from msgbox import Ui_msgbox
 
 # modular helpers
-from config_manager import read_config_file, update_entry
-from logger_util import init_log, log_print
-from i18n import init_gettext
+from moudles.config_manager import read_config_file, update_entry
+from moudles.logger_util import init_log, log_print
+from moudles.i18n import init_gettext
 
 # import debugpy
 # debugpy.listen(("0.0.0.0", 5678))
@@ -244,7 +244,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             os.makedirs(folder_name, exist_ok=True)
             file_list = os.listdir(folder_path)
             if not file_list:
-                print("要使用自定义背景功能，请在 %s 中放入图片文件" % folder_path)
+                log_print("要使用自定义背景功能，请在 %s 中放入图片文件" % folder_path)
                 self.frame.setStyleSheet("#frame {\n"
                                          "border-image: url(:/images/(1070).webp);"
                                          "border-radius: 28px;"

@@ -20,3 +20,4 @@ def init_gettext(language_value: str = 'zh_CN') -> Callable[[str], str]:
             # last resort: identity
             return lambda s: s
 
+

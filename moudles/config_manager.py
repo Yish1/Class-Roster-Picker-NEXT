@@ -55,3 +55,4 @@ def update_entry(key: str, value: Optional[str], path: str = 'config.ini') -> Di
     write_config_file(config, path)
     return config
 
+
