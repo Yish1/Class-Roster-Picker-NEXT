@@ -23,10 +23,7 @@ from smallwindow import Ui_smallwindow
 from settings import Ui_Settings
 from msgbox import Ui_msgbox
 
-# modular helpers
-from moudles.config_manager import read_config_file, update_entry
-from moudles.logger_util import init_log, log_print
-from moudles.i18n import init_gettext, set_language, _
+from moudles import *
 
 # import debugpy
 # debugpy.listen(("0.0.0.0", 5678))
