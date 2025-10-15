@@ -17,11 +17,7 @@ from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile, QThreadPool, pyqtS
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QShortcut, QSizePolicy
 from datetime import datetime
 
-from ui import Ui_CRPmain  # 导入ui文件
-from smallwindow import Ui_smallwindow
-from settings import Ui_Settings
-from msgbox import Ui_msgbox
-
+from Ui import * 
 from moudles import *
 
 # import debugpy
