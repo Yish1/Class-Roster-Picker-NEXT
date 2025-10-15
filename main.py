@@ -6,7 +6,6 @@ import os
 import time
 import requests
 import platform
-import gettext
 import pygame
 import ctypes
 import msvcrt
@@ -100,16 +99,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.font_m = None
 
         self.setMinimumSize(QtCore.QSize(780, 445))
-        self.setWindowTitle(QCoreApplication.translate(
-            "MainWindow", _("沉梦课堂点名器 %s") % dmversion))
-        self.pushButton_2.setText(_(" 开始"))
-        self.pushButton_5.setText(_(" 小窗模式"))
         self.spinBox.setValue(1)
-        self.label_5.setText(_("当前名单："))
-        self.label_4.setText(_("抽取人数："))
         self.label_7.setText("")
         self.progressBar.hide()
         self.commandLinkButton.hide()
+
+        # 加载翻译
+        self.apply_translations()
 
         # 添加横线遮罩的 FrameWithLines
         self.linemask = FrameWithLines(self)
@@ -1452,64 +1448,13 @@ class settingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.setWindowFlags(self.windowFlags() & ~
                             QtCore.Qt.WindowMinimizeButtonHint)  # 禁止最小化
 
-        current_range = self.horizontalSlider.value()
-        self.label_6.setText(f"{current_range} ms")
-        self.pushButton.setText(_("取消"))
-        self.pushButton_2.setText(_("保存"))
-        self.groupBox_3.setTitle(_("语言设置"))
-        self.groupBox_6.setTitle(_("快捷访问"))
-        self.pushButton_12.setText(_("名单文件目录"))
-        self.pushButton_10.setText(_("背景音乐目录"))
-        self.pushButton_8.setText(_("历史记录目录"))
-        self.groupBox_5.setTitle(_("关于"))
-        self.label_10.setText(_("Tips: 按下空格键可以快捷开始/结束！"))
-        self.label_2.setText(_("沉梦课堂点名器 V%s") % dmversion)
-        self.label_3.setText(_("<html><head/><body><p align=\"center\"><span style=\" font-size:7pt; text-decoration: underline;\">一个支持 单抽，连抽的课堂点名小工具</span></p><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-size:8pt; font-weight:600;\">Contributors: Yish1, QQB-Roy, limuy2022</span></p><p align=\"center\"><span style=\" font-size:7pt; font-weight:600; font-style:italic;\"><br/></span><a href=\"https://cmxz.top/ktdmq\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><span style=\" font-size:7pt;\"><br/></span></p></body></html>"))
-        self.groupBox.setTitle(_("功能设置"))
-        self.checkBox_4.setText(_("背景音乐"))
-        self.checkBox_3.setText(_("检查更新"))
-        self.checkBox.setText(_("不放回模式(单抽结果不重复)"))
-        self.label_5.setText(_("名单滚动速度:"))
-        self.radioButton.setText(_("正常模式"))
-        self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
-        self.checkBox_5.setText(_("惯性滚动"))
-        self.checkBox_2.setText(_("语音播报"))
-        self.groupBox_7.setTitle(_("个性化设置"))
-        self.label.setText(_("背景图片"))
-        self.radioButton_3.setText(_("默认背景"))
-        self.radioButton_4.setText(_("自定义"))
-        self.radioButton_5.setText(_("无"))
-        self.lineEdit.setPlaceholderText(_("幸运儿是:"))
-        self.pushButton_9.setText(_("背景图片目录"))
-        self.label_7.setText(_("启动时标题:"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("基本设置"))
-        self.groupBox_2.setTitle(_("名单管理"))
-        self.pushButton_3.setText(_("新建名单"))
-        self.pushButton_4.setText(_("删除名单"))
-        self.pushButton_15.setText(_("访问名单文件目录"))
-        self.pushButton_13.setText(_("撤销未保存的修改"))
-        self.pushButton_11.setText(_("保存修改"))
-        self.label_8.setText(_("！！！编辑名单时请确保名字为 一行一个！！！"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("名单管理"))
-        self.groupBox_4.setTitle(_("历史记录列表"))
-        self.pushButton_5.setText(_("统计所选历史记录"))
-        self.pushButton_16.setText(_("访问历史记录目录"))
-        self.pushButton_17.setText(_("删除历史记录"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("历史记录"))
-        self.pushButton_6.setText(_("反馈"))
-        self.pushButton_14.setText(_("定制"))
-        self.label_4.setText(_("<html><head/><body><p><span style=\" font-size:8pt;\">感谢您使用 沉梦课堂点名器！欢迎访问沉梦小站博客cmxz.top获取更多有趣的应用！</span></p><p><span style=\" font-size:8pt;\">                —— Yish_</span></p></body></html>"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
-
-        self.setWindowTitle(QCoreApplication.translate(
-            "MainWindow", _("沉梦课堂点名器设置")))
-
         self.main_instance = main_instance
         self.read_name_list()
         self.read_config()
         self.find_langluge()
         self.find_history()
         self.slider_value_changed("init")
+        self.apply_translations()
 
         self.enable_tts = None
         self.title_text = None
