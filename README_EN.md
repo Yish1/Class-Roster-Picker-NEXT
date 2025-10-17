@@ -16,7 +16,7 @@
 
 > [!TIP]
 > #### Way to pack the program:<br>
-> nuitka --standalone --lto=no --clang --msvc=latest --disable-ccache --windows-uac-admin --windows-console-mode=disable --enable-plugin=pyqt5,upx --upx-binary=E:\ctest\o\upx\upx.exe --output-dir=o --windows-icon-from-ico=picker.ico --nofollow-import-to=unittest main.py
+> `nuitka --standalone --lto=no --clang --msvc=latest --disable-ccache --windows-uac-admin --windows-console-mode=disable --enable-plugin=pyqt5,upx --upx-binary=E:\ctest\o\upx\upx.exe --output-dir=o --windows-icon-from-ico=picker.ico --nofollow-import-to=unittest main.py`
 
 > [!IMPORTANT]  
 > #### Mechine requirement:
@@ -40,11 +40,10 @@
 
 ## TODO
 - [x] Optimize single draw repetition
-- [ ] More stringent anti-tampering mechanism
-- [ ] Rewrite the underlying bgm module (replace pygame)
+- [ ] ......
 
       
-## Download Address
+## Download Url
 > Latest version download address：[Lanzou Cloud](https://yish.lanzouw.com/b038hjo8f) (Passward：cmti)
 > 
 > IN CMXZ.TOP：[GO！](https://cmxz.top/ktdmq)

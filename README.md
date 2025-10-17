@@ -14,8 +14,8 @@
 > 
 
 > [!TIP]
-> 提示：
-> 打包参数：nuitka --standalone --lto=no --clang --msvc=latest --disable-ccache --windows-uac-admin --windows-console-mode=disable --enable-plugin=pyqt5,upx --upx-binary=E:\ctest\o\upx\upx.exe --output-dir=o --windows-icon-from-ico=picker.ico --nofollow-import-to=unittest main.py
+> 打包参数：</br>
+> `nuitka --standalone --lto=no --clang --msvc=latest --disable-ccache --windows-uac-admin --windows-console-mode=disable --enable-plugin=pyqt5,upx --upx-binary=E:\ctest\o\upx\upx.exe --output-dir=o --windows-icon-from-ico=picker.ico --nofollow-import-to=unittest main.py`
 
 > [!IMPORTANT]  
 > 设备要求： 
@@ -38,8 +38,9 @@
 
 ## TODO
 - [x] 优化单抽重复
-- [ ] 更严格的防篡改机制
-- [ ] 底层重写bgm模块(取代pygame)
+- [x] 全屏模式
+- [x] UI优化
+- ......
       
 ## 下载链接
 > 最新版下载地址：[蓝奏云下载](https://yish.lanzouw.com/b038hjo8f) (密码：cmti)
