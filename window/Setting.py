@@ -1,14 +1,14 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtWidgets import QWidget, QInputDialog, QMessageBox
+from PyQt5.QtCore import QCoreApplication, QStandardPaths
+from PyQt5.QtWidgets import QWidget, QInputDialog, QMessageBox, QFileDialog, QListWidgetItem
 
 from window.Msgbox import msgbox
 from Ui import Ui_Settings
 
 from moudles import *
-from moudles import app_state
 
-import os, difflib
+import os, difflib, tarfile
+from datetime import datetime
 
 # 便捷引用全局状态
 state = app_state
@@ -28,7 +28,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.main_instance = main_instance
         self.read_name_list()
         self.read_config()
-        self.find_langluge()
+        self.find_language()
         self.find_history()
         self.slider_value_changed("init")
         self.apply_translations()
@@ -41,7 +41,8 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.disable_repetitive = None
         self.enable_bgmusic = None
         self.inertia_roll = None
-        self.file_path_bak = None
+        self.file_path_bak = None # 文件路径备份
+        self.bak_file_path = None # 备份文件路径
         self.roll_speed = None
         self.file_path = None
         self.isload = None
@@ -55,18 +56,22 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_5.clicked.connect(self.count_name)
         self.pushButton_6.clicked.connect(lambda: os.system(
             "start https://cmxz.top/ktdmq#toc-head-17"))
-        self.comboBox_2.currentIndexChanged.connect(self.change_langluge)
-        self.pushButton_12.clicked.connect(lambda: self.open_fold("name"))
-        self.pushButton_15.clicked.connect(lambda: self.open_fold("name"))
-        self.pushButton_10.clicked.connect(lambda: self.open_fold("dmmusic"))
-        self.pushButton_9.clicked.connect(lambda: self.open_fold("images"))
-        self.pushButton_8.clicked.connect(lambda: self.open_fold("history"))
+        self.comboBox_2.currentIndexChanged.connect(self.change_language)
+        self.pushButton_12.clicked.connect(lambda: self.open_fold((os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'name'))))
+        self.pushButton_15.clicked.connect(lambda: self.open_fold((os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'name'))))
+        self.pushButton_10.clicked.connect(lambda: self.open_fold((os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'dmmusic'))))
+        self.pushButton_9.clicked.connect(lambda: self.open_fold((os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'images'))))
+        self.pushButton_8.clicked.connect(lambda: self.open_fold((os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'history'))))
         self.pushButton_11.clicked.connect(self.save_name_list)
         self.pushButton_13.clicked.connect(self.read_name_inlist)
         self.pushButton_14.clicked.connect(lambda: os.system(
             "start https://cmxz.top/ktdmq#toc-head-8"))
-        self.pushButton_16.clicked.connect(lambda: self.open_fold("history"))
-        self.pushButton_17.clicked.connect(lambda: self.delete_file("history"))
+        self.pushButton_16.clicked.connect(lambda: self.open_fold((os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'history'))))
+        self.pushButton_17.clicked.connect(lambda: self.delete_file((os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'history'))))
+        self.pushButton_18.clicked.connect(self.save_allconfig)
+        self.pushButton_19.clicked.connect(self.load_backup)
+        self.pushButton_20.clicked.connect(self.apply_backup)
+
         self.listWidget.itemSelectionChanged.connect(self.read_name_inlist)
         self.listWidget_2.itemSelectionChanged.connect(
             lambda: self.find_history(1))
@@ -101,6 +106,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_13.setEnabled(False)
         self.pushButton_17.setEnabled(False)
         self.pushButton_5.setEnabled(False)
+        self.pushButton_20.hide()
         self.label_9.hide()
 
         if target_tab and "&" in target_tab:
@@ -202,7 +208,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             newnamepath = os.path.join(
                 state.appdata_path, "name", f"{newfilename}.txt")  # 打开文件并写入内容
             if not os.path.exists(newnamepath):
-                print("新增名单名称是: %s" % newfilename)
+                log_print("新增名单名称是: %s" % newfilename)
                 with open(newnamepath, "w", encoding="utf8") as file:
                     file.write("")
                 message = (_("已创建名为 '%s.txt' 的文件，路径为: %s\n\n请在稍后打开的文本中输入名单内容，一行一个名字，不要出现空格！") %
@@ -355,11 +361,11 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
                     self.listWidget_2.addItems(history_files_name)
                 else:
-                    print(f"目录不存在: {history_dir}")
+                    log_print(f"目录不存在: {history_dir}")
             except Exception as e:
-                print(f"读取历史文件夹失败: {e}")
+                log_print(f"读取历史文件夹失败: {e}")
 
-    def find_langluge(self):
+    def find_language(self):
         locale_dir = "./locale"
         try:
             if os.path.exists(locale_dir) and os.path.isdir(locale_dir):
@@ -368,9 +374,9 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 self.comboBox_2.addItems(folders)
                 self.comboBox_2.setCurrentText(state.language_value)
         except Exception as e:
-            print(f"读取语言失败:{e}")
+            log_print(f"读取语言失败:{e}")
 
-    def change_langluge(self):
+    def change_language(self):
         """Change language at runtime without restart."""
         try:
             self.language_value = self.comboBox_2.currentText()
@@ -392,13 +398,13 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.main_instance.show_message(str(e), "Error")
 
     def closeEvent(self, event):
-        print("设置被关闭")
+        log_print("设置被关闭")
         try:
             self.main_instance.mini(2)
             self.main_instance.read_name_list()
             self.main_instance.get_selected_file(0)
         except Exception as e:
-            print(e)
+            log_print(e)
         state.settings_flag = None
         event.accept()  # 确保仅关闭子窗口,不影响主窗口
 
@@ -545,16 +551,16 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
                 # 检查选中的情况并设置 enable_tts
                 if checked and self.radioButton.isChecked() and not self.radioButton_2.isChecked():
-                    print("正在开启播报正常模式")
+                    log_print("正在开启播报正常模式")
                     self.enable_tts = 1
                 elif checked and not self.radioButton.isChecked() and self.radioButton_2.isChecked():
-                    print("正在开启播报听写模式")
+                    log_print("正在开启播报听写模式")
                     self.enable_tts = 2
 
             elif not self.checkBox_2.isChecked():
                 self.radioButton.setEnabled(False)
                 self.radioButton_2.setEnabled(False)
-                print("正在关闭播报")
+                log_print("正在关闭播报")
                 self.enable_tts = 0
 
         elif key == "enable_update":
@@ -562,51 +568,54 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             if not checked:
                 self.main_instance.show_message(
                     _("您正在关闭检查更新功能！更新意味着带来 新功能、优化 以及修复错误，强烈建议您开启此功能！"), _("警告"))
-                print("正在关闭检查更新")
+                log_print("正在关闭检查更新")
             else:
-                print("正在开启检查更新")
+                log_print("正在开启检查更新")
 
         elif key == "enable_bgimg":
             if checked:
                 if self.radioButton_3.isChecked():
                     self.enable_bgimg = 1
-                    print("背景1")
+                    log_print("背景1")
                 elif self.radioButton_4.isChecked():
                     self.enable_bgimg = 2
                     self.main_instance.show_message(
                         _("您正在使用自定义背景功能，由于此工具可能需要在公众场合展示，请选择适宜场景的合适背景！ \n因使用不合适的背景图片而造成的后果由您自行承担！\n\n使用教程：\n\n在稍后打开的\\images文件夹中放入您喜欢的图片(建议暗色系、长宽比16:9)，程序将随机选取图片使用。"), _("声明!"))
-                    os.makedirs("images", exist_ok=True)
-                    self.main_instance.opentext("images")
-                    print("背景自定义")
+                    folder_path = os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'images')
+                    os.makedirs(folder_path, exist_ok=True)
+                    self.main_instance.opentext(folder_path)
+                    log_print("背景自定义")
                 elif self.radioButton_5.isChecked():
                     self.enable_bgimg = 3
-                    print("背景无")
+                    log_print("背景无")
 
         elif key == "disable_repetitive":
             self.disable_repetitive = 1 if checked else 0
             if not checked:
-                print("正在关闭不放回模式")
+                log_print("正在关闭不放回模式")
             else:
-                print("正在开启不放回模式")
+                log_print("正在开启不放回模式")
                 self.main_instance.show_message(
                     _("不放回模式，即单抽结束后的名字不会放回列表中，下次将不会抽到此名字\n\n当名单抽取完成、切换名单 或 手动点击按钮 时将会重置不放回列表！"), _("说明"))
 
         elif key == "enable_bgmusic":
             self.enable_bgmusic = 1 if checked else 0
             if not checked:
-                print("正在关闭背景音乐")
+                log_print("正在关闭背景音乐")
             else:
-                print("正在开启背景音乐")
+                log_print("正在开启背景音乐")
                 self.main_instance.show_message(
                     _("开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n程序将随机选取一首，播放随机的音乐进度\n\n注：程序自带几首默认音频，当您在音乐目录下放入音乐后，默认音频将不会再进入候选列表！"), _("提示"))
-                self.open_fold("dmmusic")
+                folder_path = os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'dmmusic')
+                os.makedirs(folder_path, exist_ok=True)
+                self.open_fold(folder_path)
 
         elif key == "inertia_roll":
             self.inertia_roll = 1 if checked else 0
             if not checked:
-                print("正在关闭惯性滚动")
+                log_print("正在关闭惯性滚动")
             else:
-                print("正在开启惯性滚动")
+                log_print("正在开启惯性滚动")
 
         elif key == "title_text":
             self.title_text = checked
@@ -667,7 +676,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.listWidget_2.setCurrentItem(None)
 
         if not selected_items:
-            print("未知错误")
+            log_print("未知错误")
             return
 
         for item in selected_items:
@@ -688,7 +697,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             sorted_counts = sorted(name_counts.items(),
                                    key=lambda x: x[1], reverse=True)
             # 保存文本
-            print("正在保存为文本")
+            log_print("正在保存为文本")
             cresult = _("\"%s\" 名单中奖统计:\n\n" %
                         (count_target.replace("中奖记录", "")))
             for name, count in sorted_counts:
@@ -700,6 +709,153 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 _("统计已保存至安装目录下的/中奖统计.txt中\n(每次统计会覆盖上一次统计结果)\n\n")+cresult)
 
         except Exception as e:
-            print("读取文件时发生错误:", e)
+            log_print("读取文件时发生错误:", e)
             self.main_instance.show_message(
                 _("Error: 历史记录文件不存在，无法统计次数！\n%s") % e, _("错误"))
+            return
+
+    def save_allconfig(self):
+        if hasattr(state, "appdata_path") and state.appdata_path:
+            try:
+                src_dir = state.appdata_path
+                ts = datetime.now().strftime("%Y-%m-%d-%H%M_%S")
+                default_name = f"{ts}.CRPBAK"
+
+                # 默认目录：桌面
+                desktop_dir = (
+                    QStandardPaths.writableLocation(QStandardPaths.DesktopLocation)
+                    or os.path.join(os.path.expanduser("~"), "Desktop")
+                )
+
+                # 让用户选择保存位置
+                dest_path, a = QFileDialog.getSaveFileName(
+                    self.window,
+                    _("选择备份保存位置"),
+                    os.path.join(desktop_dir, default_name),
+                    "CRP Backup (*.CRPBAK);;All Files (*.*)",
+                )
+                if not dest_path:
+                    return  # 用户取消
+                if not dest_path.lower().endswith(".crpbak"):
+                    dest_path += ".CRPBAK"
+
+                abs_src_dir = os.path.abspath(src_dir)
+                abs_dest_path = os.path.abspath(dest_path)
+
+                def add_to_tar(tar, current_dir):
+                    """递归扫描目录并添加文件"""
+                    for entry in os.scandir(current_dir):
+                        try:
+                            full_path = entry.path
+                            if entry.is_dir(follow_symlinks=False):
+                                add_to_tar(tar, full_path)  # 递归进入子目录
+                            elif entry.is_file(follow_symlinks=False):
+                                # 避免把目标备份文件自身加入
+                                if os.path.abspath(full_path) == abs_dest_path:
+                                    continue
+                                arcname = os.path.relpath(full_path, abs_src_dir)
+                                tar.add(full_path, arcname=arcname)
+                        except Exception as e:
+                            log_print(f"跳过文件 {entry.path}: {e}")
+
+                # 打包为 tar.gz 实际格式，扩展名为 .CRPBAK
+                
+                with tarfile.open(dest_path, "w:gz") as tar:
+                    add_to_tar(tar, src_dir)
+                # with open(dest_path, "rb+") as f: # 消除Gzip头部
+                #     header = f.read(3)
+                #     if header[:3] == b'\x1f\x8b\x08':
+                #         f.seek(0)
+                #         f.write(b'\x00' * 3)
+
+                QMessageBox.information(
+                    self.window,
+                    _("备份完成"),
+                    _("已创建备份文件：%s") % dest_path,
+                    QMessageBox.Ok,
+                )
+                try:
+                    self.listWidget_3.clear()
+                    self.listWidget_3.addItem(_("已创建备份文件：%s") % dest_path)
+                    os.startfile(os.path.dirname(dest_path))
+                except Exception:
+                    pass
+
+            except Exception as e:
+                log_print(f"备份失败: {e}")
+                QMessageBox.warning(
+                    self.window,
+                    _("错误"),
+                    _("Error: 备份失败！\n%s") % e,
+                    QMessageBox.Ok,
+                )
+        else:
+            QMessageBox.warning(self.window, _("错误"), _("未找到数据目录，无法备份。"), QMessageBox.Ok)
+            
+    def load_backup(self):
+        self.bak_file_path, a = QFileDialog.getOpenFileName(None, "选择备份文件", "", "CRP Backup (*.CRPBAK);;All Files (*.*)")
+        if not self.bak_file_path:
+            return  # 用户取消
+
+        try:
+            # with open(file_path, "r+b") as f:
+            #     f.seek(0)
+            #     f.write(b"\x1f\x8b\x08")
+            self.listWidget_3.clear()
+            self.pushButton_20.show()
+
+            with tarfile.open(self.bak_file_path, "r:gz") as tar:
+                log_print("备份文件结构：")
+                folder_count = {}
+                file_tree = ""
+                for member in tar.getmembers():
+                    log_print("  ├─", member.name)
+                    file_tree += "  ├─ %s\n" % member.name
+
+                    folder = os.path.dirname(member.name) or "root"
+                    folder_count[folder] = folder_count.get(folder, 0) + 1
+
+            if len(folder_count) <= 1 and "config.ini" not in file_tree:
+                self.listWidget_3.addItem(_("警告：备份文件中未找到任何有效数据！"))
+                self.pushButton_20.setEnabled(False)
+                return
+
+            self.listWidget_3.addItem(_("加载的备份文件路径: %s") % self.bak_file_path)
+            self.listWidget_3.addItem(_("！！！请确定以下数据后，点击\"确认恢复\"按钮将覆盖当前数据！！！\n"))
+            self.pushButton_20.setEnabled(True)
+
+            if "config.ini" in file_tree:
+                self.listWidget_3.addItem(_("读取到配置文件: config.ini"))
+            if folder_count.get("name", None) is not None:
+                self.listWidget_3.addItem(_("读取到 %s 个名单") % folder_count["name"])
+            if folder_count.get("history", None) is not None:
+                self.listWidget_3.addItem(_("读取到 %s 个历史记录") % folder_count["history"])
+            if folder_count.get("dmmusic", None) is not None:
+                self.listWidget_3.addItem(_("读取到 %s 个背景音乐文件") % folder_count["dmmusic"])
+            if folder_count.get("images", None) is not None:
+                self.listWidget_3.addItem(_("读取到 %s 个背景图片文件") % folder_count["images"])
+
+            self.listWidget_3.addItem(_("\n备份文件结构："))
+            self.listWidget_3.addItem(file_tree)
+
+            # QMessageBox.information(None, "成功", "文件已加载并打印结构到控制台！")
+
+        except Exception as e:
+            QMessageBox.critical(None, "错误", f"打开或解析文件失败：\n{e}")
+        
+    def apply_backup(self):
+        try:
+            with tarfile.open(self.bak_file_path, "r:gz") as tar:
+                members = tar.getmembers()
+                for member in tar.getmembers():
+                    target_path = os.path.join(state.appdata_path, member.name)
+                    if os.path.exists(target_path):
+                        os.remove(target_path)
+                    tar.extract(member, path=state.appdata_path)
+                log_print(f"所有文件已解压至: {state.appdata_path}")
+
+            QMessageBox.information(None, "成功", f"备份已成功应用至：\n{state.appdata_path}，部分设置需要重启程序后生效！")
+            self.close()
+
+        except Exception as e:
+            QMessageBox.critical(None, "错误", f"应用备份失败：\n{e}")

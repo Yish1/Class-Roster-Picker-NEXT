@@ -212,10 +212,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
     def set_bgimg(self):
         self.label_6.setText("")
         if state.bgimg == 2:
-            folder_name = "images"
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            folder_path = os.path.join(current_dir, folder_name)
-            os.makedirs(folder_name, exist_ok=True)
+            folder_path = os.path.join(state.appdata_path, 'images')
+            os.makedirs(folder_path, exist_ok=True)
             file_list = os.listdir(folder_path)
             if not file_list:
                 log_print("要使用自定义背景功能，请在 %s 中放入图片文件" % folder_path)
@@ -227,8 +225,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.label_6.setText(_("自定义背景"))
             random_file = random.choice(file_list)
             log_print(random_file)
+            
+            file_path = os.path.join(folder_path, random_file)
+            file_path = file_path.replace("\\", "/")     # 替换反斜杠为正斜杠
             self.frame.setStyleSheet("#frame {\n"
-                                     f"border-image: url('./images/{random_file}');"
+                                     f"border-image: url('{file_path}');"
                                      "border-radius: 28px;"
                                      "}")
         elif state.bgimg == 1 or state.bgimg == 0:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'picker.ui'
+# Form implementation generated from reading ui file 'f:\Github\Class-Roster-Picker-NEXT\picker.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -20,8 +20,9 @@ class Ui_CRPmain(object):
         icon.addPixmap(QtGui.QPixmap(":/icons/picker.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         CRPmain.setWindowIcon(icon)
         CRPmain.setStyleSheet("")
+        self.gridLayout_4 = QtWidgets.QGridLayout(CRPmain)
+        self.gridLayout_4.setObjectName("gridLayout_4")
         self.frame = QtWidgets.QFrame(CRPmain)
-        self.frame.setGeometry(QtCore.QRect(0, 0, 780, 490))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -405,6 +406,7 @@ class Ui_CRPmain(object):
         self.label_3.setObjectName("label_3")
         self.gridLayout_2.addWidget(self.label_3, 1, 1, 1, 4)
         self.gridLayout.addWidget(self.frame_4, 0, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.frame, 0, 0, 1, 1)
 
         self.retranslateUi(CRPmain)
         self.comboBox.setCurrentIndex(-1)
@@ -422,4 +424,4 @@ class Ui_CRPmain(object):
         self.commandLinkButton.setText(_translate("CRPmain", "恢复默认大小"))
         self.label_7.setText(_translate("CRPmain", "正在播放:"))
         self.label_3.setText(_translate("CRPmain", "恭喜xxx"))
-import Ui.ui1_rc as ui1_rc
+import Ui.ui1_rc

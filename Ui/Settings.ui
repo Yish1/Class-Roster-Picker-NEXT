@@ -316,6 +316,12 @@ QComboBox QAbstractItemView {
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
             <property name="styleSheet">
              <string notr="true">QLabel {
     color: rgb(138, 138, 138);
@@ -407,8 +413,8 @@ QScrollBar::right-arrow:horizontal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>263</width>
-               <height>328</height>
+               <width>262</width>
+               <height>370</height>
               </rect>
              </property>
              <property name="styleSheet">
@@ -427,7 +433,7 @@ QPushButton{
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="res/ui1.qrc">
+                 <iconset resource="../res/ui1.qrc">
                   <normaloff>:/icons/picker.ico</normaloff>:/icons/picker.ico</iconset>
                 </property>
                 <property name="iconSize">
@@ -580,9 +586,9 @@ QScrollBar::right-arrow:horizontal {
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-131</y>
+            <y>0</y>
             <width>328</width>
-            <height>588</height>
+            <height>596</height>
            </rect>
           </property>
           <property name="minimumSize">
@@ -1480,6 +1486,125 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_5">
+      <attribute name="title">
+       <string>备份恢复</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_21">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_8">
+         <property name="title">
+          <string>备份</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_22">
+          <item row="0" column="1">
+           <widget class="QPushButton" name="pushButton_18">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>一键备份所有内容</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="2">
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QGroupBox" name="groupBox_9">
+         <property name="title">
+          <string>恢复</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_23">
+          <item row="2" column="0">
+           <widget class="QPushButton" name="pushButton_20">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>确认恢复</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButton_19">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>导入备份</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QListWidget" name="listWidget_3">
+            <property name="defaultDropAction">
+             <enum>Qt::IgnoreAction</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <spacer name="verticalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
        <string>反馈/定制</string>
@@ -1543,7 +1668,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="res/ui1.qrc"/>
+  <include location="../res/ui1.qrc"/>
  </resources>
  <connections/>
 </ui>

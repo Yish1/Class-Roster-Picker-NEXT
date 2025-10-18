@@ -21,7 +21,7 @@ class FrameWithLines(QtWidgets.QFrame):
         painter.setPen(pen)
 
         # 绘制横线，确保在圆角矩形内
-        line_spacing = int(3.0)  # 横线间距
+        line_spacing = int(4.0)  # 横线间距
         y = 0
         while y < self.height():
             painter.drawLine(0, y, self.width(), y)
