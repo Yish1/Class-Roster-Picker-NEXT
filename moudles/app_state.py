@@ -74,7 +74,14 @@ class AppState:
         try:
             pygame.mixer.init()
         except Exception as e:
-            print(f"pygame mixer 初始化失败: {e}")
+            try:
+                from moudles.logger_util import log_print as _log
+                _log(f"pygame mixer 初始化失败: {e}")
+            except Exception:
+                try:
+                    print(f"pygame mixer 初始化失败: {e}")
+                except Exception:
+                    pass
     
     def reset_runtime_state(self):
         """重置运行时状态（用于测试或重启）"""

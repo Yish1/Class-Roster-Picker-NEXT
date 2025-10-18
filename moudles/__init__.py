@@ -5,6 +5,7 @@ from .app_state import AppState, app_state, get_app_state
 from .WorkSignals import WorkerSignals
 from .speaker_thread import SpeakerThread
 from .Check_Update import UpdateThread
+from .StartRoll_Thread import StartRollThread
 
 __all__ = [
     'read_config_file',
@@ -20,4 +21,5 @@ __all__ = [
     'WorkerSignals',
     'SpeakerThread',
     'UpdateThread',
+    'StartRollThread',
 ]

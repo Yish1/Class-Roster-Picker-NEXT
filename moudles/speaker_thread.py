@@ -9,6 +9,7 @@ from PyQt5.QtCore import QRunnable
 from moudles import app_state
 from moudles.i18n import _
 from moudles.WorkSignals import WorkerSignals
+from moudles.logger_util import log_print
 
 # 便捷引用全局状态
 state = app_state
@@ -29,7 +30,7 @@ class SpeakerThread(QRunnable):
         pythoncom.CoInitialize()
         speaker = win32com.client.Dispatch("SAPI.SpVoice")
         # for voice in speaker.GetVoices(): # 查询本机所有语言
-        #     print(voice.GetDescription())
+        #     log_print(voice.GetDescription())
         try:
             if state.language_value == "en_US":
                 speaker.Voice = speaker.GetVoices(
@@ -38,7 +39,7 @@ class SpeakerThread(QRunnable):
                 speaker.Voice = speaker.GetVoices(
                     "Name=Microsoft Huihui Desktop").Item(0)
         except Exception as e:
-            print("无法切换语音语言，Reason：", e)
+            log_print("无法切换语音语言，Reason：", e)
 
         if volume is not None:
             speaker.Volume = volume
@@ -50,10 +51,10 @@ class SpeakerThread(QRunnable):
         if self.mode == 1:
             try:
                 self.ttsread("1", 0)
-                print("此设备系统支持语音播报功能！")
+                log_print("此设备系统支持语音播报功能！")
                 self.signals.speakertest.emit(1, "")
             except Exception as e:
-                print("此设备系统不支持语音播报功能！Reason：", e)
+                log_print("此设备系统不支持语音播报功能！Reason：", e)
                 e = str(e)
                 self.signals.speakertest.emit(0, e)
         else:
@@ -77,6 +78,6 @@ class SpeakerThread(QRunnable):
                 else:
                     pass
             except Exception as e:
-                print("语音播报出现错误！Reason：", e)
+                log_print("语音播报出现错误！Reason：", e)
 
         self.signals.finished.emit()
