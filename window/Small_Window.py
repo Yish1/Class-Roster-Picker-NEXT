@@ -1,11 +1,11 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication
 from PyQt5.QtGui import QCursor, QFontMetrics
-from moudles.app_state import app_state
-from moudles.i18n import _
+from moudles import *
+from moudles.logger_util import log_print
 from Ui.SmallWindow import Ui_smallwindow
 
-import random
+import random, time
 
 state = app_state
 
@@ -45,7 +45,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.runflag = None
         self.minimum_flag = False
         self.main_instance = main_instance
-        # self.cust_font_sw = cust_font_sw
+        self.signals = WorkerSignals()
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -67,10 +67,6 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
             if self.minimum_flag == False:
                 if self.runflag == True:
                     self.qtimer(0)
-                    try:
-                        self.main_instance.save_history(2, self.small_window_name)
-                    except:
-                        print("无法写入历史记录")
                 else:
                     self.get_name_list()  # 只有未移动时才输出消息
             else:
@@ -86,36 +82,28 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
     def qtimer(self, start):
         if start == 1:
             self.timer = QTimer()
-            time = random.randint(60, 99)
-            self.timer.start(time)
+            tick = random.randint(60, 99)
+            self.timer.start(tick)
             self.timer.timeout.connect(self.setname)
             self.runflag = True
 
         elif start == 0:
             try:
-                self.timer.stop()
-                self.runflag = False
-                if state.name != "":
-                    if state.non_repetitive == 1:
-                        state.non_repetitive_list.remove(self.small_window_name)
-                        info = self.small_window_name + \
-                            _(" (剩%s人)") % len(state.non_repetitive_list)
-                        if len(state.non_repetitive_list) == 0:
-                            self.font_s.setPointSize(29)
-                            self.label_2.setFont(self.font_s)
-                            self.label_2.setText(_("名单抽取完成"))
-                            self.label_3.setText("")
-                        else:
-                            a = str(len(state.non_repetitive_list))
-                            if a != "0":
-                                self.label_3.setText(_("剩%s人") % a)
-                    else:
-                        info = self.small_window_name
-                    self.main_instance.update_list(1, _("小窗：%s") % info)
-                    state.origin_name_list = state.name
-                    self.main_instance.tts_read(self.small_window_name, 2)
+                # 非阻塞惯性滚动
+                can_inertia = (
+                    state.inertia_roll == 1 and
+                    len(state.name_list) > 1 and
+                    not (state.non_repetitive == 1 and len(state.non_repetitive_list) <= 1)
+                )
+                if can_inertia:
+                    s = 50
+                    base = max(30, int(state.roll_speed)) if state.roll_speed else 60
+                    speed = random.randint(base - 30, base + 30)
+                    self._inertia_step(speed, s)
                 else:
-                    pass
+                    if state.inertia_roll == 1:
+                        log_print("小窗：不满足惯性滚动条件")
+                    self._finalize_stop_procedure()
             except Exception as e:
                 print(f"无法停止计时器:{e}")
 
@@ -208,3 +196,61 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.label_3.hide()
         self.pushButton_7.show()
         self.minimum_flag = True
+
+    def dynamic_speed_preview(self, speed):
+        """动态调整计时器速度（用于惯性滚动）"""
+        try:
+            if self.timer:
+                self.timer.setInterval(int(speed))
+        except Exception as e:
+            log_print(f"小窗：调整速度失败:{e}")
+
+    def _inertia_step(self, speed: int, s: int):
+        """惯性滚动的单步，使用 singleShot 链式调度，避免阻塞 UI。"""
+        try:
+            if speed > 650:
+                self._finalize_stop_procedure()
+                return
+            self.dynamic_speed_preview(speed)
+            s_next = s + random.randint(100, 120)
+            s_next = s_next if s_next <= 280 else 150
+            speed_next = speed + s_next
+            delay = max(0, int(speed + 100))
+            QtCore.QTimer.singleShot(delay, lambda: self._inertia_step(speed_next, s_next))
+        except Exception as e:
+            log_print(f"小窗：惯性滚动过程中出错:{e}")
+            self._finalize_stop_procedure()
+
+    def _finalize_stop_procedure(self):
+        """停止计时器并执行停止后的 UI 与数据更新。"""
+        try:
+            if self.timer:
+                self.timer.stop()
+            self.runflag = False
+            if state.name != "":
+                if state.non_repetitive == 1:
+                    try:
+                        state.non_repetitive_list.remove(self.small_window_name)
+                    except ValueError:
+                        pass
+                    info = self.small_window_name + _(" (剩%s人)") % len(state.non_repetitive_list)
+                    if len(state.non_repetitive_list) == 0:
+                        self.font_s.setPointSize(29)
+                        self.label_2.setFont(self.font_s)
+                        self.label_2.setText(_("名单抽取完成"))
+                        self.label_3.setText("")
+                    else:
+                        a = str(len(state.non_repetitive_list))
+                        if a != "0":
+                            self.label_3.setText(_("剩%s人") % a)
+                else:
+                    info = self.small_window_name
+                try:
+                    self.main_instance.save_history(2, self.small_window_name)
+                except:
+                    print("无法写入历史记录")
+                self.main_instance.update_list(1, _("小窗：%s") % info)
+                state.origin_name_list = state.name
+                self.main_instance.tts_read(self.small_window_name, 2)
+        except Exception as e:
+            print(f"小窗：停止流程出错:{e}")
