@@ -4,6 +4,7 @@ from .logger_util import init_log, log_print
 from .app_state import AppState, app_state, get_app_state
 from .WorkSignals import WorkerSignals
 from .speaker_thread import SpeakerThread
+from .Check_Update import UpdateThread
 
 __all__ = [
     'read_config_file',
@@ -18,4 +19,5 @@ __all__ = [
     'get_app_state',
     'WorkerSignals',
     'SpeakerThread',
+    'UpdateThread',
 ]

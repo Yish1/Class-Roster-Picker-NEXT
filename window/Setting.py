@@ -145,8 +145,9 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.listWidget.addItems(txt_files_name)  # 添加文件名到列表
 
     def refresh_name_list(self):
+        name_dir = os.path.join(state.appdata_path, "name")
         txt_name = [filename for filename in os.listdir(
-            "name") if filename.endswith(".txt")]
+            name_dir) if filename.endswith(".txt")]
         txt_files_name = [os.path.splitext(
             filename)[0] for filename in txt_name]
 
@@ -168,7 +169,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         for item in selected_items:
             selected_text_inlist = item.text()
 
-        self.file_path = os.path.join("name", selected_text_inlist+".txt")
+        self.file_path = os.path.join(state.appdata_path, "name", selected_text_inlist+".txt")
 
         if not self.file_path or not os.path.isfile(self.file_path):
             return
@@ -199,7 +200,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.window, _("新增名单"), _("请输入名单名称:"))
         if ok_pressed and newfilename:
             newnamepath = os.path.join(
-                "name", f"{newfilename}.txt")  # 打开文件并写入内容
+                state.appdata_path, "name", f"{newfilename}.txt")  # 打开文件并写入内容
             if not os.path.exists(newnamepath):
                 print("新增名单名称是: %s" % newfilename)
                 with open(newnamepath, "w", encoding="utf8") as file:
@@ -217,11 +218,11 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
     def delete_file(self, mode=None):
         if mode == "history":
-            target_folder = "history"
+            target_folder = os.path.join(state.appdata_path, "history")
             text1 = _("删除历史记录")
             text2 = _("输入要删除的历史记录名称：(无需输入\"中奖记录\")")
         else:
-            target_folder = "name"
+            target_folder = os.path.join(state.appdata_path, "name")
             text1 = _("删除名单")
             text2 = _("输入要删除的名单名称：")
 
@@ -331,7 +332,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 selected_text_inlist = item.text()
 
             self.file_path = os.path.join(
-                "history", selected_text_inlist+".txt")
+                state.appdata_path, "history", selected_text_inlist+".txt")
 
             if not self.file_path or not os.path.isfile(self.file_path):
                 return
@@ -342,7 +343,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
         else:
             # Find模式，读取指定目录下的文件夹名
-            history_dir = "./history"
+            history_dir = os.path.join(state.appdata_path, "history")
             try:
                 if os.path.exists(history_dir) and os.path.isdir(history_dir):
                     history_file = [filename for filename in os.listdir(
@@ -671,7 +672,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         for item in selected_items:
             count_target = item.text()
 
-        file = "history/%s.txt" % count_target
+        file = os.path.join(state.appdata_path, "history", "%s.txt" % count_target)
         try:
             with open(file, encoding="utf-8") as file:
                 for line in file:

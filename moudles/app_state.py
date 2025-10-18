@@ -43,6 +43,7 @@ class AppState:
         self.language_value: Optional[str] = None
         
         # ============ 运行时变量 ============
+        self.appdata_path: Optional[str] = None   # AppData 路径
         self.name: Optional[str] = None
         self.mrunning: bool = False
         self.running: bool = False
@@ -50,12 +51,14 @@ class AppState:
         self.default_name_list: str = "默认名单"  # 需要翻译时在使用处调用 _()
         self.name_list: List[str] = []
         self.history_file: str = ""
+        self.file_path: str = ""
         self.non_repetitive_list: List[str] = []
         self.namelen: int = 0
         self.newversion: Optional[float] = None
         self.origin_name_list: Optional[str] = None
         self.cust_font: Optional[str] = None
         self.name_path: Optional[str] = None
+        self.selected_file: Optional[str] = None
         self.connect: bool = False
         
         # ============ 窗口标识符 ============

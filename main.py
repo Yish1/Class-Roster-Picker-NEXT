@@ -13,7 +13,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence, QFontDatabase, QFont
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile, QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog, QScroller, QShortcut, QSizePolicy
-from datetime import datetime
 
 from Ui import * 
 from moudles import *
@@ -25,16 +24,22 @@ from window.Setting import SettingsWindow
 # debugpy.listen(("0.0.0.0", 5678))
 # debugpy.wait_for_client()  # 等待调试器连接
 
-init_log('log.txt')
-
 # 初始化全局应用状态
 state = app_state
 
+# 初始化 AppData 路径
+state.appdata_path = os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP')
+os.makedirs(state.appdata_path, exist_ok=True)
+os.makedirs(os.path.join(state.appdata_path, 'history'), exist_ok=True)
+os.makedirs(os.path.join(state.appdata_path, 'name'), exist_ok=True)
+os.makedirs(os.path.join(state.appdata_path, 'dmmusic'), exist_ok=True)
+
+# 初始化日志
+init_log(os.path.join(state.appdata_path, 'log.txt'))
+
 # init i18n with config language if present
 try:
-    appdata_path = os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP')
-    os.makedirs(appdata_path, exist_ok=True)
-    config_path = os.path.join(appdata_path, 'config.ini')
+    config_path = os.path.join(state.appdata_path, 'config.ini')
     _config_boot = read_config_file(config_path)
     state.language_value = _config_boot.get('language', 'zh_CN')
     init_gettext(state.language_value)
@@ -287,7 +292,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
     def init_name(self, name_list):
         state.name_path = os.path.join(
-            "name", f"{state.default_name_list}.txt")  # 打开文件并写入内容
+            state.appdata_path, "name", f"{state.default_name_list}.txt")  # 打开文件并写入内容
         with open(state.name_path, "w", encoding="utf8") as f:
             for i in name_list:
                 f.write(i)
@@ -295,8 +300,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 f.write("\n")
 
     def read_name_list(self, mode=None):
-        folder_name = "name"
-        os.makedirs("name", exist_ok=True)
+        folder_name = os.path.join(state.appdata_path, "name")
         if not os.path.exists(folder_name) or not os.listdir(folder_name):
             self.init_name(self.make_name_list())
             log_print("first_run")
@@ -332,8 +336,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         # 获取当前选中的文件名
         state.selected_file = self.comboBox.currentText()
         self.update_config("last_name_list", state.selected_file)
-        state.file_path = os.path.join("name", state.selected_file+".txt")
-        state.history_file = "history/%s中奖记录.txt" % state.selected_file
+        state.file_path = os.path.join(state.appdata_path, "name", state.selected_file+".txt")
+        state.history_file = os.path.join(state.appdata_path, "history", "%s中奖记录.txt" % state.selected_file)
         if not os.path.exists(state.file_path):
             self.show_message(_("所选名单文件已被移动或删除！"), _("找不到文件！"))
             try:
@@ -358,9 +362,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
     def read_config(self):
         config = {}
-        appdata_path = os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP')
-        os.makedirs(appdata_path, exist_ok=True)
-        config_path = os.path.join(appdata_path, 'config.ini')
+        config_path = os.path.join(state.appdata_path, 'config.ini')
         if not os.path.exists(config_path):
             with open(config_path, 'w', encoding='utf-8') as file:
                 file.write("")
@@ -401,8 +403,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
     def update_config(self, variable, new_value, mode=None):
         # delegate to config manager
-        appdata_path = os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP')
-        config_path = os.path.join(appdata_path, 'config.ini')
+        config_path = os.path.join(state.appdata_path, 'config.ini')
         update_entry(variable, str(new_value) if new_value is not None else None, config_path)
         log_print(f"更新配置文件：[{variable}]={new_value}\n")
 
@@ -458,8 +459,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             os.system("vim %s" % path)
 
     def save_history(self, mode=None, name_set=None):
-        os.makedirs('history', exist_ok=True)
-        state.history_file = "history/%s中奖记录.txt" % state.selected_file
+        state.history_file = os.path.join(state.appdata_path, "history", "%s中奖记录.txt" % state.selected_file)
 
         if mode == 2:
             write_name = name_set
@@ -496,7 +496,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         if num > 1:
             self.start_mulit()
         else:
-            self.thread = WorkerThread()
+            self.thread = StartRoll_Thread()
             self.thread.signals.show_progress.connect(self.update_progress_bar)
             self.thread.signals.update_pushbotton.connect(
                 self.update_pushbotton)
@@ -897,7 +897,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         except:
             pass
 
-class WorkerThread(QRunnable):
+class StartRoll_Thread(QRunnable):
     def __init__(self):
         super().__init__()
         self.signals = WorkerSignals()
@@ -960,8 +960,7 @@ class WorkerThread(QRunnable):
                         pygame.mixer.music.fadeout(600)
                     pygame.mixer.music.unload()
                     try:
-                        appdata_path = os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP')
-                        tmp_file = os.path.join(appdata_path, 'tmp.cmxz')
+                        tmp_file = os.path.join(state.appdata_path, 'tmp.cmxz')
                         os.remove(tmp_file)
                     except:
                         pass
@@ -1007,10 +1006,9 @@ class WorkerThread(QRunnable):
             if len(state.name_list) != 0:
                 if state.bgmusic == 1:
                     # debugpy.breakpoint()
-                    folder_name = "dmmusic"
+                    folder_name = os.path.join(state.appdata_path, "dmmusic")
                     current_dir = os.path.dirname(os.path.abspath(__file__))
-                    folder_path = os.path.join(current_dir, folder_name)
-                    os.makedirs('dmmusic', exist_ok=True)
+                    folder_path = folder_name
                     # 获取文件夹中的文件列表
                     file_list = os.listdir(folder_path)
                     if not file_list:
@@ -1024,8 +1022,7 @@ class WorkerThread(QRunnable):
                             state.file_path = f":/mid/{mid_load}"
                             file = QFile(state.file_path)
                             file.open(QFile.ReadOnly)
-                            appdata_path = os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP')
-                            tmp_file = os.path.join(appdata_path, 'tmp.cmxz')
+                            tmp_file = os.path.join(state.appdata_path, 'tmp.cmxz')
                             ctypes.windll.kernel32.SetFileAttributesW(
                                 tmp_file, 0x80)
                             with open(tmp_file, "wb") as f:
@@ -1072,8 +1069,7 @@ class WorkerThread(QRunnable):
                         self.signals.enable_button.emit(3)
 
                         if state.default_music == True:
-                            appdata_path = os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP')
-                            tmp_file = os.path.join(appdata_path, 'tmp.cmxz')
+                            tmp_file = os.path.join(state.appdata_path, 'tmp.cmxz')
                             pygame.mixer.music.load(tmp_file)
                             pygame.mixer.music.play(-1)
                         else:
@@ -1124,260 +1120,6 @@ class WorkerThread(QRunnable):
                 self.signals.update_pushbotton.emit(_(" 重置名单"), 1)
 
 
-class UpdateThread(QRunnable):
-    def __init__(self):
-        super().__init__()
-        self.signals = WorkerSignals()
-
-    def run(self):
-        # debugpy.breakpoint()  # 在此线程启动断点调试
-        headers = {
-            'User-Agent': 'CMXZ-CRP_%s,%s,%s,%s,%s,%s%s_%s' % (state.dmversion, state.allownametts, state.bgimg, state.bgmusic, state.language_value, platform.system(), platform.release(), platform.machine())
-        }
-        print(headers)
-        updatecheck = "https://cmxz.top/programs/dm/check.php"
-        # try:
-        #     check_mode = requests.get(
-        #         updatecheck + "?mode", timeout=5, headers=headers)
-        #     if int(check_mode.text) == 1:
-        #         print("检测到强制更新版本，这意味着当前版本有严重bug，请更新至最新版本！")
-        #         state.checkupdate = 2
-        #         state.latest_version = 0
-        # except:
-        #     pass
-        if state.checkupdate == 2:
-            try:
-                page = requests.get(updatecheck, timeout=5, headers=headers)
-                state.newversion = float(page.text)
-                print("云端版本号为:", state.newversion)
-                findnewversion = _("检测到新版本！")
-                if state.newversion > state.dmversion:# and float(state.latest_version) < state.newversion:
-                    print("检测到新版本:", state.newversion,
-                          "当前版本为:", state.dmversion)
-                    new_version_detail = requests.get(
-                        updatecheck + "?detail", timeout=5, headers=headers)
-                    new_version_detail = new_version_detail.text
-                    self.signals.find_new_version.emit(_("云端最新版本为%s，要现在下载新版本吗？<br>您也可以稍后访问沉梦小站官网获取最新版本。<br><br>%s") % (
-                        state.newversion, new_version_detail), findnewversion)
-                # else:
-                #     if float(state.latest_version) == state.newversion and state.dmversion != state.newversion:
-                #         print("\n已忽略%s版本更新,当前版本：%s" % (state.newversion, state.dmversion))
-                #         findnewversion += _("(已忽略)")
-                #         self.signals.update_list.emit(1, findnewversion)
-                if state.newversion:
-                    state.connect = True
-            except Exception as e:
-                print(f"网络异常,无法检测更新:{e}")
-                noconnect = _("网络连接异常，检查更新失败")
-                self.signals.update_list.emit(1, noconnect)
-
-        elif state.checkupdate == 1:
-            print("检查更新已关闭")
-
-        self.signals.finished.emit()
-
-
-class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
-    def __init__(self, main_instance=None):
-        super().__init__()
-        self.setupUi(self)  # 初始化UI
-        self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
-
-        self.setMinimumSize(QtCore.QSize(322, 191))
-        # 设置半透明背景
-        self.setAttribute(Qt.WA_TranslucentBackground)
-
-        self.pushButton_7.hide()
-        self.pushButton_4.clicked.connect(self.close)
-        self.pushButton_2.clicked.connect(self.minimummode)
-
-        self.pushButton_7.mousePressEvent = self.mousePressEvent
-        self.pushButton_7.mouseMoveEvent = self.mouseMoveEvent
-        self.pushButton_7.mouseReleaseEvent = self.mouseReleaseEvent
-
-
-        # font_id = QFontDatabase.addApplicationFont("ttf2.ttf")
-        # if font_id != -1:  # 确保字体加载成功
-        #     state.cust_font = QFontDatabase.applicationFontFamilies(font_id)[0]
-        self.font_s = QtGui.QFont(state.cust_font, 34)
-        self.label_2.setFont(self.font_s)
-
-        self.label_2.setText(_("开始"))
-        self.m_flag = False
-        self.m_moved = False  # 用于检测是否移动
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint |
-                            QtCore.Qt.WindowStaysOnTopHint)
-        self.setWindowTitle(QCoreApplication.translate(
-            "MainWindow", _("点名器小窗模式")))
-        self.timer = None
-        self.runflag = None
-        self.minimum_flag = False
-        self.main_instance = main_instance
-        # self.cust_font_sw = cust_font_sw
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.m_flag = True
-            self.m_moved = False  # 重置移动标志
-            self.m_Position = event.globalPos() - self.pos()  # 获取鼠标相对窗口的位置
-            event.accept()
-            self.setCursor(QCursor(Qt.OpenHandCursor))  # 更改鼠标图标
-
-    def mouseMoveEvent(self, event):
-        if Qt.LeftButton and self.m_flag:
-            self.setWindowState(Qt.WindowNoState)
-            self.move(event.globalPos() - self.m_Position)  # 更改窗口位置
-            self.m_moved = True  # 标记为移动过
-            event.accept()
-
-    def mouseReleaseEvent(self, event):
-        if self.m_flag and not self.m_moved:
-            if self.minimum_flag == False:
-                if self.runflag == True:
-                    self.qtimer(0)
-                    try:
-                        self.main_instance.save_history(2, self.small_window_name)
-                    except:
-                        print("无法写入历史记录")
-                else:
-                    self.get_name_list()  # 只有未移动时才输出消息
-            else:
-                self.frame.show()
-                self.label.show()
-                self.label_2.show()
-                self.label_3.show()
-                self.pushButton_7.hide()
-                self.minimum_flag = False
-        self.m_flag = False
-        self.setCursor(QCursor(Qt.ArrowCursor))
-
-    def qtimer(self, start):
-        if start == 1:
-            self.timer = QTimer()
-            time = random.randint(60, 99)
-            self.timer.start(time)
-            self.timer.timeout.connect(self.setname)
-            self.runflag = True
-
-        elif start == 0:
-            try:
-                self.timer.stop()
-                self.runflag = False
-                if state.name != "":
-                    if state.non_repetitive == 1:
-                        state.non_repetitive_list.remove(self.small_window_name)
-                        info = self.small_window_name + \
-                            _(" (剩%s人)") % len(state.non_repetitive_list)
-                        if len(state.non_repetitive_list) == 0:
-                            self.font_s.setPointSize(29)
-                            self.label_2.setFont(self.font_s)
-                            self.label_2.setText(_("名单抽取完成"))
-                            self.label_3.setText("")
-                        else:
-                            a = str(len(state.non_repetitive_list))
-                            if a != "0":
-                                self.label_3.setText(_("剩%s人") % a)
-                    else:
-                        info = self.small_window_name
-                    self.main_instance.update_list(1, _("小窗：%s") % info)
-                    state.origin_name_list = state.name
-                    self.main_instance.tts_read(self.small_window_name, 2)
-                else:
-                    pass
-            except Exception as e:
-                print(f"无法停止计时器:{e}")
-
-    def setname(self):
-        self.font_s.setPointSize(40)
-        self.label_2.setFont(self.font_s)
-
-        if state.non_repetitive == 1:
-            if len(state.non_repetitive_list) == 0:
-                state.non_repetitive_list = state.name_list.copy()
-                self.main_instance.update_list(1, _("不放回名单已重置"))
-            a = str(len(state.non_repetitive_list))
-            if a != "0":
-                self.label_3.setText(_("剩%s人") % a)
-
-        if state.name_list == []:
-            state.name = ""
-            self.font_s.setPointSize(29)
-            self.label_2.setFont(self.font_s)
-            self.label_2.setText(_("名单为空!"))
-            self.main_instance.mini(2)
-            self.qtimer(0)
-            try:
-                self.main_instance.run_settings(f"1&{state.file_path}")
-            except Exception as e:
-                print(f"无法打开设置:{e}")
-        
-
-        else:
-            try:
-                if state.non_repetitive == 1:
-                    state.name = random.choice(state.non_repetitive_list)
-                else:
-                    state.name = random.choice(state.name_list)
-            except:
-                pass
-
-            font_size = self.font_s.pointSize()
-            metrics = QFontMetrics(self.font_s)        
-            max_width = self.label_2.width()
-            max_height = self.label_2.height()
-
-            # 估算一行字符数
-            a = max(1, round(metrics.horizontalAdvance(state.name) / max_width, 1)) # 估计行数
-            b = metrics.height()# 字体高度
-            d = 1 if font_size < 80 and len(state.name) < 5 else 2
-            c = a * (b * d)# b*2考虑到字符行间隔
-            
-            # 如果文本换行后的高度超出了标签高度，逐步减小字体
-            while c > max_height and font_size > 0:
-                
-                font_size -= 3
-                self.font_s.setPointSize(font_size)
-                self.label_2.setFont(self.font_s)
-                metrics = QFontMetrics(self.font_s)
-                b = metrics.height()
-
-                # 再次计算换行后估算行数
-                a = max(1, round(metrics.horizontalAdvance(state.name) / max_width, 1))
-                d = 1 if font_size < 80 and len(state.name) < 5 else 2
-                c = a * (b * d)
-
-            self.small_window_name = state.name
-            self.label_2.setText(self.small_window_name)
-            # print(font_size, d)
-
-    def get_name_list(self):
-        self.qtimer(1)
-
-    def closeEvent(self, event):
-        print("小窗被关闭")
-        try:
-            self.main_instance.mini(2)
-        except:
-            pass # 防止主窗口关闭后，小窗关闭报错
-        state.small_window_flag = None
-        event.accept()  # 确保仅关闭子窗口，不影响主窗口
-
-    def close_window(self):
-        self.close()
-
-    def run_small_window(self):
-        self.show()
-        return self
-
-    def minimummode(self):
-        self.frame.hide()
-        self.label.hide()
-        self.label_2.hide()
-        self.label_3.hide()
-        self.pushButton_7.show()
-        self.minimum_flag = True
-
-
 if __name__ == "__main__":
     try:
         # 防止重复运行
@@ -1398,6 +1140,28 @@ if __name__ == "__main__":
                 sys.exit()  # 退出程序
             elif result == 1:
                 print("用户选择继续运行。")
+
+        # 启用 Windows DPI 感知（优先 Per-Monitor V2，回退到 System Aware）
+        if sys.platform == "win32":
+            try:
+                ctypes.windll.shcore.SetProcessDpiAwareness(2)  # PROCESS_PER_MONITOR_DPI_AWARE
+            except Exception:
+                try:
+                    ctypes.windll.user32.SetProcessDPIAware()
+                except Exception:
+                    pass
+
+        # Qt 高 DPI 设置（需在创建 QApplication 之前）
+        # 自动根据屏幕缩放因子调整
+        os.environ.setdefault("QT_AUTO_SCREEN_SCALE_FACTOR", "1")
+        # 缩放舍入策略（Qt 5.14+ 生效）
+        if hasattr(QtGui, "QGuiApplication") and hasattr(QtCore.Qt, "HighDpiScaleFactorRoundingPolicy"):
+            try:
+                QtGui.QGuiApplication.setHighDpiScaleFactorRoundingPolicy(
+                    QtCore.Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
+                )
+            except Exception:
+                pass
 
         if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
             QtWidgets.QApplication.setAttribute(
@@ -1421,13 +1185,3 @@ if __name__ == "__main__":
         user32 = ctypes.windll.user32
         user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
         sys.exit()
-
-
-
-
-
-
-
-
-
-
