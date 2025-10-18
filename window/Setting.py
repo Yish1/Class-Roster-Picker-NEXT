@@ -377,7 +377,8 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             # Set module-level gettext to new language
             set_language(self.language_value)
             # Persist selection to config
-            update_entry('language', self.language_value)
+            config_path = os.path.join(state.appdata_path, 'config.ini')
+            update_entry('language', self.language_value , config_path)
             # Refresh main window and settings window texts
             try:
                 self.main_instance.apply_translations()
