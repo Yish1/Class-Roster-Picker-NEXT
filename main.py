@@ -106,6 +106,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.change_space(1)
         self.init_font()
 
+        if state.need_move_config == 1:
+            self.if_need_move_config()
+
         self.timer = None
         if state.first_use == 0:
             self.first_use_introduce()
@@ -389,6 +392,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 'roll_speed') else self.update_config("roll_speed", "80", "w!")
             state.title_text = config.get('title_text') if config.get(
                 'title_text') else _("幸运儿是:")
+            state.need_move_config = int(config.get('need_move_config')) if config.get(
+                'need_move_config') else self.update_config("need_move_config", 1, "w!")
 
         except Exception as e:
             log_print(f"配置文件读取失败，已重置无效为默认值！{e}")
@@ -893,6 +898,49 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         except:
             pass
 
+    def if_need_move_config(self):
+        try:
+            cwd, appdata = os.getcwd(), getattr(state, "appdata_path", "")
+            if not appdata:
+                return log_print("appdata_path 未设置")
+
+            items = ['config.ini', 'name', 'dmmusic', 'images', 'history']
+            has_any = any(os.path.exists(f"{cwd}/{i}") for i in items)
+            if not has_any:
+                self.update_config("need_move_config", 0)
+                return log_print("没有任何需要迁移的内容")
+
+            import shutil
+            log_print("检测到需要迁移的旧版配置文件或目录，正在迁移...")
+            for item in items:
+                src, dst = f"{cwd}/{item}", f"{appdata}/{item}"
+                if not os.path.exists(src):
+                    continue  # 没有这个项就跳过
+                try:
+                    if os.path.isdir(src):
+                        shutil.rmtree(dst, ignore_errors=True)
+                        shutil.copytree(src, dst)
+                    else:
+                        shutil.copy2(src, dst)
+                    log_print(f"迁移完成: {item}")
+
+                    # 尝试删除原文件或目录
+                    try:
+                        shutil.rmtree(src) if os.path.isdir(src) else os.remove(src)
+                        log_print(f"已删除原文件/目录 {src}")
+                    except Exception as e:
+                        log_print(f"无法删除原文件/目录 {src}: {e}")
+
+                except Exception as e:
+                    log_print(f"迁移失败 {item}: {e}")
+
+            self.update_config("need_move_config", 0)
+            self.show_message(_("检测到旧版配置文件，已自动迁移至新位置！\n请重新启动点名器以应用更改。"), _("配置迁移完成"))
+            sys.exit()
+
+        except Exception as e:
+            log_print(f"if_need_move_config error: {e}")
+            self.show_message(_("检测到旧版配置文件，但自动迁移失败\n需要您手动迁移文件，或重新配置名单等"), _("配置迁移失败"))
 
 if __name__ == "__main__":
     try:

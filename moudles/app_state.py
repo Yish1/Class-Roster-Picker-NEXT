@@ -41,6 +41,7 @@ class AppState:
         self.inertia_roll: Optional[int] = None   # 0关闭 1开启
         self.title_text: Optional[str] = None     # 标题文字: 幸运儿是:
         self.language_value: Optional[str] = None
+        self.need_move_config: Optional[str] = None # 是否需要移动配置文件
         
         # ============ 运行时变量 ============
         self.appdata_path: Optional[str] = None   # AppData 路径
