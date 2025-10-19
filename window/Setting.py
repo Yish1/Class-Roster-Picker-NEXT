@@ -700,13 +700,14 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             log_print("正在保存为文本")
             cresult = _("\"%s\" 名单中奖统计:\n\n" %
                         (count_target.replace("中奖记录", "")))
+            result_path = os.path.join(state.appdata_path, "中奖统计.txt")
             for name, count in sorted_counts:
                 cresult += "%s 出现了 %s 次\n" % (name, count)
-                with open('中奖统计.txt', 'w', encoding="utf-8") as file:
+                with open(result_path, 'w', encoding="utf-8") as file:
                     file.write(cresult)
 
             self.textEdit_2.setPlainText(
-                _("统计已保存至安装目录下的/中奖统计.txt中\n(每次统计会覆盖上一次统计结果)\n\n")+cresult)
+                _("统计已保存至%s下的/中奖统计.txt中\n(每次统计会覆盖上一次统计结果)\n\n") % state.appdata_path + cresult)
 
         except Exception as e:
             log_print("读取文件时发生错误:", e)
@@ -854,7 +855,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                     tar.extract(member, path=state.appdata_path)
                 log_print(f"所有文件已解压至: {state.appdata_path}")
 
-            QMessageBox.information(None, "成功", f"备份已成功应用至：\n{state.appdata_path}，部分设置需要重启程序后生效！")
+            QMessageBox.information(None, "成功", f"备份已成功恢复至：\n{state.appdata_path}，部分设置需要重启程序后生效！")
             self.close()
 
         except Exception as e:

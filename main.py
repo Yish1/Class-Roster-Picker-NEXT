@@ -15,9 +15,9 @@ from window import *
 
 from window.Setting import SettingsWindow
 
-# import debugpy
-# debugpy.listen(("0.0.0.0", 5678))
-# debugpy.wait_for_client()  # 等待调试器连接
+import debugpy
+debugpy.listen(("0.0.0.0", 5678))
+debugpy.wait_for_client()  # 等待调试器连接
 
 # 初始化全局应用状态
 state = app_state
@@ -749,7 +749,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 self.pushButton_5.click()  # 名单没有人就自动按结束按钮
                 state.origin_name_list = None
                 self.font_m.setPointSize(45)
-                self.label_3.setText(_(" 名单文件为空！"))
+                self.label_3.setText(_(" 名单为空！"))
                 state.name = ""
                 try:
                     self.run_settings(f"1&{state.file_path}")
@@ -808,7 +808,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             finally:
                 self.font_m.setPointSize(54)
                 self.label_3.setFont(self.font_m)
-                self.label_3.setText(_(" 名单文件为空！"))
+                self.label_3.setText(_(" 名单为空！"))
                 self.pushButton_5.setEnabled(True)
                 self.pushButton_5.click()  # 名单没有人就自动按结束按钮(中途切换名单)
                 state.origin_name_list = None

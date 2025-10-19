@@ -1,11 +1,10 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import Qt, QTimer, QCoreApplication
+from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QRunnable
 from PyQt5.QtGui import QCursor, QFontMetrics
-from moudles import *
-from moudles.logger_util import log_print
 from Ui.SmallWindow import Ui_smallwindow
+from moudles import *
 
-import random, time
+import random, pygame, os, time, debugpy
 
 state = app_state
 
@@ -46,6 +45,13 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.minimum_flag = False
         self.main_instance = main_instance
         self.signals = WorkerSignals()
+        self.music = MusicPlayer()
+
+        # 自动隐藏倒计时：开启小窗即开始计时，30秒后最小化
+        self.auto_hide_timer = QTimer(self)
+        self.auto_hide_timer.setSingleShot(True)
+        self.auto_hide_timer.timeout.connect(self.minimummode)
+        self.start_auto_hide()
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -82,13 +88,22 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
     def qtimer(self, start):
         if start == 1:
             self.timer = QTimer()
-            tick = random.randint(60, 99)
+            if state.roll_speed:
+                tick = state.roll_speed
+            else:
+                tick = random.randint(60, 99)
             self.timer.start(tick)
             self.timer.timeout.connect(self.setname)
             self.runflag = True
+            self.play_music()
+            # 开始点名时停止自动隐藏计时
+            self.stop_auto_hide()
 
         elif start == 0:
             try:
+                if state.bgmusic == 1 or pygame.mixer.music.get_busy():
+                    self.music_thread = Play_Music_Thread(0)
+                    state.threadpool.start(self.music_thread)
                 # 非阻塞惯性滚动
                 can_inertia = (
                     state.inertia_roll == 1 and
@@ -104,6 +119,8 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
                     if state.inertia_roll == 1:
                         log_print("小窗：不满足惯性滚动条件")
                     self._finalize_stop_procedure()
+
+
             except Exception as e:
                 print(f"无法停止计时器:{e}")
 
@@ -197,6 +214,23 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.pushButton_7.show()
         self.minimum_flag = True
 
+    # 自动隐藏计时控制
+    def start_auto_hide(self):
+        try:
+            self.auto_hide_timer.start(30 * 1000)  # 30秒
+        except Exception:
+            pass
+
+    def stop_auto_hide(self):
+        try:
+            self.auto_hide_timer.stop()
+        except Exception:
+            pass
+
+    def reset_auto_hide(self):
+        self.stop_auto_hide()
+        self.start_auto_hide()
+
     def dynamic_speed_preview(self, speed):
         """动态调整计时器速度（用于惯性滚动）"""
         try:
@@ -220,6 +254,11 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         except Exception as e:
             log_print(f"小窗：惯性滚动过程中出错:{e}")
             self._finalize_stop_procedure()
+
+    def play_music(self):
+        """播放背景音乐"""
+        self.music_thread = Play_Music_Thread(1)
+        state.threadpool.start(self.music_thread)
 
     def _finalize_stop_procedure(self):
         """停止计时器并执行停止后的 UI 与数据更新。"""
@@ -252,5 +291,41 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
                 self.main_instance.update_list(1, _("小窗：%s") % info)
                 state.origin_name_list = state.name
                 self.main_instance.tts_read(self.small_window_name, 2)
+            # 结束点名后恢复并重新开始30秒倒计时
+            self.reset_auto_hide()
         except Exception as e:
             print(f"小窗：停止流程出错:{e}")
+
+
+class Play_Music_Thread(QRunnable):
+    def __init__(self, mode=None):
+        super().__init__()
+        self.signals = WorkerSignals()
+        self.music = MusicPlayer()
+        self.mode = mode
+
+    def run(self):
+        if self.mode == 1:
+            try:
+                if state.bgmusic != 1 or pygame.mixer.music.get_busy():
+                    return
+                
+                folder_path = os.path.join(state.appdata_path, "dmmusic")
+                try:
+                    file_list = os.listdir(folder_path)
+                except Exception:
+                    file_list = []
+
+                if file_list == []:
+                    mid_title = self.music.play_default_music()
+                else:
+                    self.music.play_random_file(folder_path)
+                    
+            except Exception as e:
+                log_print(f"小窗：播放音乐出错:{e}")
+        
+        elif self.mode == 0:
+            try:
+                self.music.stop_music()
+            except Exception as e:
+                log_print(f"小窗：停止音乐出错:{e}")

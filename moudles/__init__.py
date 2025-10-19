@@ -6,6 +6,7 @@ from .WorkSignals import WorkerSignals
 from .speaker_thread import SpeakerThread
 from .Check_Update import UpdateThread
 from .StartRoll_Thread import StartRollThread
+from .Music_Player import MusicPlayer
 
 __all__ = [
     'read_config_file',
@@ -22,4 +23,5 @@ __all__ = [
     'SpeakerThread',
     'UpdateThread',
     'StartRollThread',
+    'MusicPlayer',
 ]
