@@ -4,7 +4,7 @@ from PyQt5.QtGui import QCursor, QFontMetrics
 from Ui.SmallWindow import Ui_smallwindow
 from moudles import *
 
-import random, pygame, os, time, debugpy
+import random, pygame, os
 
 state = app_state
 

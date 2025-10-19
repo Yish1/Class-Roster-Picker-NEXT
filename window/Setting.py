@@ -462,6 +462,12 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.pushButton_14.setText(_("定制"))
             self.label_4.setText(_("感谢您使用 沉梦课堂点名器！欢迎访问沉梦小站博客cmxz.top获取更多有趣的应用！\n                —— Yish_"))
             self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
+            self.groupBox_8.setTitle(_("备份"))
+            self.pushButton_18.setText(_("一键备份所有内容"))
+            self.groupBox_9.setTitle(_("恢复"))
+            self.pushButton_20.setText(_("确认恢复"))
+            self.pushButton_19.setText(_("导入备份"))
+            self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _("备份恢复"))
             self.setWindowTitle(QCoreApplication.translate(
                 "MainWindow", _("沉梦课堂点名器设置")))
         except Exception as e:
@@ -794,7 +800,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             QMessageBox.warning(self.window, _("错误"), _("未找到数据目录，无法备份。"), QMessageBox.Ok)
             
     def load_backup(self):
-        self.bak_file_path, a = QFileDialog.getOpenFileName(None, "选择备份文件", "", "CRP Backup (*.CRPBAK);;All Files (*.*)")
+        self.bak_file_path, a = QFileDialog.getOpenFileName(None, _("选择备份文件"), "", "CRP Backup (*.CRPBAK);;All Files (*.*)")
         if not self.bak_file_path:
             return  # 用户取消
 
@@ -855,8 +861,8 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                     tar.extract(member, path=state.appdata_path)
                 log_print(f"所有文件已解压至: {state.appdata_path}")
 
-            QMessageBox.information(None, "成功", f"备份已成功恢复至：\n{state.appdata_path}，部分设置需要重启程序后生效！")
+            QMessageBox.information(None, _("成功"), _("备份已成功恢复至：\n%s，部分设置需要重启程序后生效！") % state.appdata_path)
             self.close()
 
         except Exception as e:
-            QMessageBox.critical(None, "错误", f"应用备份失败：\n{e}")
+            QMessageBox.critical(None, _("错误"), _("应用备份失败：\n%s") % e)
