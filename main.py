@@ -857,7 +857,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         message = str(message)
         if first == 1:
             msgBox.setIconPixmap(QtGui.QIcon(
-                ':/icons/picker.ico').pixmap(64, 64))
+                ':/icons/welcome.png').pixmap(80, 180))
         msgBox.setText(message)
         msgBox.exec_()
 

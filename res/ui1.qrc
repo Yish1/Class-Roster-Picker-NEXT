@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>welcome.png</file>
     <file>setting.png</file>
     <file>exit.png</file>
     <file>hide.png</file>

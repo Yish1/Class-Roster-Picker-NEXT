@@ -317,7 +317,8 @@ class Play_Music_Thread(QRunnable):
                     file_list = []
 
                 if file_list == []:
-                    mid_title = self.music.play_default_music()
+                    mid_title = self.music.play_default()
+                    log_print(f"小窗：播放默认音乐:{mid_title}")
                 else:
                     self.music.play_random_file(folder_path)
                     
