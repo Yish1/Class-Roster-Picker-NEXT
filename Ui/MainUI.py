@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'f:\Github\Class-Roster-Picker-NEXT\picker.ui'
+# Form implementation generated from reading ui file 'f:\Github\Class-Roster-Picker-NEXT\Ui\MainUI.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -20,9 +20,8 @@ class Ui_CRPmain(object):
         icon.addPixmap(QtGui.QPixmap(":/icons/picker.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         CRPmain.setWindowIcon(icon)
         CRPmain.setStyleSheet("")
-        self.gridLayout_4 = QtWidgets.QGridLayout(CRPmain)
-        self.gridLayout_4.setObjectName("gridLayout_4")
         self.frame = QtWidgets.QFrame(CRPmain)
+        self.frame.setGeometry(QtCore.QRect(11, 11, 883, 473))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -370,22 +369,22 @@ class Ui_CRPmain(object):
         self.frame_2.setObjectName("frame_2")
         self.gridLayout_6 = QtWidgets.QGridLayout(self.frame_2)
         self.gridLayout_6.setObjectName("gridLayout_6")
-        self.pushButton = QtWidgets.QPushButton(self.frame_2)
-        self.pushButton.setText("")
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/icons/hide.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton.setIcon(icon4)
-        self.pushButton.setIconSize(QtCore.QSize(20, 20))
-        self.pushButton.setObjectName("pushButton")
-        self.gridLayout_6.addWidget(self.pushButton, 0, 0, 1, 1)
         self.pushButton_3 = QtWidgets.QPushButton(self.frame_2)
         self.pushButton_3.setText("")
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton_3.setIcon(icon5)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_3.setIcon(icon4)
         self.pushButton_3.setIconSize(QtCore.QSize(20, 20))
         self.pushButton_3.setObjectName("pushButton_3")
         self.gridLayout_6.addWidget(self.pushButton_3, 0, 1, 1, 1)
+        self.pushButton = QtWidgets.QPushButton(self.frame_2)
+        self.pushButton.setText("")
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/icons/hide.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton.setIcon(icon5)
+        self.pushButton.setIconSize(QtCore.QSize(20, 20))
+        self.pushButton.setObjectName("pushButton")
+        self.gridLayout_6.addWidget(self.pushButton, 0, 0, 1, 1)
         self.gridLayout_2.addWidget(self.frame_2, 0, 5, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.frame_4)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding)
@@ -406,7 +405,6 @@ class Ui_CRPmain(object):
         self.label_3.setObjectName("label_3")
         self.gridLayout_2.addWidget(self.label_3, 1, 1, 1, 4)
         self.gridLayout.addWidget(self.frame_4, 0, 0, 1, 1)
-        self.gridLayout_4.addWidget(self.frame, 0, 0, 1, 1)
 
         self.retranslateUi(CRPmain)
         self.comboBox.setCurrentIndex(-1)

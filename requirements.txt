@@ -4,4 +4,3 @@ pywin32
 PyQt5
 datetime
 nuitka
-qtrangeslider

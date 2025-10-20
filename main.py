@@ -15,9 +15,9 @@ from window import *
 
 from window.Setting import SettingsWindow
 
-import debugpy
-debugpy.listen(("0.0.0.0", 5678))
-debugpy.wait_for_client()  # 等待调试器连接
+# import debugpy
+# debugpy.listen(("0.0.0.0", 5678))
+# debugpy.wait_for_client()  # 等待调试器连接
 
 # 初始化全局应用状态
 state = app_state

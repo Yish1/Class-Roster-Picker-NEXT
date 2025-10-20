@@ -220,7 +220,7 @@ class Ui_Settings(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 262, 370))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 275, 334))
         self.scrollAreaWidgetContents.setStyleSheet("")
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
@@ -327,7 +327,7 @@ class Ui_Settings(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 328, 596))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 328, 584))
         self.scrollAreaWidgetContents_2.setMinimumSize(QtCore.QSize(0, 0))
         self.scrollAreaWidgetContents_2.setStyleSheet("#scrollAreaWidgetContents_2 {\n"
 "    background-color: transparent;\n"
@@ -834,4 +834,4 @@ class Ui_Settings(object):
         self.pushButton_14.setText(_translate("Settings", "定制"))
         self.label_4.setText(_translate("Settings", "<html><head/><body><p><span style=\" font-size:8pt;\">感谢您使用 沉梦课堂点名器！欢迎访问沉梦小站博客cmxz.top获取更多有趣的应用！</span></p><p><span style=\" font-size:8pt;\">                —— Yish_</span></p></body></html>"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("Settings", "反馈/定制"))
-import Ui.ui1_rc
+import ui1_rc
