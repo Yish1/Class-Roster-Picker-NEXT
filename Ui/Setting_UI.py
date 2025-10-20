@@ -834,4 +834,4 @@ class Ui_Settings(object):
         self.pushButton_14.setText(_translate("Settings", "定制"))
         self.label_4.setText(_translate("Settings", "<html><head/><body><p><span style=\" font-size:8pt;\">感谢您使用 沉梦课堂点名器！欢迎访问沉梦小站博客cmxz.top获取更多有趣的应用！</span></p><p><span style=\" font-size:8pt;\">                —— Yish_</span></p></body></html>"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("Settings", "反馈/定制"))
-import ui1_rc
+import Ui.ui1_rc
