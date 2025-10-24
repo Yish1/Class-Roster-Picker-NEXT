@@ -18,18 +18,23 @@ def _(s: str) -> str:
 
 def get_locale_dir(language_value: str = 'zh_CN') -> Callable[[str], str]:
 
-    # 第一优先级：绝对路径 
+    # 第一优先级：绝对路径（当前工作目录）
     absolute_locale_dir = os.path.abspath(os.path.join(os.getcwd(), 'locale'))
     if os.path.isdir(absolute_locale_dir):
         localedir = absolute_locale_dir
     else:
-        # 第二优先级：Nuitka 单文件解包目录
-        appdata_dir = os.path.join(os.getenv("LOCALAPPDATA", ""), "CRP_onefile", "locale")
-        if os.path.isdir(appdata_dir):
-            localedir = appdata_dir
+        # 第二优先级：可执行文件所在目录
+        exe_base_path = os.path.join(os.path.dirname(sys.executable), 'locale')
+        if os.path.isdir(exe_base_path):
+            localedir = exe_base_path
         else:
-            # 第三：当前目录下（开发模式）
-            localedir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'locale')
+            # 第三优先级：AppData 目录
+            appdata_locale_dir = os.path.join(os.getenv("LOCALAPPDATA", ""), "CRP_onefile", "locale")
+            if os.path.isdir(appdata_locale_dir):
+                localedir = appdata_locale_dir
+            else:
+                # 到这应该就寄了
+                localedir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'locale')
 
     return localedir
 
