@@ -16,26 +16,35 @@ def _(s: str) -> str:
     """
     return _current_gettext(s)
 
+def get_locale_dir(language_value: str = 'zh_CN') -> Callable[[str], str]:
+
+    # 第一优先级：绝对路径 
+    absolute_locale_dir = os.path.abspath(os.path.join(os.getcwd(), 'locale'))
+    if os.path.isdir(absolute_locale_dir):
+        localedir = absolute_locale_dir
+    else:
+        # 第二优先级：Nuitka 单文件解包目录
+        appdata_dir = os.path.join(os.getenv("LOCALAPPDATA", ""), "CRP_onefile", "locale")
+        if os.path.isdir(appdata_dir):
+            localedir = appdata_dir
+        else:
+            # 第三：当前目录下（开发模式）
+            localedir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'locale')
+
+    return localedir
 
 def init_gettext(language_value: str = 'zh_CN') -> Callable[[str], str]:
-    """Initialize gettext for the given language and set it as current.
-
-    Returns the gettext function for convenience. On failure, falls back
-    to zh_CN and finally to identity.
     """
-    # 检测是否在 Nuitka onefile 模式下运行
-    if getattr(sys, "_MEIPASS", None):
-        base_path = sys._MEIPASS
-    elif getattr(sys, "frozen", False):
-        # Nuitka 没有 _MEIPASS，但 frozen=True 说明是打包运行
-        base_path = os.path.dirname(sys.executable)
-    else:
-        # 正常开发环境
-        base_path = os.path.abspath(os.path.dirname(__file__))
+    Initialize gettext for the given language and set it as current.
 
-    # locale 路径兼容开发与打包
-    localedir = os.path.join(base_path, 'locale')
-    log_print("i18n目录:", localedir)
+    Priority:
+    1. Absolute locale directory (external override)
+    2. Nuitka onefile unpacked path: AppData\Local\CRP_onefile\locale
+    3. Fallback to zh_CN or identity.
+    """
+    localedir = get_locale_dir()
+
+    log_print("使用的 i18n 目录:", localedir)
 
     global _current_gettext
     try:

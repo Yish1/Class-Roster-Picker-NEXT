@@ -366,7 +366,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 log_print(f"读取历史文件夹失败: {e}")
 
     def find_language(self):
-        locale_dir = "./locale"
+        locale_dir = get_locale_dir()
         try:
             if os.path.exists(locale_dir) and os.path.isdir(locale_dir):
                 folders = [folder for folder in os.listdir(

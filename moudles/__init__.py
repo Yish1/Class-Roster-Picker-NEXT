@@ -1,5 +1,5 @@
 from .config_manager import read_config_file, update_entry
-from .i18n import init_gettext, set_language, _
+from .i18n import init_gettext, set_language, _, get_locale_dir
 from .logger_util import init_log, log_print
 from .app_state import AppState, app_state, get_app_state
 from .WorkSignals import WorkerSignals
@@ -24,4 +24,5 @@ __all__ = [
     'UpdateThread',
     'StartRollThread',
     'MusicPlayer',
+    'get_locale_dir',
 ]
