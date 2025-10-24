@@ -969,6 +969,7 @@ if __name__ == "__main__":
                 ctypes.windll.shcore.SetProcessDpiAwareness(2)  # PROCESS_PER_MONITOR_DPI_AWARE
             except Exception:
                 try:
+                    log_print("启用 Windows DPI 感知失败，尝试回退到系统感知。")
                     ctypes.windll.user32.SetProcessDPIAware()
                 except Exception:
                     pass
@@ -977,11 +978,23 @@ if __name__ == "__main__":
         # 自动根据屏幕缩放因子调整
         os.environ.setdefault("QT_AUTO_SCREEN_SCALE_FACTOR", "1")
         # 缩放舍入策略（Qt 5.14+ 生效）
+        # 注意：在 Windows 7 上启用 PassThrough 会导致文字不显示，这里仅在 Win10+ 启用
         if hasattr(QtGui, "QGuiApplication") and hasattr(QtCore.Qt, "HighDpiScaleFactorRoundingPolicy"):
             try:
-                QtGui.QGuiApplication.setHighDpiScaleFactorRoundingPolicy(
-                    QtCore.Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
-                )
+                ok_to_set = True
+                if sys.platform == "win32":
+                    try:
+                        v = sys.getwindowsversion()
+                        # 仅在 Windows 10 及以上启用（Windows 7/8/8.1 跳过）
+                        ok_to_set = (v.major >= 10)
+                    except Exception:
+                        ok_to_set = False
+                if ok_to_set:
+                    QtGui.QGuiApplication.setHighDpiScaleFactorRoundingPolicy(
+                        QtCore.Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
+                    )
+                else:
+                    log_print("跳过设置 HighDpiScaleFactorRoundingPolicy")
             except Exception:
                 pass
 

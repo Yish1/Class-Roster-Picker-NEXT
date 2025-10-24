@@ -15,7 +15,7 @@
 
 > [!TIP]
 > 打包参数：</br>
-> `nuitka --standalone --lto=yes --clang --msvc=latest --disable-ccache --windows-uac-admin --windows-console-mode=disable --enable-plugin=pyqt5,upx --upx-binary=E:\ctest\o\upx\upx.exe --output-dir=o --windows-icon-from-ico=picker.ico --nofollow-import-to=unittest main.py`
+> ` nuitka --standalone --lto=yes --clang --msvc=latest --disable-ccache --windows-console-mode=disable --enable-plugin=pyqt5,upx --upx-binary=F:\Programs\upx\upx.exe --output-dir=CRP_OUT_6.6_313 --windows-icon-from-ico=picker.ico --nofollow-import-to=unittest main.py`
 
 > [!IMPORTANT]  
 > 设备要求： 
