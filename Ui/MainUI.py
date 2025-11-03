@@ -545,7 +545,7 @@ class Ui_CRPmain(object):
 
         self.retranslateUi(CRPmain)
         self.comboBox.setCurrentIndex(-1)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         self.pushButton_3.clicked.connect(CRPmain.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(CRPmain)
 
