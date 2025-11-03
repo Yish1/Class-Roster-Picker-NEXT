@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>../../../Programs/Time_History/Class-Roster-Picker-NEXT/res/picker.ico</file>
     <file>welcome.png</file>
     <file>setting.png</file>
     <file>exit.png</file>

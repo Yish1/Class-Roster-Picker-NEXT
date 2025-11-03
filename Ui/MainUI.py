@@ -234,37 +234,72 @@ class Ui_CRPmain(object):
         self.gridLayout_3 = QtWidgets.QGridLayout(self.frame_6)
         self.gridLayout_3.setContentsMargins(-1, -1, 0, -1)
         self.gridLayout_3.setObjectName("gridLayout_3")
-        spacerItem4 = QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
-        self.gridLayout_3.addItem(spacerItem4, 4, 1, 1, 1)
-        spacerItem5 = QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_3.addItem(spacerItem5, 1, 0, 1, 1)
+        spacerItem4 = QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_3.addItem(spacerItem4, 2, 0, 1, 1)
+        spacerItem5 = QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        self.gridLayout_3.addItem(spacerItem5, 4, 1, 1, 1)
         self.commandLinkButton = QtWidgets.QCommandLinkButton(self.frame_6)
         self.commandLinkButton.setMaximumSize(QtCore.QSize(16777215, 40))
         self.commandLinkButton.setObjectName("commandLinkButton")
         self.gridLayout_3.addWidget(self.commandLinkButton, 3, 1, 1, 1)
-        self.label_7 = QtWidgets.QLabel(self.frame_6)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_7.sizePolicy().hasHeightForWidth())
-        self.label_7.setSizePolicy(sizePolicy)
-        self.label_7.setMaximumSize(QtCore.QSize(16777215, 50))
-        self.label_7.setStyleSheet("QLabel {\n"
-"    color: #B4B4B4;\n"
+        self.tabWidget = QtWidgets.QTabWidget(self.frame_6)
+        self.tabWidget.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.tabWidget.setStyleSheet("/* QTabWidget整体背景与边框 */\n"
+"QTabWidget {\n"
+"    background-color: rgba(43, 43, 43, 0.85);\n"
+"\n"
+"    border-radius: 6px;\n"
 "}\n"
-"* {\n"
-"    font-size: 10px;\n"
+"\n"
+"/* 内容区无边框 */\n"
+"QTabWidget::pane {\n"
+"    border: none;\n"
+"}\n"
+"\n"
+"QTabBar::tab {\n"
+"    color: white;                      \n"
+"    background-color: rgba(63, 63, 63, 180);\n"
+"    padding: 2px 6px;          /* ← 控制内部边距：越小标签越紧凑 */\n"
+"    margin: 1px;               /* ← 控制标签之间的间隔 */\n"
+"    min-width: 80px;           /* ← 标签最小宽度，可根据文字长度调整 */\n"
+"    min-height: 16px;          /* ← 标签高度 */\n"
+"    font-size: 12px;           /* ← 文字大小也影响视觉尺寸 */\n"
+"    border-radius: 4px;\n"
+"}\n"
+"\n"
+"/* 选中标签背景颜色 */\n"
+"QTabBar::tab:selected {\n"
+"    background-color: rgba(26, 95, 207, 180);  /* 深蓝 */\n"
+"}\n"
+"\n"
+"/* 悬停选中的标签 */\n"
+"QTabBar::tab:hover {\n"
+"    background-color: rgba(81, 161, 81, 180);\n"
+"}\n"
+"\n"
+"QListWidget {\n"
+"    border-radius: 6px;\n"
 "}")
-        self.label_7.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
-        self.label_7.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
-        self.label_7.setObjectName("label_7")
-        self.gridLayout_3.addWidget(self.label_7, 0, 1, 1, 1)
-        self.listWidget = QtWidgets.QListWidget(self.frame_6)
+        self.tabWidget.setTabPosition(QtWidgets.QTabWidget.South)
+        self.tabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
+        self.tabWidget.setUsesScrollButtons(False)
+        self.tabWidget.setDocumentMode(False)
+        self.tabWidget.setTabsClosable(False)
+        self.tabWidget.setMovable(False)
+        self.tabWidget.setTabBarAutoHide(False)
+        self.tabWidget.setObjectName("tabWidget")
+        self.tab = QtWidgets.QWidget()
+        self.tab.setObjectName("tab")
+        self.gridLayout_7 = QtWidgets.QGridLayout(self.tab)
+        self.gridLayout_7.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_7.setHorizontalSpacing(7)
+        self.gridLayout_7.setObjectName("gridLayout_7")
+        self.listWidget = QtWidgets.QListWidget(self.tab)
         self.listWidget.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.listWidget.setStyleSheet("QListWidget {\n"
 "    background-color: rgba(43, 43, 43, 0.85);\n"
 "    color: rgba(255, 255, 255, 1);\n"
-"    border: 1px solid rgba(75, 75, 75, 0.9);\n"
+"    border: 1px solid rgba(75, 75, 75, 0.9)\n"
 "}\n"
 "QScrollBar:vertical {\n"
 "    width: 12px;\n"
@@ -335,7 +370,109 @@ class Ui_CRPmain(object):
         self.listWidget.setMovement(QtWidgets.QListView.Static)
         self.listWidget.setResizeMode(QtWidgets.QListView.Fixed)
         self.listWidget.setObjectName("listWidget")
-        self.gridLayout_3.addWidget(self.listWidget, 1, 1, 2, 1)
+        self.gridLayout_7.addWidget(self.listWidget, 0, 0, 1, 1)
+        self.tabWidget.addTab(self.tab, "")
+        self.tab_2 = QtWidgets.QWidget()
+        self.tab_2.setObjectName("tab_2")
+        self.gridLayout_8 = QtWidgets.QGridLayout(self.tab_2)
+        self.gridLayout_8.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_8.setObjectName("gridLayout_8")
+        self.listWidget_2 = QtWidgets.QListWidget(self.tab_2)
+        self.listWidget_2.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.listWidget_2.setStyleSheet("QListWidget {\n"
+"    background-color: rgba(43, 43, 43, 0.85);\n"
+"    color: rgba(255, 255, 255, 1);\n"
+"    border: 1px solid rgba(75, 75, 75, 0.9);\n"
+"}\n"
+"QScrollBar:vertical {\n"
+"    width: 12px;\n"
+"    border: 1px solid rgba(43, 43, 43, 0.9);\n"
+"    margin: 0px;\n"
+"    padding-top: 0px;\n"
+"    padding-bottom: 0px;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical {\n"
+"    width: 3px;\n"
+"    background: rgba(75, 75, 75, 0.9);\n"
+"    min-height: 20px;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical:hover {\n"
+"    background: rgba(63, 63, 63, 1);\n"
+"}\n"
+"\n"
+"QScrollBar::sub-line:vertical,\n"
+"QScrollBar::add-line:vertical {\n"
+"    width: 0px;\n"
+"    height: 0px;\n"
+"}\n"
+"\n"
+"QScrollBar::add-page:vertical,\n"
+"QScrollBar::sub-page:vertical {\n"
+"    background: rgba(43, 43, 43, 0.9);\n"
+"}\n"
+"\n"
+"QScrollBar:horizontal {\n"
+"    height: 12px;\n"
+"    border: 1px rgba(43, 43, 43, 0.9);\n"
+"    margin: 0px;\n"
+"    padding-left: 0px;\n"
+"    padding-right: 0px;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:horizontal {\n"
+"    height: 16px;\n"
+"    background: rgba(75, 75, 75, 0.9);\n"
+"    min-width: 20px;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:horizontal:hover {\n"
+"    background: rgba(63, 63, 63, 1);\n"
+"}\n"
+"\n"
+"QScrollBar::add-page:horizontal,\n"
+"QScrollBar::sub-page:horizontal {\n"
+"    background: rgba(43, 43, 43, 0.9);\n"
+"}\n"
+"\n"
+"* {\n"
+"    font-size: 18px;\n"
+"}\n"
+"")
+        self.listWidget_2.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.listWidget_2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.listWidget_2.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.listWidget_2.setProperty("showDropIndicator", False)
+        self.listWidget_2.setDragEnabled(False)
+        self.listWidget_2.setDefaultDropAction(QtCore.Qt.IgnoreAction)
+        self.listWidget_2.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.listWidget_2.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
+        self.listWidget_2.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+        self.listWidget_2.setHorizontalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+        self.listWidget_2.setMovement(QtWidgets.QListView.Static)
+        self.listWidget_2.setResizeMode(QtWidgets.QListView.Fixed)
+        self.listWidget_2.setObjectName("listWidget_2")
+        self.gridLayout_8.addWidget(self.listWidget_2, 0, 0, 1, 1)
+        self.tabWidget.addTab(self.tab_2, "")
+        self.gridLayout_3.addWidget(self.tabWidget, 1, 1, 1, 1)
+        self.label_7 = QtWidgets.QLabel(self.frame_6)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_7.sizePolicy().hasHeightForWidth())
+        self.label_7.setSizePolicy(sizePolicy)
+        self.label_7.setMaximumSize(QtCore.QSize(16777215, 50))
+        self.label_7.setStyleSheet("QLabel {\n"
+"    color: #B4B4B4;\n"
+"}\n"
+"* {\n"
+"    font-size: 10px;\n"
+"}")
+        self.label_7.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.label_7.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.label_7.setObjectName("label_7")
+        self.gridLayout_3.addWidget(self.label_7, 0, 1, 1, 1)
         self.gridLayout_2.addWidget(self.frame_6, 14, 0, 2, 3)
         self.pushButton_4 = QtWidgets.QPushButton(self.frame_4)
         self.pushButton_4.setMinimumSize(QtCore.QSize(80, 0))
@@ -408,6 +545,7 @@ class Ui_CRPmain(object):
 
         self.retranslateUi(CRPmain)
         self.comboBox.setCurrentIndex(-1)
+        self.tabWidget.setCurrentIndex(0)
         self.pushButton_3.clicked.connect(CRPmain.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(CRPmain)
 
@@ -420,6 +558,8 @@ class Ui_CRPmain(object):
         self.label_6.setText(_translate("CRPmain", "自定义背景"))
         self.pushButton_2.setText(_translate("CRPmain", " 开始"))
         self.commandLinkButton.setText(_translate("CRPmain", "恢复默认大小"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("CRPmain", "历史记录"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("CRPmain", "剩余名单"))
         self.label_7.setText(_translate("CRPmain", "正在播放:"))
         self.label_3.setText(_translate("CRPmain", "恭喜xxx"))
 import Ui.ui1_rc

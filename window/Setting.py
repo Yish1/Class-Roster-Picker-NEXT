@@ -57,17 +57,18 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_6.clicked.connect(lambda: os.system(
             "start https://cmxz.top/ktdmq#toc-head-17"))
         self.comboBox_2.currentIndexChanged.connect(self.change_language)
-        self.pushButton_12.clicked.connect(lambda: self.open_fold((os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'name'))))
-        self.pushButton_15.clicked.connect(lambda: self.open_fold((os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'name'))))
-        self.pushButton_10.clicked.connect(lambda: self.open_fold((os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'dmmusic'))))
-        self.pushButton_9.clicked.connect(lambda: self.open_fold((os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'images'))))
-        self.pushButton_8.clicked.connect(lambda: self.open_fold((os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'history'))))
+        self.pushButton_12.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path, 'name'))))
+        self.pushButton_15.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path, 'name'))))
+        self.pushButton_10.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path,'dmmusic'))))
+        self.pushButton_9.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path,'images'))))
+        self.pushButton_8.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path,'history'))))
+        self.pushButton_21.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path))))
         self.pushButton_11.clicked.connect(self.save_name_list)
         self.pushButton_13.clicked.connect(self.read_name_inlist)
         self.pushButton_14.clicked.connect(lambda: os.system(
             "start https://cmxz.top/ktdmq#toc-head-8"))
-        self.pushButton_16.clicked.connect(lambda: self.open_fold((os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'history'))))
-        self.pushButton_17.clicked.connect(lambda: self.delete_file((os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'history'))))
+        self.pushButton_16.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path,'history'))))
+        self.pushButton_17.clicked.connect(lambda: self.delete_file((os.path.join(state.appdata_path,'history'))))
         self.pushButton_18.clicked.connect(self.save_allconfig)
         self.pushButton_19.clicked.connect(self.load_backup)
         self.pushButton_20.clicked.connect(self.apply_backup)
@@ -587,7 +588,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                     self.enable_bgimg = 2
                     self.main_instance.show_message(
                         _("您正在使用自定义背景功能，由于此工具可能需要在公众场合展示，请选择适宜场景的合适背景！ \n因使用不合适的背景图片而造成的后果由您自行承担！\n\n使用教程：\n\n在稍后打开的\\images文件夹中放入您喜欢的图片(建议暗色系、长宽比16:9)，程序将随机选取图片使用。"), _("声明!"))
-                    folder_path = os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'images')
+                    folder_path = os.path.join(state.appdata_path, 'images')
                     os.makedirs(folder_path, exist_ok=True)
                     self.main_instance.opentext(folder_path)
                     log_print("背景自定义")
@@ -612,7 +613,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 log_print("正在开启背景音乐")
                 self.main_instance.show_message(
                     _("开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n程序将随机选取一首，播放随机的音乐进度\n\n注：程序自带几首默认音频，当您在音乐目录下放入音乐后，默认音频将不会再进入候选列表！"), _("提示"))
-                folder_path = os.path.join(os.getenv('APPDATA'), 'CMXZ', 'CRP', 'dmmusic')
+                folder_path = os.path.join(state.appdata_path,'dmmusic')
                 os.makedirs(folder_path, exist_ok=True)
                 self.open_fold(folder_path)
 

@@ -586,7 +586,7 @@ QScrollBar::right-arrow:horizontal {
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>0</y>
+            <y>-140</y>
             <width>328</width>
             <height>584</height>
            </rect>
@@ -830,31 +830,6 @@ QScrollBar::right-arrow:horizontal {
               <string>个性化设置</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_19">
-              <item row="0" column="0">
-               <widget class="QLabel" name="label">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>背景图片</string>
-                </property>
-               </widget>
-              </item>
               <item row="1" column="0">
                <widget class="QFrame" name="frame_3">
                 <property name="sizePolicy">
@@ -900,6 +875,41 @@ QScrollBar::right-arrow:horizontal {
                 </layout>
                </widget>
               </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_7">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>启动时标题:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <spacer name="verticalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>10</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
               <item row="8" column="0">
                <spacer name="verticalSpacer_5">
                 <property name="orientation">
@@ -912,6 +922,31 @@ QScrollBar::right-arrow:horizontal {
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>背景图片</string>
+                </property>
+               </widget>
               </item>
               <item row="6" column="0">
                <widget class="QLineEdit" name="lineEdit">
@@ -937,22 +972,6 @@ QScrollBar::right-arrow:horizontal {
                  <string>幸运儿是:</string>
                 </property>
                </widget>
-              </item>
-              <item row="3" column="0">
-               <spacer name="verticalSpacer_4">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>10</height>
-                 </size>
-                </property>
-               </spacer>
               </item>
               <item row="7" column="0">
                <spacer name="verticalSpacer_6">
@@ -992,25 +1011,6 @@ QScrollBar::right-arrow:horizontal {
                 </property>
                 <property name="text">
                  <string>背景图片目录</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_7">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>启动时标题:</string>
                 </property>
                </widget>
               </item>
@@ -1497,19 +1497,6 @@ p, li { white-space: pre-wrap; }
           <string>备份</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_22">
-          <item row="0" column="1">
-           <widget class="QPushButton" name="pushButton_18">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>一键备份所有内容</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0">
            <spacer name="horizontalSpacer">
             <property name="orientation">
@@ -1541,6 +1528,32 @@ p, li { white-space: pre-wrap; }
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="pushButton_18">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>一键备份所有内容</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="pushButton_21">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>打开数据目录</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
