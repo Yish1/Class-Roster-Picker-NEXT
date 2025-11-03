@@ -24,7 +24,7 @@
    </property>
    <property name="styleSheet">
     <string notr="true">QWidget {
-background-color: rgba(194, 194, 194, 0.97);
+background-color: rgba(194, 194, 194, 0.8);
 border-radius: 28px;
 }</string>
    </property>
@@ -62,7 +62,7 @@ QPushButton:hover{
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="res/ui1.qrc">
+       <iconset resource="../res/ui1.qrc">
         <normaloff>:/icons/hide.png</normaloff>:/icons/hide.png</iconset>
       </property>
       <property name="iconSize">
@@ -79,7 +79,7 @@ QPushButton:hover{
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="res/ui1.qrc">
+       <iconset resource="../res/ui1.qrc">
         <normaloff>:/icons/exit.png</normaloff>:/icons/exit.png</iconset>
       </property>
       <property name="iconSize">
@@ -111,7 +111,7 @@ QPushButton{
     <string/>
    </property>
    <property name="icon">
-    <iconset resource="res/ui1.qrc">
+    <iconset resource="../res/ui1.qrc">
      <normaloff>:/icons/picker.ico</normaloff>:/icons/picker.ico</iconset>
    </property>
    <property name="iconSize">
@@ -172,7 +172,7 @@ QPushButton{
   <zorder>frame</zorder>
  </widget>
  <resources>
-  <include location="res/ui1.qrc"/>
+  <include location="../res/ui1.qrc"/>
  </resources>
  <connections/>
 </ui>
