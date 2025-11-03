@@ -413,8 +413,8 @@ QScrollBar::right-arrow:horizontal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>275</width>
-               <height>334</height>
+               <width>274</width>
+               <height>366</height>
               </rect>
              </property>
              <property name="styleSheet">
@@ -588,7 +588,7 @@ QScrollBar::right-arrow:horizontal {
             <x>0</x>
             <y>0</y>
             <width>328</width>
-            <height>584</height>
+            <height>592</height>
            </rect>
           </property>
           <property name="minimumSize">

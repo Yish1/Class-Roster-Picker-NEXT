@@ -50,7 +50,7 @@
    <property name="styleSheet">
     <string notr="true">#frame {
     border-radius: 28px;
-    border-image: url(:/images/(1070).webp); 
+    border-image: url(:/images/eva.webp); 
 }
 </string>
    </property>
@@ -86,7 +86,7 @@
       </property>
       <property name="styleSheet">
        <string notr="true">#frame_4{
-background-color: rgba(42, 45, 47, 0.81);
+background-color: rgba(42, 45, 47, 0.75);
 border-radius: 28px;
 }</string>
       </property>
@@ -568,7 +568,7 @@ background:rgba(80, 182, 84, 1);
             <property name="styleSheet">
              <string notr="true">/* QTabWidget整体背景与边框 */
 QTabWidget {
-    background-color: rgba(43, 43, 43, 0.85);
+    background-color: rgba(43, 43, 43, 0.8);
 
 	border-radius: 6px;
 }
@@ -610,7 +610,7 @@ QListWidget {
              <enum>QTabWidget::Rounded</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <property name="usesScrollButtons">
              <bool>false</bool>
@@ -659,7 +659,7 @@ QListWidget {
                  <string notr="true">QListWidget {
     background-color: rgba(43, 43, 43, 0.85);
     color: rgba(255, 255, 255, 1);
-    border: 1px solid rgba(75, 75, 75, 0.9)
+    border: 1px solid rgba(75, 75, 75, 0.8)
 }
 QScrollBar:vertical {
     width: 12px;
@@ -787,7 +787,7 @@ QScrollBar::sub-page:horizontal {
                  <string notr="true">QListWidget {
     background-color: rgba(43, 43, 43, 0.85);
     color: rgba(255, 255, 255, 1);
-    border: 1px solid rgba(75, 75, 75, 0.9);
+    border: 1px solid rgba(75, 75, 75, 0.8);
 }
 QScrollBar:vertical {
     width: 12px;

@@ -30,7 +30,7 @@ class Ui_CRPmain(object):
         self.frame.setMinimumSize(QtCore.QSize(0, 0))
         self.frame.setStyleSheet("#frame {\n"
 "    border-radius: 28px;\n"
-"    border-image: url(:/images/(1070).webp); \n"
+"    border-image: url(:/images/eva.webp); \n"
 "}\n"
 "")
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -43,7 +43,7 @@ class Ui_CRPmain(object):
         self.frame_4 = QtWidgets.QFrame(self.frame)
         self.frame_4.setMinimumSize(QtCore.QSize(780, 445))
         self.frame_4.setStyleSheet("#frame_4{\n"
-"background-color: rgba(42, 45, 47, 0.81);\n"
+"background-color: rgba(42, 45, 47, 0.75);\n"
 "border-radius: 28px;\n"
 "}")
         self.frame_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -246,7 +246,7 @@ class Ui_CRPmain(object):
         self.tabWidget.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.tabWidget.setStyleSheet("/* QTabWidget整体背景与边框 */\n"
 "QTabWidget {\n"
-"    background-color: rgba(43, 43, 43, 0.85);\n"
+"    background-color: rgba(43, 43, 43, 0.8);\n"
 "\n"
 "    border-radius: 6px;\n"
 "}\n"
@@ -299,7 +299,7 @@ class Ui_CRPmain(object):
         self.listWidget.setStyleSheet("QListWidget {\n"
 "    background-color: rgba(43, 43, 43, 0.85);\n"
 "    color: rgba(255, 255, 255, 1);\n"
-"    border: 1px solid rgba(75, 75, 75, 0.9)\n"
+"    border: 1px solid rgba(75, 75, 75, 0.8)\n"
 "}\n"
 "QScrollBar:vertical {\n"
 "    width: 12px;\n"
@@ -382,7 +382,7 @@ class Ui_CRPmain(object):
         self.listWidget_2.setStyleSheet("QListWidget {\n"
 "    background-color: rgba(43, 43, 43, 0.85);\n"
 "    color: rgba(255, 255, 255, 1);\n"
-"    border: 1px solid rgba(75, 75, 75, 0.9);\n"
+"    border: 1px solid rgba(75, 75, 75, 0.8);\n"
 "}\n"
 "QScrollBar:vertical {\n"
 "    width: 12px;\n"
@@ -545,7 +545,7 @@ class Ui_CRPmain(object):
 
         self.retranslateUi(CRPmain)
         self.comboBox.setCurrentIndex(-1)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         self.pushButton_3.clicked.connect(CRPmain.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(CRPmain)
 

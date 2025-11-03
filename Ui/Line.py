@@ -16,7 +16,7 @@ class FrameWithLines(QtWidgets.QFrame):
         painter.setClipPath(path)
 
         # 设置遮罩画笔
-        pen = QtGui.QPen(QtGui.QColor(0, 0, 0, 90))  # 半透明黑色
+        pen = QtGui.QPen(QtGui.QColor(80, 80, 80, 90))  # 半透明灰色
         pen.setWidth(int(1.3))  # 横线宽度
         painter.setPen(pen)
 

@@ -238,7 +238,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                                      "}")
         elif state.bgimg == 1 or state.bgimg == 0:
             self.frame.setStyleSheet("#frame {\n"
-                                     "border-image: url(:/images/bg.webp);"
+                                     "border-image: url(:/images/eva.webp);"
                                      "border-radius: 28px;"
                                      "}")
         elif state.bgimg == 3:
@@ -370,7 +370,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         if hasattr(self, "listWidget_2"):
             self.listWidget_2.clear()
             if state.non_repetitive == 1:
-                self.listWidget_2.addItems(state.non_repetitive_list)
+                self.listWidget_2.addItem(_("剩余：%s 人") % len(state.non_repetitive_list))
+                text = state.non_repetitive_list if state.non_repetitive_list else [_("此名单已完成抽取")]
+                self.listWidget_2.addItems(text)
             else:
                 self.listWidget_2.addItems(state.name_list)
             log_print("已更新名单列表窗口内容")
