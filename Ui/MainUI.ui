@@ -760,7 +760,7 @@ QScrollBar::sub-page:horizontal {
             </widget>
             <widget class="QWidget" name="tab_2">
              <attribute name="title">
-              <string>剩余名单</string>
+              <string>名单列表</string>
              </attribute>
              <layout class="QGridLayout" name="gridLayout_8">
               <property name="leftMargin">

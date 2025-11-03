@@ -559,7 +559,7 @@ class Ui_CRPmain(object):
         self.pushButton_2.setText(_translate("CRPmain", " 开始"))
         self.commandLinkButton.setText(_translate("CRPmain", "恢复默认大小"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("CRPmain", "历史记录"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("CRPmain", "剩余名单"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("CRPmain", "名单列表"))
         self.label_7.setText(_translate("CRPmain", "正在播放:"))
         self.label_3.setText(_translate("CRPmain", "恭喜xxx"))
 import Ui.ui1_rc

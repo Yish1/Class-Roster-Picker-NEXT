@@ -586,7 +586,7 @@ QScrollBar::right-arrow:horizontal {
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-140</y>
+            <y>0</y>
             <width>328</width>
             <height>584</height>
            </rect>

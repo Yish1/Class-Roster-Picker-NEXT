@@ -94,9 +94,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.commandLinkButton.clicked.connect(self.restoresize)
 
         # 启用触摸手势滚动
-        scroller = QScroller.scroller(self.listWidget)
-        scroller.grabGesture(self.listWidget.viewport(),
-                             QScroller.LeftMouseButtonGesture)
+        for lw in (self.listWidget, self.listWidget_2):
+            scroller = QScroller.scroller(lw)
+            scroller.grabGesture(lw.viewport(), QScroller.LeftMouseButtonGesture)
 
         # 启动时执行的函数
         self.read_config()
@@ -112,7 +112,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.timer = None
         if state.first_use == 0:
             self.first_use_introduce()
-
 
     def init_font(self):
         font_path = ":/fonts/font.ttf"
@@ -146,6 +145,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.pushButton_5.setText(_(" 小窗模式"))
             self.label_5.setText(_("当前名单："))
             self.label_4.setText(_("抽取人数："))
+            self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("历史记录"))
+            self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("名单列表"))
             # Update background label if needed
             if state.bgimg == 2:
                 self.label_6.setText(_("自定义背景"))
@@ -314,9 +315,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         txt_files_name = [os.path.splitext(
             filename)[0] for filename in txt_name]
         # 去除扩展名
-        if mode == 1:
+        if mode == 1: # 设置调用，仅返回名单列表
             return txt_files_name
-        else:
+        else: # 初始化或设置关闭后重新读取名单
             self.comboBox.disconnect()
             self.comboBox.clear()
             self.comboBox.addItems(txt_files_name)  # 添加文件名到下拉框
@@ -345,19 +346,34 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 log_print("first_run")
         else:
                 log_print(f"所选文件的路径为: {state.file_path}\n")
-        self.process_name_file(state.file_path)
-        if first == 1:
-            info = _("\'%s'，共 %s 人") % (state.selected_file, state.namelen)
-            if state.non_repetitive == 1:
-                info += _("(不放回)")
-            self.listWidget.addItem(info)
 
-        if first == 0:
+        self.process_name_file(state.file_path)
+
+        # first: 1 首次加载，0 切换
+        if first == 1:
+            info = _("\'%s\'，共 %s 人") % (state.selected_file, state.namelen)
+        else:
             info = _("切换至>\'%s\' 共 %s 人") % (state.selected_file, state.namelen)
-            if state.non_repetitive == 1:
-                info += _("(不放回)")
-            self.listWidget.addItem(info)
+
+        if state.non_repetitive == 1:
+            info += _("(不放回)")
+
+        self.listWidget.addItem(info)
+
+        # 切换时自动选中最后一行
+        if first == 0:
             self.listWidget.setCurrentRow(self.listWidget.count() - 1)
+
+        self.update_name_listwidget()
+
+    def update_name_listwidget(self):
+        if hasattr(self, "listWidget_2"):
+            self.listWidget_2.clear()
+            if state.non_repetitive == 1:
+                self.listWidget_2.addItems(state.non_repetitive_list)
+            else:
+                self.listWidget_2.addItems(state.name_list)
+            log_print("已更新名单列表窗口内容")
 
     def read_config(self):
         config = {}
@@ -462,7 +478,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
     def save_history(self, mode=None, name_set=None):
         state.history_file = os.path.join(state.appdata_path, "history", "%s中奖记录.txt" % state.selected_file)
 
-        if mode == 2:
+        if mode == 1:
             write_name = name_set
         else:
             write_name = state.name
@@ -509,7 +525,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.thread.signals.change_speed.connect(
                 self.dynamic_speed_preview)
             self.thread.signals.finished.connect(
-                lambda: log_print("结束点名") or self.ttsinitialize())
+                lambda: log_print("结束点名") or self.ttsinitialize() or self.update_name_listwidget())
 
             state.threadpool.start(self.thread)
 
@@ -545,35 +561,58 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
     def start_mulit(self):
         num = self.spinBox.value()
-        if num > state.namelen:
-            self.show_message(_("Error: 连抽人数大于名单人数!"), _("错误"))
+        if state.non_repetitive == 1:
+            namelist = state.non_repetitive_list
+
         else:
-            if state.mrunning == False:
-                self.ptimer = QTimer(self)
-                self.progressBar.setMaximum(100)
-                self.progressBar.show()
-                self.ptimer.timeout.connect(self.update_progress_bar_mulit)
-                self.value = 0
-                self.ptimer.start(5)
-                log_print("连抽：%d 人" % num)
-                name_set = random.sample(state.name_list, num)
-                log_print(name_set)
-                try:
-                    self.save_history(1, name_set)
-                except:
-                    log_print("无法写入历史记录")
-                log_print(state.today, "幸运儿是： %s " % name_set)
-                self.listWidget.addItem("----------------------------")
-                self.listWidget.addItem(_("连抽：%d 人") % num)
-                for state.name in name_set:
-                    self.listWidget.addItem(state.name)
-                self.listWidget.addItem("----------------------------")
-                target_line = num - 2 if num > 2 else num - 1
-                self.listWidget.setCurrentRow(
-                    self.listWidget.count() - target_line)
-                self.label_3.setText(state.title_text)
+            namelist = state.name_list
+
+        if num > len(namelist):
+            if num < len(state.name_list) and state.non_repetitive == 1:
+                state.non_repetitive_list = state.name_list.copy()
+                self.update_list(1, _("大于名单人数，不放回名单已重置"))
+                namelist = state.non_repetitive_list
+
             else:
-                log_print("连抽中...")
+                self.show_message(_("Error: 连抽人数大于名单人数!"), _("错误"))
+                self.spinBox.setValue(len(namelist))
+                return
+
+        if state.mrunning == False:
+            self.ptimer = QTimer(self)
+            self.progressBar.setMaximum(100)
+            self.progressBar.show()
+            self.ptimer.timeout.connect(self.update_progress_bar_mulit)
+            self.value = 0
+            self.ptimer.start(5)
+            log_print("连抽：%d 人" % num)
+            name_set = random.sample(namelist, num)
+            try:
+                self.save_history(1, name_set)
+            except:
+                log_print("无法写入历史记录")
+
+            self.listWidget.addItem("----------------------------")
+
+            leave_name_num = _("，剩余：%s") % (len(state.non_repetitive_list) - len(name_set)) if state.non_repetitive == 1 else ""
+            self.listWidget.addItem(_("连抽：%d 人%s") % (num, leave_name_num))
+
+            for state.name in name_set:
+                self.listWidget.addItem(state.name)
+                if state.non_repetitive == 1:
+                    try:
+                        state.non_repetitive_list.remove(state.name)
+                    except ValueError:
+                        log_print(f"无法从不重复列表中移除 {state.name}，可能已不存在于列表中。")
+
+            self.listWidget.addItem("----------------------------")
+            target_line = num - 2 if num > 2 else num - 1
+            self.listWidget.setCurrentRow(
+                self.listWidget.count() - target_line)
+            self.label_3.setText(state.title_text)
+            self.update_name_listwidget()
+        else:
+            log_print("连抽中...")
 
     def reset_repetive_list(self):
         log_print("已重置不重复列表")
