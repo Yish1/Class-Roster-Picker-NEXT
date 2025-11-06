@@ -362,7 +362,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             info = _("\'%s\'，共 %s 人") % (state.selected_file, state.namelen)
         else:
             text = _("剩余 %s 人") % len(state.non_repetitive_list) if state.non_repetitive == 1 else _("共 %s 人") % state.namelen
-            info = _("切换至>\'%s\' %s<") % (state.selected_file, text)
+            info = _("切换至>\'%s\' %s") % (state.selected_file, text)
 
         if state.non_repetitive == 1:
             info += _("(不放回)")
@@ -376,31 +376,42 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.update_name_listwidget()
 
     def update_name_listwidget(self):
-        '''更新名单列表Widget_2'''
-        if hasattr(self, "listWidget_2"):
-            self.listWidget_2.clear()
-            if state.non_repetitive == 1:
-                self.listWidget_2.addItem(_("剩余：%s 人") % len(state.non_repetitive_list))
-                text = state.non_repetitive_list if state.non_repetitive_list else [_("此名单已完成抽取")]
-                self.listWidget_2.addItems(text)
+        """更新名单列表 Widget_2"""
+
+        if not hasattr(self, "listWidget_2"):
+            return
+        self.listWidget_2.clear()
+
+        if state.non_repetitive == 1:
+            list_to_show = state.non_repetitive_list or state.name_list
+
+            if state.non_repetitive_list:
+                remaining = len(state.non_repetitive_list)
+                self.listWidget_2.addItem(_("剩余：%s 人") % remaining)
             else:
-                self.listWidget_2.addItems(state.name_list)
-            log_print("已更新名单列表窗口内容")
+                self.listWidget_2.addItem(_("此名单已完成抽取！"))
+            self.listWidget_2.addItems(list_to_show)
+        else:
+            self.listWidget_2.addItems(state.name_list)
 
     def get_saved_non_repetitive_list(self, selected_file, mode=None):
         """切换名单时保存或读取不重复名单列表"""
-        if state.non_repetitive_dict is not None:
-            if mode == "read": # 读取
-                if selected_file in state.non_repetitive_dict:
-                    return state.non_repetitive_dict[selected_file]
-                else:
-                    state.non_repetitive_dict[selected_file] = state.name_list.copy()
-                    return state.non_repetitive_dict[selected_file]
+        if state.non_repetitive_dict is None:
+            state.non_repetitive_dict = {}
 
-            elif mode == "save": # 保存
-                state.non_repetitive_dict[selected_file] = state.non_repetitive_list.copy()
-                log_print("不重复名单列表已保存" + str(state.non_repetitive_list))
-                return
+        if mode == "read":
+            # 如果没有记录，就初始化为当前 name_list 的副本
+            state.non_repetitive_dict.setdefault(selected_file, state.name_list.copy())
+
+            # 如果对应名单是空的，也填入 name_list 的副本
+            if not state.non_repetitive_dict[selected_file]:
+                state.non_repetitive_dict[selected_file] = state.name_list.copy()
+
+            return state.non_repetitive_dict[selected_file]
+
+        elif mode == "save":  # 保存
+            state.non_repetitive_dict[selected_file] = state.non_repetitive_list.copy()
+            log_print(f"不重复名单列表已保存 {state.non_repetitive_list}")
 
     def read_config(self):
         config = {}
@@ -645,6 +656,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         log_print("已重置不重复列表")
         self.update_list(1, _("已重置单抽列表(%s人)") % state.namelen)
         state.non_repetitive_list = state.name_list.copy()
+        self.update_name_listwidget()
 
     def update_progress_bar_mulit(self):
         state.mrunning = True
