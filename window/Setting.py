@@ -68,7 +68,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_14.clicked.connect(lambda: os.system(
             "start https://cmxz.top/ktdmq#toc-head-8"))
         self.pushButton_16.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path,'history'))))
-        self.pushButton_17.clicked.connect(lambda: self.delete_file((os.path.join(state.appdata_path,'history'))))
+        self.pushButton_17.clicked.connect(lambda: self.delete_file("history"))
         self.pushButton_18.clicked.connect(self.save_allconfig)
         self.pushButton_19.clicked.connect(self.load_backup)
         self.pushButton_20.clicked.connect(self.apply_backup)
@@ -224,38 +224,71 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.listWidget.addItems(txt_name)  # 添加新的文件名到下拉框
 
     def delete_file(self, mode=None):
+
         if mode == "history":
+            widget = self.listWidget_2
             target_folder = os.path.join(state.appdata_path, "history")
-            text1 = _("删除历史记录")
-            text2 = _("输入要删除的历史记录名称：(无需输入\"中奖记录\")")
+            title = _("删除历史记录")
         else:
+            widget = self.listWidget
             target_folder = os.path.join(state.appdata_path, "name")
-            text1 = _("删除名单")
-            text2 = _("输入要删除的名单名称：")
+            title = _("删除名单")
 
-        target_filename, ok_pressed = QInputDialog.getText(
-            self.window, text1, text2)
+        selected_items = widget.selectedItems()
+        if not selected_items:
+            QMessageBox.warning(self.window, _("提示"), _("请先选择一个要删除的项目！"))
+            return
 
-        target_filename += "中奖记录" if mode == "history" else ""
+        selected_name = selected_items[0].text()
+        text_confirm = _("确认要删除 \"%s\" 吗？") % selected_name
 
-        if ok_pressed and target_filename:
-            target_filepath = os.path.join(
-                target_folder, f"{target_filename}.txt")
-            try:
-                os.remove(target_filepath)  # 删除文件
-                message = (_("已成功删除文件： '%s.txt' ") % target_filename)
-                QMessageBox.information(
-                    self.window, _("删除成功"), message, QMessageBox.Ok)
+        msgBox = QMessageBox(self.window)
+        msgBox.setIcon(QMessageBox.Warning)
+        msgBox.setWindowTitle(title)
+        msgBox.setText(text_confirm)
+        msgBox.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
+
+        okBtn = msgBox.addButton(_("确定删除"), QMessageBox.AcceptRole)
+        msgBox.addButton(_("取消"), QMessageBox.RejectRole)
+        msgBox.exec_()
+
+        if msgBox.clickedButton() != okBtn:
+            return
+
+        target_file = os.path.join(target_folder, f"{selected_name}.txt")
+
+        try:
+            os.remove(target_file)
+
+            QMessageBox.information(
+                self.window,
+                _("删除成功"),
+                _("已成功删除：'%s.txt'") % selected_name,
+                QMessageBox.Ok
+            )
+
+            if mode == "history":     # 刷新历史列表
+                self.listWidget_2.clear()
+                self.find_history()
+            else:                     # 刷新名单列表
                 txt_name = self.refresh_name_list()
-                self.listWidget.clear()  # 清空下拉框的选项
-                self.listWidget.addItems(txt_name)  # 添加新的文件名到下拉框
-            except Exception as e:
-                QMessageBox.warning(
-                    self.window, _('错误'), _('Error: 目标文件不存在，或已被删除！\n%s') % e, QMessageBox.Ok)
+                self.listWidget.clear()
+                self.listWidget.addItems(txt_name)
 
-        if mode == "history":
-            self.listWidget_2.clear()
-            self.find_history()
+        except FileNotFoundError:
+            QMessageBox.warning(
+                self.window,
+                _("错误"),
+                _("目标文件不存在或已被删除！"),
+                QMessageBox.Ok
+            )
+        except Exception as e:
+            QMessageBox.critical(
+                self.window,
+                _("错误"),
+                _("删除时发生异常：\n%s") % e,
+                QMessageBox.Ok
+            )
 
     def save_name_list(self):
         current_name = self.textEdit.toPlainText()

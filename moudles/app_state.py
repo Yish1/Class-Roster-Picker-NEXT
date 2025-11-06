@@ -26,7 +26,7 @@ class AppState:
         self._initialized = True
         
         # ============ 应用版本 ============
-        self.dmversion = 6.66
+        self.dmversion = 6.62
         
         # ============ 配置变量 ============
         self.allownametts: Optional[int] = None   # 1关闭 2正常模式 3听写模式
