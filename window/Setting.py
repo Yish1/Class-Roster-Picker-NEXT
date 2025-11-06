@@ -403,7 +403,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         try:
             self.main_instance.mini(2)
             self.main_instance.read_name_list()
-            self.main_instance.get_selected_file(0)
+            self.main_instance.get_selected_file(2)
         except Exception as e:
             log_print(e)
         state.settings_flag = None

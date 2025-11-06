@@ -54,6 +54,7 @@ class AppState:
         self.history_file: str = ""
         self.file_path: str = ""
         self.non_repetitive_list: List[str] = []
+        self.non_repetitive_dict = {}
         self.namelen: int = 0
         self.newversion: Optional[float] = None
         self.origin_name_list: Optional[str] = None
@@ -93,6 +94,7 @@ class AppState:
         self.name_list = []
         self.history_file = ""
         self.non_repetitive_list = []
+        self.non_repetitive_dict = {}
         self.namelen = 0
         self.origin_name_list = None
         self.today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

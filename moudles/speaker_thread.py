@@ -75,6 +75,8 @@ class SpeakerThread(QRunnable):
                         except:
                             pass
 
+                    log_print("语音content：", self.content)
+
                 else:
                     pass
             except Exception as e:

@@ -42,9 +42,10 @@ class MusicPlayer:
             "ltinat": "Late in autumn",
             "qby": "千本桜",
             "xxlg": "小小恋歌",
-            "ydh": "运动员进行曲",
             "level5": "LEVEL5 -Judgelight-",
             "zyzy": "自言自语(ヒトリゴト)-ClariS",
+            "olk": "One Less Kiss",
+            "yzk": "比翼の羽根"
         }
 
     def play_default(self, signals=None):
@@ -54,7 +55,7 @@ class MusicPlayer:
                 mid_file = ['hyl.mid']
             else:
                 mid_file = ['olg.mid', 'qqss.mid', 'april.mid', 'hyl.mid', 'hzt.mid',
-                            'lemon.mid', 'ltinat.mid', 'qby.mid', 'xxlg.mid', 'ydh.mid', 'level5.mid', 'zyzy.mid']
+                            'lemon.mid', 'ltinat.mid', 'qby.mid', 'xxlg.mid', 'olk.mid', 'level5.mid', 'zyzy.mid', 'yzk.mid']
             mid_load = random.choice(mid_file)
             state.file_path = f":/mid/{mid_load}"
             file = QFile(state.file_path)

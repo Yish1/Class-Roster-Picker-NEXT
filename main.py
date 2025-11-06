@@ -4,6 +4,7 @@ import random
 import os
 import ctypes
 import msvcrt
+import traceback
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence, QFontDatabase, QFont
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile, QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
@@ -333,6 +334,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 pass
 
     def get_selected_file(self, first=None):
+        # 先检查有无切换前的文件(保存不重复名单列表)
+        if state.selected_file is not None and state.non_repetitive == 1 and first != 2:
+            self.get_saved_non_repetitive_list(state.selected_file, mode = "save")
+
         # 获取当前选中的文件名
         state.selected_file = self.comboBox.currentText()
         self.update_config("last_name_list", state.selected_file)
@@ -349,11 +354,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
         self.process_name_file(state.file_path)
 
+        if state.non_repetitive == 1: 
+            state.non_repetitive_list = self.get_saved_non_repetitive_list(state.selected_file, "read")
+
         # first: 1 首次加载，0 切换
         if first == 1:
             info = _("\'%s\'，共 %s 人") % (state.selected_file, state.namelen)
         else:
-            info = _("切换至>\'%s\' 共 %s 人") % (state.selected_file, state.namelen)
+            text = _("剩余 %s 人") % len(state.non_repetitive_list) if state.non_repetitive == 1 else _("共 %s 人") % state.namelen
+            info = _("切换至>\'%s\' %s<") % (state.selected_file, text)
 
         if state.non_repetitive == 1:
             info += _("(不放回)")
@@ -367,6 +376,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.update_name_listwidget()
 
     def update_name_listwidget(self):
+        '''更新名单列表Widget_2'''
         if hasattr(self, "listWidget_2"):
             self.listWidget_2.clear()
             if state.non_repetitive == 1:
@@ -376,6 +386,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             else:
                 self.listWidget_2.addItems(state.name_list)
             log_print("已更新名单列表窗口内容")
+
+    def get_saved_non_repetitive_list(self, selected_file, mode=None):
+        """切换名单时保存或读取不重复名单列表"""
+        if state.non_repetitive_dict is not None:
+            if mode == "read": # 读取
+                if selected_file in state.non_repetitive_dict:
+                    return state.non_repetitive_dict[selected_file]
+                else:
+                    state.non_repetitive_dict[selected_file] = state.name_list.copy()
+                    return state.non_repetitive_dict[selected_file]
+
+            elif mode == "save": # 保存
+                state.non_repetitive_dict[selected_file] = state.non_repetitive_list.copy()
+                log_print("不重复名单列表已保存" + str(state.non_repetitive_list))
+                return
 
     def read_config(self):
         config = {}
@@ -460,8 +485,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         state.namelen = len(state.name_list)
         self.spinBox.setMaximum(state.namelen)
         log_print("读取到的有效名单长度:", state.namelen)
-        if state.non_repetitive == 1:
-            state.non_repetitive_list = state.name_list.copy()
+        # if state.non_repetitive == 1:
+        #     state.non_repetitive_list = state.name_list.copy()
 
     def ttsinitialize(self):
         if state.allownametts == 2:
@@ -1057,7 +1082,14 @@ if __name__ == "__main__":
         mainWindow = MainWindow()
         mainWindow.show()
         sys.exit(app.exec_())
-    except Exception as e:
+
+    except Exception:
+        error_detail = traceback.format_exc()
         user32 = ctypes.windll.user32
-        user32.MessageBoxW(None, f"程序启动时遇到严重错误:{e}", "Warning!", 0x30)
+        user32.MessageBoxW(
+            None,
+            f"程序启动时遇到严重错误:\n\n{error_detail}",
+            "Warning!",
+            0x30   # MB_ICONWARNING
+        )
         sys.exit()
