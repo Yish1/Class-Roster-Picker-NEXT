@@ -6,10 +6,10 @@ import pythoncom
 import win32com.client
 from PyQt5.QtCore import QRunnable
 
-from moudles import app_state
-from moudles.i18n import _
-from moudles.WorkSignals import WorkerSignals
-from moudles.logger_util import log_print
+from modules import app_state
+from modules.i18n import _
+from modules.WorkSignals import WorkerSignals
+from modules.logger_util import log_print
 
 # 便捷引用全局状态
 state = app_state

@@ -13,6 +13,8 @@
     <file>font.ttf</file>
   </qresource>
   <qresource prefix="mid">
+    <file>evaop.mid</file>
+    <file>gyz.mid</file>
     <file>zyzy.mid</file>
     <file>april.mid</file>
     <file>hyl.mid</file>

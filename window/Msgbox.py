@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtCore, QtGui
 from Ui import Ui_msgbox
-from moudles.i18n import _
+from modules.i18n import _
 
 class msgbox(QtWidgets.QDialog, Ui_msgbox):  # 保存弹窗
     def __init__(self, text):

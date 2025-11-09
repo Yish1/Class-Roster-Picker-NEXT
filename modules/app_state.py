@@ -77,7 +77,7 @@ class AppState:
             pygame.mixer.init()
         except Exception as e:
             try:
-                from moudles.logger_util import log_print as _log
+                from modules.logger_util import log_print as _log
                 _log(f"pygame mixer 初始化失败: {e}")
             except Exception:
                 try:

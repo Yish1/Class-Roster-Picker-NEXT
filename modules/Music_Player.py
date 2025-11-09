@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QFile
-from moudles.app_state import app_state
-from moudles.logger_util import log_print
-from moudles.i18n import _
+from modules.app_state import app_state
+from modules.logger_util import log_print
+from modules.i18n import _
 
 import os
 import random
@@ -45,7 +45,9 @@ class MusicPlayer:
             "level5": "LEVEL5 -Judgelight-",
             "zyzy": "自言自语(ヒトリゴト)-ClariS",
             "olk": "One Less Kiss",
-            "yzk": "比翼の羽根"
+            "yzk": "比翼の羽根",
+            "gyz": "孤勇者",
+            "evaop": "残酷な天使のテーゼ",
         }
 
     def play_default(self, signals=None):
@@ -55,15 +57,18 @@ class MusicPlayer:
                 mid_file = ['hyl.mid']
             else:
                 mid_file = ['olg.mid', 'qqss.mid', 'april.mid', 'hyl.mid', 'hzt.mid',
-                            'lemon.mid', 'ltinat.mid', 'qby.mid', 'xxlg.mid', 'olk.mid', 'level5.mid', 'zyzy.mid', 'yzk.mid']
+                            'lemon.mid', 'ltinat.mid', 'qby.mid', 'xxlg.mid', 'olk.mid', 'level5.mid', 'zyzy.mid', 'yzk.mid', 'gyz.mid', 'evaop.mid']
             mid_load = random.choice(mid_file)
             state.file_path = f":/mid/{mid_load}"
             file = QFile(state.file_path)
             file.open(QFile.ReadOnly)
+            data = file.readAll() 
+
             tmp_file = os.path.join(state.appdata_path, 'tmp.cmxz')
             ctypes.windll.kernel32.SetFileAttributesW(tmp_file, 0x80)
             with open(tmp_file, "wb") as f:
-                f.write(file.readAll())
+                f.write(data)
+
             ctypes.windll.kernel32.SetFileAttributesW(tmp_file, 2)
             state.default_music = True
 

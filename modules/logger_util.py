@@ -35,7 +35,7 @@ def log_print(*args: Any, log_path: str = None) -> None:
             base_dir = '.'
             try:
                 # Lazy import to avoid circular dependency at import-time
-                from moudles.app_state import app_state as _app_state  # type: ignore
+                from modules.app_state import app_state as _app_state  # type: ignore
                 base_dir = _app_state.appdata_path or '.'
             except Exception:
                 base_dir = '.'

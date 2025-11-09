@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QRunnable
 from PyQt5.QtGui import QCursor, QFontMetrics
 from Ui.SmallWindow import Ui_smallwindow
-from moudles import *
+from modules import *
 
 import random, pygame, os
 

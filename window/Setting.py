@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QWidget, QInputDialog, QMessageBox, QFileDialog, QLi
 from window.Msgbox import msgbox
 from Ui import Ui_Settings
 
-from moudles import *
+from modules import *
 
 import os, difflib, tarfile
 from datetime import datetime

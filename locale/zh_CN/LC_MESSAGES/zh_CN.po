@@ -28,11 +28,11 @@ msgstr ""
 msgid "沉梦课堂点名器 %s"
 msgstr ""
 
-#: main.py:145 moudles/StartRoll_Thread.py:62
+#: main.py:145 modules/StartRoll_Thread.py:62
 msgid " 开始"
 msgstr ""
 
-#: main.py:146 moudles/StartRoll_Thread.py:35
+#: main.py:146 modules/StartRoll_Thread.py:35
 msgid " 小窗模式"
 msgstr ""
 
@@ -183,82 +183,82 @@ msgstr ""
 msgid "配置迁移失败"
 msgstr ""
 
-#: moudles/Check_Update.py:39
+#: modules/Check_Update.py:39
 msgid "检测到新版本！"
 msgstr ""
 
-#: moudles/Check_Update.py:46
+#: modules/Check_Update.py:46
 #, python-format
 msgid ""
 "云端最新版本为%s，要现在下载新版本吗？<br>您也可以稍后访问沉梦小站官网"
 "获取最新版本。<br><br>%s"
 msgstr ""
 
-#: moudles/Check_Update.py:57
+#: modules/Check_Update.py:57
 msgid "网络连接异常，检查更新失败"
 msgstr ""
 
-#: moudles/Music_Player.py:94
+#: modules/Music_Player.py:94
 msgid " 加载音乐.."
 msgstr ""
 
-#: moudles/Music_Player.py:97
+#: modules/Music_Player.py:97
 #, python-format
 msgid "正在播放:%s"
 msgstr ""
 
-#: moudles/Music_Player.py:109
+#: modules/Music_Player.py:109
 msgid " 加载音乐..."
 msgstr ""
 
-#: moudles/StartRoll_Thread.py:39
+#: modules/StartRoll_Thread.py:39
 msgid "无法写入历史记录"
 msgstr ""
 
-#: moudles/StartRoll_Thread.py:51
+#: modules/StartRoll_Thread.py:51
 msgid "最终的幸运儿即将出现："
 msgstr ""
 
-#: moudles/StartRoll_Thread.py:54
+#: modules/StartRoll_Thread.py:54
 msgid "点击开始重置名单,或切换名单继续点名"
 msgstr ""
 
-#: moudles/StartRoll_Thread.py:55
+#: modules/StartRoll_Thread.py:55
 msgid "此名单已完成抽取！"
 msgstr ""
 
-#: moudles/StartRoll_Thread.py:69
+#: modules/StartRoll_Thread.py:69
 msgid " 请稍后..."
 msgstr ""
 
-#: moudles/StartRoll_Thread.py:116
+#: modules/StartRoll_Thread.py:116
 msgid " 加载音乐."
 msgstr ""
 
-#: moudles/StartRoll_Thread.py:128
+#: modules/StartRoll_Thread.py:128
 #, python-format
 msgid "正在播放(默认音频):%s"
 msgstr ""
 
-#: moudles/StartRoll_Thread.py:130
+#: modules/StartRoll_Thread.py:130
 msgid "播放默认音频失败！"
 msgstr ""
 
-#: moudles/StartRoll_Thread.py:134 moudles/StartRoll_Thread.py:139
-#: moudles/StartRoll_Thread.py:142
+#: modules/StartRoll_Thread.py:134 modules/StartRoll_Thread.py:139
+#: modules/StartRoll_Thread.py:142
 msgid " 结束"
 msgstr ""
 
-#: moudles/StartRoll_Thread.py:137
+#: modules/StartRoll_Thread.py:137
 #, python-format
 msgid "无法播放：%s"
 msgstr ""
 
-#: moudles/StartRoll_Thread.py:147
+#: modules/StartRoll_Thread.py:147
 msgid " 重置名单"
 msgstr ""
 
-#: moudles/speaker_thread.py:64
+#: modules/speaker_thread.py:64
 #, python-format
 msgid "恭喜 %s"
 msgstr ""

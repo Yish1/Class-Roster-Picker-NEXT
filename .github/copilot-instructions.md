@@ -12,8 +12,8 @@
     - 这些 `.ui` 文件通过 `pyuic5` 编译成相应的 Python 文件 (例如 `ui.py`, `settings.py`)。
     - 资源文件 (如图片、字体) 在 `res/` 目录下，并通过 `pyrcc5` 从 `res/ui1.qrc` 编译到 `ui1_rc.py` 中。
 - **模块化**:
-    - `moudles/config_manager.py`: 负责读写 `config.ini` 配置文件。
-    - `moudles/i18n.py`: 使用 `gettext` 实现国际化 (i18n)，支持运行时语言切换。
+    - `modules/config_manager.py`: 负责读写 `config.ini` 配置文件。
+    - `modules/i18n.py`: 使用 `gettext` 实现国际化 (i18n)，支持运行时语言切换。
     - `main.py`, `settings.py`, `smallwindow.py`: 分别管理主窗口、设置窗口和小窗口的逻辑。
 - **数据流**:
     - **名单**: 存储在 `name/` 目录下的 `.txt` 文件中，每行一个名字。
@@ -43,7 +43,7 @@
      pyrcc5 res/ui1.qrc -o ui1_rc.py
      ```
 - **国际化 (i18n)**:
-  1. 在代码中使用 `_("text to translate")` 来标记需要翻译的字符串。`_` 函数由 `moudles.i18n` 提供。
+  1. 在代码中使用 `_("text to translate")` 来标记需要翻译的字符串。`_` 函数由 `modules.i18n` 提供。
   2. 使用 `pygettext.py` 提取字符串到 `.pot` 文件。
   3. 使用 Poedit 或类似工具从 `.pot` 文件创建和编辑 `.po` 翻译文件。
   4. 将 `.po` 文件编译成 `.mo` 文件，并放置在 `locale/<lang>/LC_MESSAGES/` 目录下。
@@ -55,7 +55,7 @@
 
 ## 代码约定和模式
 
-- **配置管理**: 通过 `moudles.config_manager` 中的 `read_config_file` 和 `update_entry` 函数来操作 `config.ini`。
+- **配置管理**: 通过 `modules.config_manager` 中的 `read_config_file` 和 `update_entry` 函数来操作 `config.ini`。
 - **多线程**: 使用 `QThreadPool` 和 `QRunnable` 来处理耗时任务（如网络请求、音乐播放），避免 UI 冻结。
 - **窗口管理**: 使用全局标志 (如 `settings_flag`) 来跟踪子窗口的实例，防止重复创建。
 - **样式**: 主要通过 `setStyleSheet` 在 Python 代码中直接设置 PyQt 控件的样式。

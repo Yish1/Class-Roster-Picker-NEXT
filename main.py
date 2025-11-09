@@ -11,7 +11,7 @@ from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile, QThreadPool, pyqtS
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QScroller, QShortcut, QSizePolicy
 
 from Ui import * 
-from moudles import *
+from modules import *
 from window import *
 
 from window.Setting import SettingsWindow

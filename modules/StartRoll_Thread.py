@@ -1,9 +1,9 @@
 from PyQt5.QtCore import QRunnable
-from moudles.app_state import app_state
-from moudles.WorkSignals import WorkerSignals
-from moudles.i18n import _
-from moudles.logger_util import log_print
-from moudles.Music_Player import MusicPlayer
+from modules.app_state import app_state
+from modules.WorkSignals import WorkerSignals
+from modules.i18n import _
+from modules.logger_util import log_print
+from modules.Music_Player import MusicPlayer
 
 import random
 import time
