@@ -92,7 +92,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.pushButton_4.clicked.connect(self.run_settings)
         self.pushButton_5.clicked.connect(self.small_mode)
         self.pushButton.clicked.connect(lambda: self.mini(1))
-        self.commandLinkButton.clicked.connect(self.restoresize)
+        self.commandLinkButton.clicked.connect(lambda: self.restoresize("init"))
 
         # 启用触摸手势滚动
         for lw in (self.listWidget, self.listWidget_2):
@@ -106,6 +106,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.check_new_version()
         self.change_space(1)
         self.init_font()
+        self.restoresize()
 
         self.small_Window = smallWindow(self)
 
@@ -215,6 +216,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             state.windows_move_flag = True
         else:
             state.windows_move_flag = False
+        
+        # 保存窗口尺寸
+        state.saved_size = f"{self.width()},{self.height()}"
+        self.update_config("saved_size", state.saved_size, "w")
 
     def set_bgimg(self):
         self.label_6.setText("")
@@ -278,8 +283,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.showNormal()
     # 功能实现代码
 
-    def restoresize(self):
-        self.resize(905, 495)
+    def restoresize(self, mode = None):
+        x, y = state.saved_size.split(",") if state.saved_size else (905, 495)
+        if mode == "init":
+            x, y = 905, 495
+        self.resize(int(x), int(y))
         screen_geometry = QApplication.primaryScreen().availableGeometry()
         x = (screen_geometry.width() - self.width()) // 2
         y = (screen_geometry.height() - self.height()) // 2
@@ -450,6 +458,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 'theme_id') else self.update_config("theme_id", 1, "w!")
             state.small_window_transparent = int(config.get('small_window_transparent')) if config.get(
                 'small_window_transparent') else self.update_config("small_window_transparent", 80, "w!")
+            state.saved_size = config.get('saved_size') if config.get(
+                'saved_size') else self.update_config("saved_size", "905,405", "w!")
 
         except Exception as e:
             log_print(f"配置文件读取失败，已重置无效为默认值！{e}")
