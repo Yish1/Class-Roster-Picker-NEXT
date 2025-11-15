@@ -263,9 +263,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
     def run_settings(self, target_tab = None):
         if state.settings_flag is None:
-            settings_window = SettingsWindow(self, target_tab, self.small_Window)
-            state.settings_flag = settings_window.run_settings_window()
-
+            self.settings_window = SettingsWindow(self, target_tab, self.small_Window)
+            state.settings_flag = self.settings_window.run_settings_window()
+        
+        else:
+            if hasattr(self, "settings_window"):
+                self.settings_window.activateWindow()
+                
     def closeEvent(self, event):
         # 关闭其他窗口的代码
         try:

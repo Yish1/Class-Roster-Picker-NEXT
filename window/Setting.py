@@ -917,6 +917,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
     def apply_smwindow_transparency(self):
         value = self.horizontalSlider_2.value()
         self.label_18.setText(f"{value}%%")
+        self.small_window.stop_auto_hide()
         self.small_window.apply_transparency(value)
         self.process_config("small_window_transparent", value)
 

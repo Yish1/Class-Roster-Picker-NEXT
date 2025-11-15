@@ -1,6 +1,5 @@
 <RCC>
   <qresource prefix="icons">
-    <file>color_pick.webp</file>
     <file>welcome.png</file>
     <file>setting.png</file>
     <file>exit.png</file>
