@@ -218,7 +218,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
     # 自动隐藏计时控制
     def start_auto_hide(self):
         try:
-            self.auto_hide_timer.start(30 * 1000)  # 30秒
+            self.auto_hide_timer.start(60 * 1000)  # 60秒
         except Exception:
             pass
 
