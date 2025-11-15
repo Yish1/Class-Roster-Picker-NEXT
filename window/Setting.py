@@ -14,18 +14,19 @@ from datetime import datetime
 state = app_state
 
 class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
-    def __init__(self, main_instance, target_tab = None):
+    def __init__(self, main_instance, target_tab = None, small_window = None):
         super().__init__()
         central_widget = QtWidgets.QWidget(self)  # 创建一个中央小部件
         self.setCentralWidget(central_widget)  # 设置中央小部件为QMainWindow的中心区域
         self.setupUi(central_widget)  # 初始化UI到中央小部件上
-        self.setMinimumSize(680, 560)
-        self.resize(680, 560)
+        self.setMinimumSize(690, 600)
+        self.resize(690, 600)
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
         self.setWindowFlags(self.windowFlags() & ~
                             QtCore.Qt.WindowMinimizeButtonHint)  # 禁止最小化
 
         self.main_instance = main_instance
+        self.small_window = small_window
         self.read_name_list()
         self.read_config()
         self.find_language()
@@ -39,6 +40,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.enable_bgimg = None
         self.language_value = None
         self.disable_repetitive = None
+        self.small_transparency = None # 小窗口透明度
         self.enable_bgmusic = None
         self.inertia_roll = None
         self.file_path_bak = None # 文件路径备份
@@ -78,6 +80,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             lambda: self.find_history(1))
         self.tabWidget.currentChanged.connect(self.tab_changed)
         self.horizontalSlider.valueChanged.connect(self.slider_value_changed)
+        self.horizontalSlider_2.valueChanged.connect(self.apply_smwindow_transparency)
 
         self.checkBox.toggled.connect(
             lambda checked: self.process_config("disable_repetitive", checked))
@@ -108,7 +111,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_17.setEnabled(False)
         self.pushButton_5.setEnabled(False)
         self.pushButton_20.hide()
-        self.label_9.hide()
+        self.label_9.setText("")
 
         if target_tab and "&" in target_tab:
             try:
@@ -126,7 +129,6 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 pass
 
     def slider_value_changed(self, mode=None):
-        self.label_9.show()
         self.label_9.setText(_("可以开始点名后调整滑块预览速度"))
         if mode == "init":
             self.horizontalSlider.setValue(state.roll_speed)
@@ -140,7 +142,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.main_instance.dynamic_speed_preview(current_range)
 
     def tab_changed(self, index):
-        if index != 0:
+        if index != 0 and index != 3:
             self.frame.hide()
             if index == 1:
                 self.file_path = self.file_path_bak
@@ -437,6 +439,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.main_instance.mini(2)
             self.main_instance.read_name_list()
             self.main_instance.get_selected_file(2)
+            self.small_window.apply_transparency()
         except Exception as e:
             log_print(e)
         state.settings_flag = None
@@ -557,6 +560,10 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         if state.title_text:
             self.lineEdit.setText(state.title_text)
 
+        if state.small_window_transparent:
+            self.label_18.setText("%s%%" % state.small_window_transparent)
+            self.horizontalSlider_2.setValue(state.small_window_transparent)
+
     def open_fold(self, value):
         os.makedirs(value, exist_ok=True)
         self.main_instance.opentext(value)
@@ -663,6 +670,9 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         elif key == "roll_speed":
             self.roll_speed = checked
 
+        elif key == "small_window_transparent":
+            self.small_transparency = checked
+
     def save_settings(self):
         if self.enable_tts == 1:
             self.main_instance.update_config("allownametts", 2)
@@ -706,6 +716,9 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
         if self.roll_speed:
             self.main_instance.update_config("roll_speed", self.roll_speed)
+
+        if self.small_transparency:
+            self.main_instance.update_config("small_window_transparent", self.small_transparency)
 
         self.close()
 
@@ -900,3 +913,10 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
         except Exception as e:
             QMessageBox.critical(None, _("错误"), _("应用备份失败：\n%s") % e)
+    
+    def apply_smwindow_transparency(self):
+        value = self.horizontalSlider_2.value()
+        self.label_18.setText(f"{value}%%")
+        self.small_window.apply_transparency(value)
+        self.process_config("small_window_transparent", value)
+

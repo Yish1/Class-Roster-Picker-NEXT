@@ -13,7 +13,9 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         super().__init__()
         self.setupUi(self)  # 初始化UI
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
+        self.main_instance = main_instance
 
+    def run_small_window(self):
         self.setMinimumSize(QtCore.QSize(322, 191))
         # 设置半透明背景
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -43,7 +45,6 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.timer = None
         self.runflag = None
         self.minimum_flag = False
-        self.main_instance = main_instance
         self.signals = WorkerSignals()
         self.music = MusicPlayer()
 
@@ -52,6 +53,10 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.auto_hide_timer.setSingleShot(True)
         self.auto_hide_timer.timeout.connect(self.minimummode)
         self.start_auto_hide()
+        self.apply_transparency()
+
+        self.show()
+        return self
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -202,10 +207,6 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
     def close_window(self):
         self.close()
 
-    def run_small_window(self):
-        self.show()
-        return self
-
     def minimummode(self):
         self.frame.hide()
         self.label.hide()
@@ -296,6 +297,19 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         except Exception as e:
             print(f"小窗：停止流程出错:{e}")
 
+    def apply_transparency(self, value=None):
+        """应用小窗口透明度设置"""
+        if state.small_window_transparent is not None:
+            
+            if value is not None:
+                transparency_value = value / 100
+            else:
+                transparency_value = state.small_window_transparent / 100
+
+            self.label.setStyleSheet("QWidget {\n"
+                "background-color: rgba(194, 194, 194, %s);\n"
+                "border-radius: 28px;\n"
+                "}" % transparency_value)
 
 class Play_Music_Thread(QRunnable):
     def __init__(self, mode=None):

@@ -42,6 +42,8 @@ class AppState:
         self.title_text: Optional[str] = None     # 标题文字: 幸运儿是:
         self.language_value: Optional[str] = None
         self.need_move_config: Optional[str] = None # 是否需要移动配置文件
+        self.small_window_transparent: Optional[int] = None  # 小窗口透明度 1-100
+        self.theme_id: Optional[int] = None       # 主题ID
         
         # ============ 运行时变量 ============
         self.appdata_path: Optional[str] = None   # AppData 路径

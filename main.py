@@ -107,6 +107,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.change_space(1)
         self.init_font()
 
+        self.small_Window = smallWindow(self)
+
         if state.need_move_config == 1:
             self.if_need_move_config()
 
@@ -252,15 +254,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         # 保留对子窗口实例的引用
         if state.small_window_flag is None:
             self.showMinimized()
-            small_Window = smallWindow(self)
-            state.small_window_flag = small_Window.run_small_window()
+            state.small_window_flag = self.small_Window.run_small_window()
 
     def run_settings(self, target_tab = None):
         if state.settings_flag is None:
-            if target_tab:
-                settings_window = SettingsWindow(self, target_tab)
-            else:
-                settings_window = SettingsWindow(self)
+            settings_window = SettingsWindow(self, target_tab, self.small_Window)
             state.settings_flag = settings_window.run_settings_window()
 
     def closeEvent(self, event):
@@ -448,6 +446,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 'title_text') else _("幸运儿是:")
             state.need_move_config = int(config.get('need_move_config')) if config.get(
                 'need_move_config') else self.update_config("need_move_config", 1, "w!")
+            state.theme_id = int(config.get('theme_id')) if config.get(
+                'theme_id') else self.update_config("theme_id", 1, "w!")
+            state.small_window_transparent = int(config.get('small_window_transparent')) if config.get(
+                'small_window_transparent') else self.update_config("small_window_transparent", 80, "w!")
 
         except Exception as e:
             log_print(f"配置文件读取失败，已重置无效为默认值！{e}")
