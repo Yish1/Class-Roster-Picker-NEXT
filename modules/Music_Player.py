@@ -59,8 +59,8 @@ class MusicPlayer:
                 mid_file = ['olg.mid', 'qqss.mid', 'april.mid', 'hyl.mid', 'hzt.mid',
                             'lemon.mid', 'ltinat.mid', 'qby.mid', 'xxlg.mid', 'olk.mid', 'level5.mid', 'zyzy.mid', 'yzk.mid', 'gyz.mid', 'evaop.mid']
             mid_load = random.choice(mid_file)
-            state.file_path = f":/mid/{mid_load}"
-            file = QFile(state.file_path)
+            state.music_path = f":/mid/{mid_load}"
+            file = QFile(state.music_path)
             file.open(QFile.ReadOnly)
             data = file.readAll() 
 
@@ -89,10 +89,10 @@ class MusicPlayer:
         """从目录中随机选择音频播放，返回展示名称"""
         file_list = os.listdir(folder_path)
         random_file = random.choice(file_list)
-        state.file_path = os.path.join(folder_path, random_file)
-        pygame.mixer.music.load(state.file_path)
-        log_print("播放音乐：%s" % state.file_path)
-        sound = pygame.mixer.Sound(state.file_path)
+        state.music_path = os.path.join(folder_path, random_file)
+        pygame.mixer.music.load(state.music_path)
+        log_print("播放音乐：%s" % state.music_path)
+        sound = pygame.mixer.Sound(state.music_path)
         music_length = sound.get_length()
         random_play = round(random.uniform(2, 5), 1)
         start_time = round(music_length / random_play, 1)

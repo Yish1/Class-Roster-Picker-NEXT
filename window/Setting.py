@@ -74,9 +74,10 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_18.clicked.connect(self.save_allconfig)
         self.pushButton_19.clicked.connect(self.load_backup)
         self.pushButton_20.clicked.connect(self.apply_backup)
+        self.pushButton_22.clicked.connect(lambda: self.add_new_list("temp"))
         self.pushButton_24.clicked.connect(lambda: self.update_bind_picture("bind"))
         self.pushButton_25.clicked.connect(lambda: self.update_bind_picture("unbind"))
-
+        
         self.listWidget.itemSelectionChanged.connect(self.read_name_inlist)
         self.listWidget_2.itemSelectionChanged.connect(
             lambda: self.find_history(1))
@@ -214,26 +215,42 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         finally:
             return file_content
 
-    def add_new_list(self):
-        newfilename, ok_pressed = QInputDialog.getText(
-            self.window, _("新增名单"), _("请输入名单名称:"))
-        if ok_pressed and newfilename:
-            newnamepath = os.path.join(
-                state.appdata_path, "name", f"{newfilename}.txt")  # 打开文件并写入内容
-            if not os.path.exists(newnamepath):
-                log_print("新增名单名称是: %s" % newfilename)
-                with open(newnamepath, "w", encoding="utf8") as file:
-                    file.write("")
-                message = (_("已创建名为 '%s.txt' 的文件，路径为: %s\n\n请在稍后打开的文本中输入名单内容，一行一个名字，不要出现空格！") %
-                           (newfilename, newnamepath))
-                QMessageBox.information(
-                    self.window, _("新建成功"), message, QMessageBox.Ok)
-            else:
-                self.main_instance.show_message(
-                    _("Error: 同名文件已存在，请勿重复创建！"), _("错误"))
-            txt_name = self.refresh_name_list()
-            self.listWidget.clear()  # 清空下拉框的选项
-            self.listWidget.addItems(txt_name)  # 添加新的文件名到下拉框
+    def add_new_list(self, mode=None):
+        # 输入提示
+        text = (_("请输入临时名单名称: \nTips: 临时名单在不放回模式下点到的名字会自动从名单中删除！")
+                if mode == "temp" else _("请输入名单名称:"))
+
+        name, ok = QInputDialog.getText(self.window, _("新增名单"), text)
+        if not (ok and name):
+            return
+
+        # 临时名单后缀
+        if mode == "temp":
+            name += "_temp"
+
+        path = os.path.join(state.appdata_path, "name", f"{name}.txt")
+
+        # 已存在
+        if os.path.exists(path):
+            self.main_instance.show_message(_("Error: 同名文件已存在，请勿重复创建！"), _("错误"))
+            return
+
+        # 创建空文件
+        log_print(f"新增名单名称是: {name}")
+        open(path, "w", encoding="utf8").close()
+
+        # 成功提示
+        QMessageBox.information(
+            self.window, _("新建成功"),
+            _("已创建 '%s.txt'\n路径: %s\n\n请在稍后打开的文本中输入名单内容，一行一个名字，不要出现空格！")
+            % (name, path),
+            QMessageBox.Ok
+        )
+
+        # 刷新列表
+        names = self.refresh_name_list()
+        self.listWidget.clear()
+        self.listWidget.addItems(names)
 
     def delete_file(self, mode=None):
 

@@ -57,6 +57,7 @@ class AppState:
         self.name_list: List[str] = []
         self.history_file: str = ""
         self.file_path: str = ""
+        self.music_path: str = ""
         self.non_repetitive_list: List[str] = []
         self.non_repetitive_dict = {}
         self.namelen: int = 0

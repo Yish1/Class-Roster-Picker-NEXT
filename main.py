@@ -540,6 +540,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         #     state.non_repetitive_list = state.name_list.copy()
 
     def ttsinitialize(self):
+        """语音初始化"""
         if state.allownametts == 2:
             log_print("语音播报(正常模式)")
         elif state.allownametts == 3:
@@ -603,7 +604,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.thread.signals.change_speed.connect(
                 self.dynamic_speed_preview)
             self.thread.signals.finished.connect(
-                lambda: log_print("结束点名") or self.ttsinitialize() or self.update_name_listwidget())
+                lambda: log_print("结束点名") or self.ttsinitialize() or self.update_name_listwidget() or self.del_temp_list())
 
             state.threadpool.start(self.thread)
 
@@ -693,6 +694,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             log_print("连抽中...")
 
     def reset_repetive_list(self):
+        self.process_name_file(state.file_path)
         log_print("已重置不重复列表")
         self.update_list(1, _("已重置单抽列表(%s人)") % state.namelen)
         state.non_repetitive_list = state.name_list.copy()
@@ -919,6 +921,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.label_3.setFont(self.font_m)
         if state.non_repetitive == 1:
             if len(state.non_repetitive_list) == 0:
+                self.process_name_file(state.file_path)
                 state.non_repetitive_list = state.name_list.copy()
         if state.namelen == 0:
             self.show_message(_("Error: 名单文件为空，请输入名字（一行一个）后再重新点名！"), _("错误"))
@@ -1059,6 +1062,36 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         except Exception as e:
             log_print(f"if_need_move_config error: {e}")
             self.show_message(_("检测到旧版配置文件，但自动迁移失败\n需要您手动迁移文件，或重新配置名单等"), _("配置迁移失败"))
+
+    def del_temp_list(self):
+        """从临时名单文件中删除名字"""
+
+        # 仅对 *_temp 名单生效
+        if "_temp" not in state.selected_file:
+            return
+
+        temp_list_path = os.path.join(state.appdata_path, "name", state.selected_file + ".txt")
+
+        # 要删除的名字
+        target = state.name.strip()
+
+        # 文件不存在就直接返回
+        if not os.path.exists(temp_list_path):
+            return
+
+        # 读取
+        with open(temp_list_path, "r", encoding="utf8") as f:
+            lines = f.readlines()
+
+        # 删除匹配行
+        new_lines = [line for line in lines if line.strip() != target]
+
+        # 写回
+        if new_lines != lines:
+            with open(temp_list_path, "w", encoding="utf8") as f:
+                f.writelines(new_lines)
+
+            log_print(f"已从{state.selected_file}中删除名字：{target}")
 
 if __name__ == "__main__":
     try:

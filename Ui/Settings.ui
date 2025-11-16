@@ -736,8 +736,30 @@ QPushButton{
                  <property name="topMargin">
                   <number>11</number>
                  </property>
-                 <item row="0" column="0">
-                  <widget class="QListWidget" name="listWidget"/>
+                 <item row="3" column="0">
+                  <widget class="QPushButton" name="pushButton_4">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>删除名单</string>
+                   </property>
+                  </widget>
                  </item>
                  <item row="1" column="0">
                   <widget class="QPushButton" name="pushButton_3">
@@ -764,32 +786,10 @@ QPushButton{
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="0">
-                  <widget class="QPushButton" name="pushButton_4">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>35</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string>删除名单</string>
-                   </property>
-                  </widget>
+                 <item row="0" column="0">
+                  <widget class="QListWidget" name="listWidget"/>
                  </item>
-                 <item row="3" column="0">
+                 <item row="4" column="0">
                   <widget class="QPushButton" name="pushButton_15">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -811,6 +811,25 @@ QPushButton{
                    </property>
                    <property name="text">
                     <string>访问名单文件目录</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QPushButton" name="pushButton_22">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>新建一次性名单</string>
                    </property>
                   </widget>
                  </item>

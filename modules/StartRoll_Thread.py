@@ -9,6 +9,7 @@ import random
 import time
 import os
 import pygame
+# import debugpy
 
 state = app_state
 
@@ -99,6 +100,7 @@ class StartRollThread(QRunnable):
             # 向主线程发送终止信号
 
         else:  # 开始按钮
+            # debugpy.breakpoint()
             state.running = True
             self.signals.qtimer.emit(1)
             self.signals.enable_button.emit(6)  # 禁用人数选择框spinbox
@@ -135,7 +137,7 @@ class StartRollThread(QRunnable):
                         self.signals.enable_button.emit(4)
                     except Exception as e:
                         self.signals.update_list.emit(7, _("无法播放：%s") % e)
-                        log_print("无法播放音乐文件：%s，错误信息：%s" % (state.file_path, e))
+                        log_print("无法播放音乐文件：%s，错误信息：%s" % (state.music_path, e))
                         self.signals.update_pushbotton.emit(_(" 结束"), 2)
                         self.signals.enable_button.emit(4)
 
