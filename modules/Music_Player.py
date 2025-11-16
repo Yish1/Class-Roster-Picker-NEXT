@@ -62,7 +62,7 @@ class MusicPlayer:
             state.music_path = f":/mid/{mid_load}"
             file = QFile(state.music_path)
             file.open(QFile.ReadOnly)
-            data = file.readAll() 
+            data = file.readAll()
 
             tmp_file = os.path.join(state.appdata_path, 'tmp.cmxz')
             ctypes.windll.kernel32.SetFileAttributesW(tmp_file, 0x80)
@@ -79,7 +79,7 @@ class MusicPlayer:
             state.default_music = True
             log_print("err: %s" % str(e))
             return None
-        
+
         tmp_file = os.path.join(state.appdata_path, 'tmp.cmxz')
         pygame.mixer.music.load(tmp_file)
         pygame.mixer.music.play(-1)

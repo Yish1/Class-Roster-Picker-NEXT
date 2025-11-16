@@ -7,14 +7,17 @@ from Ui import Ui_Settings
 
 from modules import *
 
-import os, difflib, tarfile
+import os
+import difflib
+import tarfile
 from datetime import datetime
 
 # 便捷引用全局状态
 state = app_state
 
+
 class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
-    def __init__(self, main_instance, target_tab = None, small_window = None):
+    def __init__(self, main_instance, target_tab=None, small_window=None):
         super().__init__()
         central_widget = QtWidgets.QWidget(self)  # 创建一个中央小部件
         self.setCentralWidget(central_widget)  # 设置中央小部件为QMainWindow的中心区域
@@ -41,11 +44,11 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.enable_bgimg = None
         self.language_value = None
         self.disable_repetitive = None
-        self.small_transparency = None # 小窗口透明度
+        self.small_transparency = None  # 小窗口透明度
         self.enable_bgmusic = None
         self.inertia_roll = None
-        self.file_path_bak = None # 文件路径备份
-        self.bak_file_path = None # 备份文件路径
+        self.file_path_bak = None  # 文件路径备份
+        self.bak_file_path = None  # 备份文件路径
         self.roll_speed = None
         self.file_path = None
         self.isload = None
@@ -59,31 +62,41 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_5.clicked.connect(self.count_name)
         self.pushButton_6.clicked.connect(lambda: os.system(
             "start https://cmxz.top/ktdmq#toc-head-17"))
-        self.pushButton_12.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path, 'name'))))
-        self.pushButton_15.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path, 'name'))))
-        self.pushButton_10.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path,'dmmusic'))))
-        self.pushButton_9.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path,'images'))))
-        self.pushButton_8.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path,'history'))))
-        self.pushButton_21.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path))))
+        self.pushButton_12.clicked.connect(lambda: self.open_fold(
+            (os.path.join(state.appdata_path, 'name'))))
+        self.pushButton_15.clicked.connect(lambda: self.open_fold(
+            (os.path.join(state.appdata_path, 'name'))))
+        self.pushButton_10.clicked.connect(lambda: self.open_fold(
+            (os.path.join(state.appdata_path, 'dmmusic'))))
+        self.pushButton_9.clicked.connect(lambda: self.open_fold(
+            (os.path.join(state.appdata_path, 'images'))))
+        self.pushButton_8.clicked.connect(lambda: self.open_fold(
+            (os.path.join(state.appdata_path, 'history'))))
+        self.pushButton_21.clicked.connect(
+            lambda: self.open_fold((os.path.join(state.appdata_path))))
         self.pushButton_11.clicked.connect(self.save_name_list)
         self.pushButton_13.clicked.connect(self.read_name_inlist)
         self.pushButton_14.clicked.connect(lambda: os.system(
             "start https://cmxz.top/ktdmq#toc-head-8"))
-        self.pushButton_16.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path,'history'))))
+        self.pushButton_16.clicked.connect(lambda: self.open_fold(
+            (os.path.join(state.appdata_path, 'history'))))
         self.pushButton_17.clicked.connect(lambda: self.delete_file("history"))
         self.pushButton_18.clicked.connect(self.save_allconfig)
         self.pushButton_19.clicked.connect(self.load_backup)
         self.pushButton_20.clicked.connect(self.apply_backup)
         self.pushButton_22.clicked.connect(lambda: self.add_new_list("temp"))
-        self.pushButton_24.clicked.connect(lambda: self.update_bind_picture("bind"))
-        self.pushButton_25.clicked.connect(lambda: self.update_bind_picture("unbind"))
-        
+        self.pushButton_24.clicked.connect(
+            lambda: self.update_bind_picture("bind"))
+        self.pushButton_25.clicked.connect(
+            lambda: self.update_bind_picture("unbind"))
+
         self.listWidget.itemSelectionChanged.connect(self.read_name_inlist)
         self.listWidget_2.itemSelectionChanged.connect(
             lambda: self.find_history(1))
         self.tabWidget.currentChanged.connect(self.tab_changed)
         self.horizontalSlider.valueChanged.connect(self.slider_value_changed)
-        self.horizontalSlider_2.valueChanged.connect(self.apply_smwindow_transparency)
+        self.horizontalSlider_2.valueChanged.connect(
+            self.apply_smwindow_transparency)
 
         self.checkBox.toggled.connect(
             lambda checked: self.process_config("disable_repetitive", checked))
@@ -128,7 +141,8 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 target_name = target_name.rsplit("\\", 1)[-1].rsplit(".", 1)[0]
                 self.tabWidget.setCurrentIndex(target_tab)
 
-                items = self.listWidget.findItems(target_name, QtCore.Qt.MatchContains)
+                items = self.listWidget.findItems(
+                    target_name, QtCore.Qt.MatchContains)
                 if items:
                     self.listWidget.setCurrentItem(items[0])
 
@@ -189,7 +203,8 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         for item in selected_items:
             selected_text_inlist = item.text()
 
-        self.file_path = os.path.join(state.appdata_path, "name", selected_text_inlist+".txt")
+        self.file_path = os.path.join(
+            state.appdata_path, "name", selected_text_inlist+".txt")
 
         if not self.file_path or not os.path.isfile(self.file_path):
             return
@@ -232,7 +247,8 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
         # 已存在
         if os.path.exists(path):
-            self.main_instance.show_message(_("Error: 同名文件已存在，请勿重复创建！"), _("错误"))
+            self.main_instance.show_message(
+                _("Error: 同名文件已存在，请勿重复创建！"), _("错误"))
             return
 
         # 创建空文件
@@ -447,7 +463,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             set_language(self.language_value)
             # Persist selection to config
             config_path = os.path.join(state.appdata_path, 'config.ini')
-            update_entry('language', self.language_value , config_path)
+            update_entry('language', self.language_value, config_path)
             # Refresh main window and settings window texts
             try:
                 self.main_instance.apply_translations()
@@ -481,16 +497,6 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         try:
             current_range = self.horizontalSlider.value()
             self.label_6.setText(f"{current_range} ms")
-            self.pushButton.setText(_("取消"))
-            self.pushButton_2.setText(_("保存"))
-            self.groupBox_3.setTitle(_("语言设置"))
-            self.groupBox_6.setTitle(_("快捷访问"))
-            self.pushButton_12.setText(_("名单文件目录"))
-            self.pushButton_10.setText(_("背景音乐目录"))
-            self.pushButton_8.setText(_("历史记录目录"))
-            self.groupBox_5.setTitle(_("关于"))
-            self.label_10.setText(_("Tips: 按下空格键可以快捷开始/结束！"))
-            self.label_2.setText(_("沉梦课堂点名器 V%s") % state.dmversion)
             self.groupBox.setTitle(_("功能设置"))
             self.checkBox_4.setText(_("背景音乐"))
             self.checkBox_3.setText(_("检查更新"))
@@ -500,38 +506,69 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.radioButton_2.setText(_("听写模式(不说\"恭喜\")"))
             self.checkBox_5.setText(_("惯性滚动"))
             self.checkBox_2.setText(_("语音播报"))
+            self.groupBox_3.setTitle(_("语言设置"))
+            self.groupBox_6.setTitle(_("快捷访问"))
+            self.pushButton_12.setText(_("名单文件目录"))
+            self.pushButton_10.setText(_("背景音乐目录"))
+            self.pushButton_8.setText(_("历史记录目录"))
+            self.groupBox_5.setTitle(_("关于"))
+            self.label_10.setText(_("Tips: 按下空格键可以快捷开始/结束！"))
+            self.label_2.setText(_("沉梦课堂点名器 V6.5"))
+            self.label_3.setText(_("<html><head/><body><p align=\"center\"><span style=\" font-size:7pt; text-decoration: underline;\">一个支持 单抽，连抽的课堂点名小工具</span></p><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-size:8pt; font-weight:600;\">Contributors: Yish1, QQB-Roy, limuy2022</span></p><p align=\"center\"><span style=\" font-size:7pt; font-weight:600; font-style:italic;\"><br/></span><a href=\"https://cmxz.top/ktdmq\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><span style=\" font-size:7pt;\"><br/></span></p></body></html>"))
+            self.tabWidget.setTabText(
+                self.tabWidget.indexOf(self.tab), _("基本设置"))
+            self.groupBox_2.setTitle(_("名单管理"))
+            self.pushButton_4.setText(_("删除名单"))
+            self.pushButton_3.setText(_("新建名单"))
+            self.pushButton_15.setText(_("访问名单文件目录"))
+            self.pushButton_22.setText(_("新建一次性名单"))
+            self.pushButton_13.setText(_("撤销未保存的修改"))
+            self.pushButton_11.setText(_("保存修改"))
+            self.label_8.setText(_("！！！编辑名单时请确保名字为 一行一个！！！"))
+            self.tabWidget.setTabText(
+                self.tabWidget.indexOf(self.tab_2), _("名单管理"))
+            self.groupBox_4.setTitle(_("历史记录列表"))
+            self.pushButton_5.setText(_("统计所选历史记录"))
+            self.listWidget_2.setSortingEnabled(False)
+            self.pushButton_16.setText(_("访问历史记录目录"))
+            self.pushButton_17.setText(_("删除历史记录"))
+            self.tabWidget.setTabText(
+                self.tabWidget.indexOf(self.tab_4), _("历史记录"))
+            self.groupBox_10.setTitle(_("小窗个性化"))
+            self.label_12.setText(_("背景透明度 (可打开小窗查看实时更新)"))
+            self.label_18.setText(_("100%"))
+            self.groupBox_11.setTitle(_("绑定背景图片与名单"))
+            self.label_17.setText(_("图片预览区"))
+            self.pushButton_25.setText(_("解除绑定"))
+            self.pushButton_24.setText(_("绑定"))
+            self.label_15.setText(_("名单"))
+            self.label_16.setText(_("背景图片"))
             self.groupBox_7.setTitle(_("个性化设置"))
+            self.lineEdit.setPlaceholderText(_("幸运儿是:"))
+            self.pushButton_9.setText(_("背景图片目录"))
+            self.label_7.setText(_("启动时标题:"))
             self.label.setText(_("背景图片"))
             self.radioButton_3.setText(_("默认背景"))
             self.radioButton_4.setText(_("自定义"))
             self.radioButton_5.setText(_("无"))
-            self.lineEdit.setPlaceholderText(_("幸运儿是:"))
-            self.pushButton_9.setText(_("背景图片目录"))
-            self.label_7.setText(_("启动时标题:"))
-            self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("基本设置"))
-            self.groupBox_2.setTitle(_("名单管理"))
-            self.pushButton_3.setText(_("新建名单"))
-            self.pushButton_4.setText(_("删除名单"))
-            self.pushButton_15.setText(_("访问名单文件目录"))
-            self.pushButton_13.setText(_("撤销未保存的修改"))
-            self.pushButton_11.setText(_("保存修改"))
-            self.label_8.setText(_("！！！编辑名单时请确保名字为 一行一个！！！"))
-            self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("名单管理"))
-            self.groupBox_4.setTitle(_("历史记录列表"))
-            self.pushButton_5.setText(_("统计所选历史记录"))
-            self.pushButton_16.setText(_("访问历史记录目录"))
-            self.pushButton_17.setText(_("删除历史记录"))
-            self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _("历史记录"))
-            self.pushButton_6.setText(_("反馈"))
-            self.pushButton_14.setText(_("定制"))
-            self.label_4.setText(_("感谢您使用 沉梦课堂点名器！欢迎访问沉梦小站博客cmxz.top获取更多有趣的应用！\n                —— Yish_"))
-            self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
+            self.tabWidget.setTabText(
+                self.tabWidget.indexOf(self.tab_6), _("界面设置"))
             self.groupBox_8.setTitle(_("备份"))
             self.pushButton_18.setText(_("一键备份所有内容"))
+            self.pushButton_21.setText(_("打开数据目录"))
             self.groupBox_9.setTitle(_("恢复"))
             self.pushButton_20.setText(_("确认恢复"))
             self.pushButton_19.setText(_("导入备份"))
-            self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _("备份恢复"))
+            self.tabWidget.setTabText(
+                self.tabWidget.indexOf(self.tab_5), _("备份恢复"))
+            self.pushButton_6.setText(_("反馈"))
+            self.pushButton_14.setText(_("定制"))
+            self.label_4.setText(
+                _("<html><head/><body><p><span style=\" font-size:8pt;\">感谢您使用 沉梦课堂点名器！欢迎访问沉梦小站博客cmxz.top获取更多有趣的应用！</span></p><p><span style=\" font-size:8pt;\">                —— Yish_</span></p></body></html>"))
+            self.tabWidget.setTabText(
+                self.tabWidget.indexOf(self.tab_3), _("反馈/定制"))
+            self.pushButton.setText(_("取消"))
+            self.pushButton_2.setText(_("保存"))
             self.setWindowTitle(QCoreApplication.translate(
                 "MainWindow", _("沉梦课堂点名器设置")))
         except Exception as e:
@@ -680,7 +717,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 log_print("正在开启背景音乐")
                 self.main_instance.show_message(
                     _("开启背景音乐功能后，需要在稍后打开的背景音乐目录下放一些您喜欢的音乐\n程序将随机选取一首，播放随机的音乐进度\n\n注：程序自带几首默认音频，当您在音乐目录下放入音乐后，默认音频将不会再进入候选列表！"), _("提示"))
-                folder_path = os.path.join(state.appdata_path,'dmmusic')
+                folder_path = os.path.join(state.appdata_path, 'dmmusic')
                 os.makedirs(folder_path, exist_ok=True)
                 self.open_fold(folder_path)
 
@@ -745,7 +782,8 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.main_instance.update_config("roll_speed", self.roll_speed)
 
         if self.small_transparency:
-            self.main_instance.update_config("small_window_transparent", self.small_transparency)
+            self.main_instance.update_config(
+                "small_window_transparent", self.small_transparency)
 
         self.close()
 
@@ -762,7 +800,8 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         for item in selected_items:
             count_target = item.text()
 
-        file = os.path.join(state.appdata_path, "history", "%s.txt" % count_target)
+        file = os.path.join(state.appdata_path, "history",
+                            "%s.txt" % count_target)
         try:
             with open(file, encoding="utf-8") as file:
                 for line in file:
@@ -804,7 +843,8 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
                 # 默认目录：桌面
                 desktop_dir = (
-                    QStandardPaths.writableLocation(QStandardPaths.DesktopLocation)
+                    QStandardPaths.writableLocation(
+                        QStandardPaths.DesktopLocation)
                     or os.path.join(os.path.expanduser("~"), "Desktop")
                 )
 
@@ -834,13 +874,14 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                                 # 避免把目标备份文件自身加入
                                 if os.path.abspath(full_path) == abs_dest_path:
                                     continue
-                                arcname = os.path.relpath(full_path, abs_src_dir)
+                                arcname = os.path.relpath(
+                                    full_path, abs_src_dir)
                                 tar.add(full_path, arcname=arcname)
                         except Exception as e:
                             log_print(f"跳过文件 {entry.path}: {e}")
 
                 # 打包为 tar.gz 实际格式，扩展名为 .CRPBAK
-                
+
                 with tarfile.open(dest_path, "w:gz") as tar:
                     add_to_tar(tar, src_dir)
                 # with open(dest_path, "rb+") as f: # 消除Gzip头部
@@ -871,10 +912,12 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                     QMessageBox.Ok,
                 )
         else:
-            QMessageBox.warning(self.window, _("错误"), _("未找到数据目录，无法备份。"), QMessageBox.Ok)
-            
+            QMessageBox.warning(self.window, _("错误"), _(
+                "未找到数据目录，无法备份。"), QMessageBox.Ok)
+
     def load_backup(self):
-        self.bak_file_path, a = QFileDialog.getOpenFileName(None, _("选择备份文件"), "", "CRP Backup (*.CRPBAK);;All Files (*.*)")
+        self.bak_file_path, a = QFileDialog.getOpenFileName(
+            None, _("选择备份文件"), "", "CRP Backup (*.CRPBAK);;All Files (*.*)")
         if not self.bak_file_path:
             return  # 用户取消
 
@@ -902,19 +945,24 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 return
 
             self.listWidget_3.addItem(_("加载的备份文件路径: %s") % self.bak_file_path)
-            self.listWidget_3.addItem(_("！！！请确定以下数据后，点击\"确认恢复\"按钮将覆盖当前数据！！！\n"))
+            self.listWidget_3.addItem(
+                _("！！！请确定以下数据后，点击\"确认恢复\"按钮将覆盖当前数据！！！\n"))
             self.pushButton_20.setEnabled(True)
 
             if "config.ini" in file_tree:
                 self.listWidget_3.addItem(_("读取到配置文件: config.ini"))
             if folder_count.get("name", None) is not None:
-                self.listWidget_3.addItem(_("读取到 %s 个名单") % folder_count["name"])
+                self.listWidget_3.addItem(
+                    _("读取到 %s 个名单") % folder_count["name"])
             if folder_count.get("history", None) is not None:
-                self.listWidget_3.addItem(_("读取到 %s 个历史记录") % folder_count["history"])
+                self.listWidget_3.addItem(
+                    _("读取到 %s 个历史记录") % folder_count["history"])
             if folder_count.get("dmmusic", None) is not None:
-                self.listWidget_3.addItem(_("读取到 %s 个背景音乐文件") % folder_count["dmmusic"])
+                self.listWidget_3.addItem(
+                    _("读取到 %s 个背景音乐文件") % folder_count["dmmusic"])
             if folder_count.get("images", None) is not None:
-                self.listWidget_3.addItem(_("读取到 %s 个背景图片文件") % folder_count["images"])
+                self.listWidget_3.addItem(
+                    _("读取到 %s 个背景图片文件") % folder_count["images"])
 
             self.listWidget_3.addItem(_("\n备份文件结构："))
             self.listWidget_3.addItem(file_tree)
@@ -923,7 +971,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
         except Exception as e:
             QMessageBox.critical(None, "错误", f"打开或解析文件失败：\n{e}")
-        
+
     def apply_backup(self):
         try:
             with tarfile.open(self.bak_file_path, "r:gz") as tar:
@@ -935,12 +983,13 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                     tar.extract(member, path=state.appdata_path)
                 log_print(f"所有文件已解压至: {state.appdata_path}")
 
-            QMessageBox.information(None, _("成功"), _("备份已成功恢复至：\n%s，部分设置需要重启程序后生效！") % state.appdata_path)
+            QMessageBox.information(None, _("成功"), _(
+                "备份已成功恢复至：\n%s，部分设置需要重启程序后生效！") % state.appdata_path)
             self.close()
 
         except Exception as e:
             QMessageBox.critical(None, _("错误"), _("应用备份失败：\n%s") % e)
-    
+
     def apply_smwindow_transparency(self):
         value = self.horizontalSlider_2.value()
         self.label_18.setText(f"{value}%%")
@@ -962,7 +1011,8 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
     def check_bind(self):
         # 清洗 None
-        state.bind_picture = state.bind_picture.replace("None,", "").replace("None", "")
+        state.bind_picture = state.bind_picture.replace(
+            "None,", "").replace("None", "")
 
         # 构建绑定字典
         state.bind_picture_dict = {
@@ -984,6 +1034,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 self.comboBox_4.setItemText(i, clean)
 
         self.show_bind_picture()
+
     def refresh_bind(self):
         name_list = self.refresh_name_list()
         self.comboBox_3.clear()
@@ -996,7 +1047,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.check_bind()
 
         # self.pushButton_24.setEnabled(False)
-        # self.pushButton_25.setEnabled(False)  
+        # self.pushButton_25.setEnabled(False)
 
     def show_bind_picture(self):
         pic_name = self.comboBox_4.currentText()
@@ -1011,7 +1062,8 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             return
 
         self.label_17.setPixmap(
-            pix.scaled(self.label_17.size(), QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+            pix.scaled(self.label_17.size(), QtCore.Qt.KeepAspectRatio,
+                       QtCore.Qt.SmoothTransformation)
         )
 
     def update_bind_picture(self, mode):
@@ -1023,19 +1075,22 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         pic = self.comboBox_4.currentText().replace(_(" (当前绑定)"), "")
 
         # 构建绑定字典
-        items = [i for i in state.bind_picture.replace("None", "").split(",") if ":" in i]
+        items = [i for i in state.bind_picture.replace(
+            "None", "").split(",") if ":" in i]
         state.bind_picture_dict = dict(item.split(":", 1) for item in items)
 
         # 绑定 or 解绑
         if mode == "bind":
             state.bind_picture_dict[name] = pic
-            msg = (_("已成功将 图片 \"%s\" 绑定至 名单 \"%s\"！\n\nTips：要使绑定生效，还需在左侧背景设置中选择 ·自定义· ") % (pic, name), _("绑定成功"))
+            msg = (_("已成功将 图片 \"%s\" 绑定至 名单 \"%s\"！\n\nTips：要使绑定生效，还需在左侧背景设置中选择 ·自定义· ") % (
+                pic, name), _("绑定成功"))
         elif mode == "unbind":
             state.bind_picture_dict.pop(name, None)
             msg = (_("已成功将名单 \"%s\" 的图片解绑！") % name, _("解绑成功"))
 
         # 保存配置
-        state.bind_picture = ",".join(f"{k}:{v}" for k, v in state.bind_picture_dict.items())
+        state.bind_picture = ",".join(
+            f"{k}:{v}" for k, v in state.bind_picture_dict.items())
         self.main_instance.update_config("bind_picture", state.bind_picture)
 
         self.main_instance.show_message(*msg)

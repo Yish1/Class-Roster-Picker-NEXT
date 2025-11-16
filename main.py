@@ -10,7 +10,7 @@ from PyQt5.QtGui import QCursor, QFontMetrics, QKeySequence, QFontDatabase, QFon
 from PyQt5.QtCore import Qt, QTimer, QCoreApplication, QFile, QThreadPool, pyqtSignal, QRunnable, QObject, QCoreApplication
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QScroller, QShortcut, QSizePolicy
 
-from Ui import * 
+from Ui import *
 from modules import *
 from window import *
 
@@ -92,12 +92,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         self.pushButton_4.clicked.connect(self.run_settings)
         self.pushButton_5.clicked.connect(self.small_mode)
         self.pushButton.clicked.connect(lambda: self.mini(1))
-        self.commandLinkButton.clicked.connect(lambda: self.restoresize("init"))
+        self.commandLinkButton.clicked.connect(
+            lambda: self.restoresize("init"))
 
         # 启用触摸手势滚动
         for lw in (self.listWidget, self.listWidget_2):
             scroller = QScroller.scroller(lw)
-            scroller.grabGesture(lw.viewport(), QScroller.LeftMouseButtonGesture)
+            scroller.grabGesture(
+                lw.viewport(), QScroller.LeftMouseButtonGesture)
 
         # 启动时执行的函数
         self.read_config()
@@ -149,8 +151,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.pushButton_5.setText(_(" 小窗模式"))
             self.label_5.setText(_("当前名单："))
             self.label_4.setText(_("抽取人数："))
-            self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _("历史记录"))
-            self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _("名单列表"))
+            self.tabWidget.setTabText(
+                self.tabWidget.indexOf(self.tab), _("历史记录"))
+            self.tabWidget.setTabText(
+                self.tabWidget.indexOf(self.tab_2), _("名单列表"))
             # Update background label if needed
             if state.bgimg == 2:
                 self.label_6.setText(_("自定义背景"))
@@ -216,20 +220,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             state.windows_move_flag = True
         else:
             state.windows_move_flag = False
-        
+
         # 保存窗口尺寸
         state.saved_size = f"{self.width()},{self.height()}"
         self.update_config("saved_size", state.saved_size, "w")
 
     def set_bgimg(self):
         self.label_6.setText("")
-        
-        if state.bgimg == 2: # 自定义背景
+
+        if state.bgimg == 2:  # 自定义背景
             folder_path = os.path.join(state.appdata_path, 'images')
             os.makedirs(folder_path, exist_ok=True)
             file_list = os.listdir(folder_path)
 
-            if not file_list: # 文件夹为空, 就约战壁纸
+            if not file_list:  # 文件夹为空, 就约战壁纸
                 log_print("要使用自定义背景功能，请在 %s 中放入图片文件" % folder_path)
                 self.frame.setStyleSheet("#frame {\n"
                                          "border-image: url(:/images/(1070).webp);"
@@ -241,9 +245,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
             if state.bind_picture != "None" and ":" in state.bind_picture and state.selected_file:
                 # 构建绑定字典
-                items = [i for i in state.bind_picture.replace("None", "").split(",") if ":" in i]
-                state.bind_picture_dict = dict(item.split(":", 1) for item in items)
-                pic_name = state.bind_picture_dict.get(state.selected_file, None)
+                items = [i for i in state.bind_picture.replace(
+                    "None", "").split(",") if ":" in i]
+                state.bind_picture_dict = dict(
+                    item.split(":", 1) for item in items)
+                pic_name = state.bind_picture_dict.get(
+                    state.selected_file, None)
 
                 if pic_name is not None:
                     bind_path = os.path.join(folder_path, pic_name)
@@ -252,29 +259,29 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                     if os.path.exists(bind_path):
                         self.label_6.setText(_("自定义绑定背景"))
                         self.frame.setStyleSheet("#frame {\n"
-                                                f"border-image: url('{bind_path}');"
-                                                "border-radius: 28px;"
-                                                "}")
-                        
+                                                 f"border-image: url('{bind_path}');"
+                                                 "border-radius: 28px;"
+                                                 "}")
+
                         return
-                
+
             random_file = random.choice(file_list)
             log_print(random_file)
-            
+
             file_path = os.path.join(folder_path, random_file)
             file_path = file_path.replace("\\", "/")     # 替换反斜杠为正斜杠
             self.frame.setStyleSheet("#frame {\n"
                                      f"border-image: url('{file_path}');"
                                      "border-radius: 28px;"
                                      "}")
-            
-        elif state.bgimg == 1 or state.bgimg == 0: # eva背景
+
+        elif state.bgimg == 1 or state.bgimg == 0:  # eva背景
             self.frame.setStyleSheet("#frame {\n"
                                      "border-image: url(:/images/eva.webp);"
                                      "border-radius: 28px;"
                                      "}")
-            
-        elif state.bgimg == 3: # 纯色背景
+
+        elif state.bgimg == 3:  # 纯色背景
             self.frame.setStyleSheet("#frame {\n"
                                      "background-color: rgba(42, 45, 47, 0.92);\n"
                                      "border-radius: 28px;"
@@ -286,11 +293,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.showMinimized()
             state.small_window_flag = self.small_Window.run_small_window()
 
-    def run_settings(self, target_tab = None):
+    def run_settings(self, target_tab=None):
         if state.settings_flag is None:
-            self.settings_window = SettingsWindow(self, target_tab, self.small_Window)
+            self.settings_window = SettingsWindow(
+                self, target_tab, self.small_Window)
             state.settings_flag = self.settings_window.run_settings_window()
-        
+
         else:
             if hasattr(self, "settings_window"):
                 self.settings_window.activateWindow()
@@ -312,7 +320,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.showNormal()
     # 功能实现代码
 
-    def restoresize(self, mode = None):
+    def restoresize(self, mode=None):
         x, y = state.saved_size.split(",") if state.saved_size else (905, 495)
         if mode == "init":
             x, y = 905, 495
@@ -351,9 +359,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         txt_files_name = [os.path.splitext(
             filename)[0] for filename in txt_name]
         # 去除扩展名
-        if mode == 1: # 设置调用，仅返回名单列表
+        if mode == 1:  # 设置调用，仅返回名单列表
             return txt_files_name
-        else: # 初始化或设置关闭后重新读取名单
+        else:  # 初始化或设置关闭后重新读取名单
             self.comboBox.disconnect()
             self.comboBox.clear()
             self.comboBox.addItems(txt_files_name)  # 添加文件名到下拉框
@@ -371,13 +379,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
     def get_selected_file(self, first=None):
         # 先检查有无切换前的文件(保存不重复名单列表)
         if state.selected_file is not None and state.non_repetitive == 1 and first != 2:
-            self.get_saved_non_repetitive_list(state.selected_file, mode = "save")
+            self.get_saved_non_repetitive_list(
+                state.selected_file, mode="save")
 
         # 获取当前选中的文件名
         state.selected_file = self.comboBox.currentText()
         self.update_config("last_name_list", state.selected_file)
-        state.file_path = os.path.join(state.appdata_path, "name", state.selected_file+".txt")
-        state.history_file = os.path.join(state.appdata_path, "history", "%s中奖记录.txt" % state.selected_file)
+        state.file_path = os.path.join(
+            state.appdata_path, "name", state.selected_file+".txt")
+        state.history_file = os.path.join(
+            state.appdata_path, "history", "%s中奖记录.txt" % state.selected_file)
         if not os.path.exists(state.file_path):
             self.show_message(_("所选名单文件已被移动或删除！"), _("找不到文件！"))
             try:
@@ -385,18 +396,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             except:
                 log_print("first_run")
         else:
-                log_print(f"所选文件的路径为: {state.file_path}\n")
+            log_print(f"所选文件的路径为: {state.file_path}\n")
 
         self.process_name_file(state.file_path)
 
-        if state.non_repetitive == 1: 
-            state.non_repetitive_list = self.get_saved_non_repetitive_list(state.selected_file, "read")
+        if state.non_repetitive == 1:
+            state.non_repetitive_list = self.get_saved_non_repetitive_list(
+                state.selected_file, "read")
 
         # first: 1 首次加载，0 切换
         if first == 1:
             info = _("\'%s\'，共 %s 人") % (state.selected_file, state.namelen)
         else:
-            text = _("剩余 %s 人") % len(state.non_repetitive_list) if state.non_repetitive == 1 else _("共 %s 人") % state.namelen
+            text = _("剩余 %s 人") % len(state.non_repetitive_list) if state.non_repetitive == 1 else _(
+                "共 %s 人") % state.namelen
             info = _("切换至>\'%s\' %s") % (state.selected_file, text)
 
         if state.non_repetitive == 1:
@@ -437,16 +450,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
         if mode == "read":
             # 如果没有记录，就初始化为当前 name_list 的副本
-            state.non_repetitive_dict.setdefault(selected_file, state.name_list.copy())
+            state.non_repetitive_dict.setdefault(
+                selected_file, state.name_list.copy())
 
             # 如果对应名单是空的，也填入 name_list 的副本
             if not state.non_repetitive_dict[selected_file]:
-                state.non_repetitive_dict[selected_file] = state.name_list.copy()
+                state.non_repetitive_dict[selected_file] = state.name_list.copy(
+                )
 
             return state.non_repetitive_dict[selected_file]
 
         elif mode == "save":  # 保存
-            state.non_repetitive_dict[selected_file] = state.non_repetitive_list.copy()
+            state.non_repetitive_dict[selected_file] = state.non_repetitive_list.copy(
+            )
             log_print(f"不重复名单列表已保存 {state.non_repetitive_list}")
 
     def read_config(self):
@@ -499,7 +515,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
     def update_config(self, variable, new_value, mode=None):
         # delegate to config manager
         config_path = os.path.join(state.appdata_path, 'config.ini')
-        update_entry(variable, str(new_value) if new_value is not None else None, config_path)
+        update_entry(variable, str(new_value)
+                     if new_value is not None else None, config_path)
         log_print(f"更新配置文件：[{variable}]={new_value}\n")
 
         if mode == "w!":
@@ -521,13 +538,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             with open(file_path, encoding='utf8') as f:
                 # 读取每一行，去除行尾换行符，过滤掉空行和仅包含空格的行
                 state.name_list = [line.strip()
-                             for line in f.readlines() if line.strip()]
+                                   for line in f.readlines() if line.strip()]
         except:
             log_print("utf8解码失败，尝试gbk")
             try:
                 with open(file_path, encoding='gbk') as f:
                     state.name_list = [line.strip()
-                                 for line in f.readlines() if line.strip()]
+                                       for line in f.readlines() if line.strip()]
             except:
                 self.show_message(
                     _("Error: 名单文件%s编码错误，请检查文件编码是否为utf8或gbk") % file_path, _("错误"))
@@ -555,7 +572,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             os.system("vim %s" % path)
 
     def save_history(self, mode=None, name_set=None):
-        state.history_file = os.path.join(state.appdata_path, "history", "%s中奖记录.txt" % state.selected_file)
+        state.history_file = os.path.join(
+            state.appdata_path, "history", "%s中奖记录.txt" % state.selected_file)
 
         if mode == 1:
             write_name = name_set
@@ -565,11 +583,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         if write_name != '' or name_set != None:
             with open(state.history_file, "a", encoding="utf-8") as file:
                 if mode == 1:
-                        content = "%s 沉梦课堂点名器%s 幸运儿是：%s\n" % (
-                            state.today, state.dmversion, name_set)
+                    content = "%s 沉梦课堂点名器%s 幸运儿是：%s\n" % (
+                        state.today, state.dmversion, name_set)
                 else:
-                        content = "%s 沉梦课堂点名器%s 幸运儿是：%s\n" % (
-                            state.today, state.dmversion, write_name)
+                    content = "%s 沉梦课堂点名器%s 幸运儿是：%s\n" % (
+                        state.today, state.dmversion, write_name)
                 file.write(content)
 
                 log_print(state.today, "幸运儿是： %s " % write_name)
@@ -609,7 +627,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             state.threadpool.start(self.thread)
 
     def check_new_version(self):
-        
+
         self.update_thread = UpdateThread()
         state.threadpool.start(self.update_thread)
         self.update_thread.signals.find_new_version.connect(
@@ -673,7 +691,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
             self.listWidget.addItem("----------------------------")
 
-            leave_name_num = _("，剩余：%s") % (len(state.non_repetitive_list) - len(name_set)) if state.non_repetitive == 1 else ""
+            leave_name_num = _("，剩余：%s") % (len(
+                state.non_repetitive_list) - len(name_set)) if state.non_repetitive == 1 else ""
             self.listWidget.addItem(_("连抽：%d 人%s") % (num, leave_name_num))
 
             for state.name in name_set:
@@ -891,7 +910,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             try:
                 if self.timer:
                     self.timer.stop()
-                
+
             except Exception as e:
                 log_print(f"停止计时器失败:{e}")
 
@@ -902,22 +921,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                     # log_print("Debug:",state.name)
                     if state.allownametts != 1:
                         self.tts_read(state.origin_name_list)
-                
+
             except Exception as e:
-                log_print(f"计时器启动语音播报线程失败:{e}")            
+                log_print(f"计时器启动语音播报线程失败:{e}")
 
     def setname(self):
         max_width = self.label_3.width()
         max_height = self.label_3.height()
-        
+
         if state.windows_move_flag:
             self.font_m.setPointSize(150)  # 字体大小
-            self.label_3.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)  # 允许 QLabel 扩展
+            self.label_3.setSizePolicy(
+                QSizePolicy.Expanding, QSizePolicy.Expanding)  # 允许 QLabel 扩展
             self.label_3.setMaximumSize(16777215, 16777215)
         else:
             self.font_m.setPointSize(90)
             self.label_3.setMaximumSize(max_width, max_height)
-            
+
         self.label_3.setFont(self.font_m)
         if state.non_repetitive == 1:
             if len(state.non_repetitive_list) == 0:
@@ -930,7 +950,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 self.run_settings(f"1&{state.file_path}")
             except Exception as e:
                 log_print(f"文件不存在:{e}")
-                self.show_message(_("选择的名单文件%s不存在！") % state.file_path, "\n%s" % e)
+                self.show_message(_("选择的名单文件%s不存在！") %
+                                  state.file_path, "\n%s" % e)
             finally:
                 self.font_m.setPointSize(54)
                 self.label_3.setFont(self.font_m)
@@ -952,14 +973,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         metrics = QFontMetrics(self.font_m)
 
         # 估算一行字符数
-        a = max(1, round(metrics.horizontalAdvance(state.name) / max_width, 1)) # 估计行数
-        b = metrics.height()# 字体高度
+        a = max(1, round(metrics.horizontalAdvance(
+            state.name) / max_width, 1))  # 估计行数
+        b = metrics.height()  # 字体高度
         d = 1.2 if font_size < 80 and len(state.name) < 6 else 2.2
-        c = a * (b * d)# b*2考虑到字符行间隔
+        c = a * (b * d)  # b*2考虑到字符行间隔
 
         # 如果文本换行后的高度超出了标签高度，逐步减小字体
         while c > max_height and font_size > 0:
-            
+
             font_size -= 3
             self.font_m.setPointSize(font_size)
             self.label_3.setFont(self.font_m)
@@ -992,7 +1014,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             _("欢迎使用沉梦课堂点名器%s！\n\n此工具支持单抽(放回)、单抽(不放回)、连抽功能\n还有一些特色功能：语音播报、背景音乐、小窗模式\n\n进入主界面后，请点击左上角的设置按钮，按需开启功能，编辑名单\n如果遇到了问题，可以在沉梦小站中留言，或者在github上提交issues\n\n\t----Yish_") % state.dmversion, _("欢迎"), 1)
         self.update_config("first_use", 1)
 
-    def tts_read(self, content, mode = None):
+    def tts_read(self, content, mode=None):
         try:
             if state.origin_name_list != "":
                 if mode:
@@ -1047,7 +1069,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
                     # 尝试删除原文件或目录
                     try:
-                        shutil.rmtree(src) if os.path.isdir(src) else os.remove(src)
+                        shutil.rmtree(src) if os.path.isdir(
+                            src) else os.remove(src)
                         log_print(f"已删除原文件/目录 {src}")
                     except Exception as e:
                         log_print(f"无法删除原文件/目录 {src}: {e}")
@@ -1056,12 +1079,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                     log_print(f"迁移失败 {item}: {e}")
 
             self.update_config("need_move_config", 0)
-            self.show_message(_("检测到旧版配置文件，已自动迁移至新位置！\n请重新启动点名器以应用更改。"), _("配置迁移完成"))
+            self.show_message(
+                _("检测到旧版配置文件，已自动迁移至新位置！\n请重新启动点名器以应用更改。"), _("配置迁移完成"))
             sys.exit()
 
         except Exception as e:
             log_print(f"if_need_move_config error: {e}")
-            self.show_message(_("检测到旧版配置文件，但自动迁移失败\n需要您手动迁移文件，或重新配置名单等"), _("配置迁移失败"))
+            self.show_message(
+                _("检测到旧版配置文件，但自动迁移失败\n需要您手动迁移文件，或重新配置名单等"), _("配置迁移失败"))
 
     def del_temp_list(self):
         """从临时名单文件中删除名字"""
@@ -1070,7 +1095,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         if "_temp" not in state.selected_file:
             return
 
-        temp_list_path = os.path.join(state.appdata_path, "name", state.selected_file + ".txt")
+        temp_list_path = os.path.join(
+            state.appdata_path, "name", state.selected_file + ".txt")
 
         # 要删除的名字
         target = state.name.strip()
@@ -1092,6 +1118,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                 f.writelines(new_lines)
 
             log_print(f"已从{state.selected_file}中删除名字：{target}")
+
 
 if __name__ == "__main__":
     try:
@@ -1117,7 +1144,8 @@ if __name__ == "__main__":
         # 启用 Windows DPI 感知（优先 Per-Monitor V2，回退到 System Aware）
         if sys.platform == "win32":
             try:
-                ctypes.windll.shcore.SetProcessDpiAwareness(2)  # PROCESS_PER_MONITOR_DPI_AWARE
+                ctypes.windll.shcore.SetProcessDpiAwareness(
+                    2)  # PROCESS_PER_MONITOR_DPI_AWARE
             except Exception:
                 try:
                     log_print("启用 Windows DPI 感知失败，尝试回退到系统感知。")
