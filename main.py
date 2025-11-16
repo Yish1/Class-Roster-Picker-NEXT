@@ -490,7 +490,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             'title_text': ('title_text', _("幸运儿是:"), False),
             'need_move_config': ('need_move_config', 1, True),
             'small_window_transparent': ('small_window_transparent', 80, True),
-            'saved_size': ('saved_size', "905,405", False),
+            'saved_size': ('saved_size', "905,495", False),
             'bind_picture': ('bind_picture', "None", False),
         }
 

@@ -536,7 +536,6 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
                 self.tabWidget.indexOf(self.tab_4), _("历史记录"))
             self.groupBox_10.setTitle(_("小窗个性化"))
             self.label_12.setText(_("背景透明度 (可打开小窗查看实时更新)"))
-            self.label_18.setText(_("100%"))
             self.groupBox_11.setTitle(_("绑定背景图片与名单"))
             self.label_17.setText(_("图片预览区"))
             self.pushButton_25.setText(_("解除绑定"))
@@ -1004,6 +1003,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
     def refresh_picture_list(self):
         pic_path = os.path.join(state.appdata_path, "images")
+        os.makedirs(pic_path, exist_ok=True)
         pic_name = [filename for filename in os.listdir(
             pic_path) if filename.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))]
 
