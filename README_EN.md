@@ -16,7 +16,7 @@
 
 > [!TIP]
 > #### Way to pack the program:<br>
-> `nuitka --standalone --lto=yes --clang --msvc=latest --disable-ccache --enable-plugin=pyqt5,upx --upx-binary=F:\Programs\upx\upx.exe --windows-console-mode=disable --output-dir=CRP_6.6_313upx --windows-icon-from-ico=picker.ico --nofollow-import-to=unittest --nofollow-import-to=zstandard --include-data-dir=locale=locale main.py`
+> `nuitka --onefile --lto=yes --clang --msvc=latest --disable-ccache --windows-console-mode=disable --enable-plugin=pyqt5 --output-dir=CRP_6.62_38 --windows-icon-from-ico=picker.ico --nofollow-import-to=unittest --nofollow-import-to=zstandard --include-data-dir=locale=locale --onefile-tempdir-spec=%CACHE_DIR%/CRP_onefile main.py`
 
 > [!IMPORTANT]  
 > #### Mechine requirement:

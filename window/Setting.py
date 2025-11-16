@@ -513,7 +513,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.pushButton_8.setText(_("历史记录目录"))
             self.groupBox_5.setTitle(_("关于"))
             self.label_10.setText(_("Tips: 按下空格键可以快捷开始/结束！"))
-            self.label_2.setText(_("沉梦课堂点名器 V6.5"))
+            self.label_2.setText(_("沉梦课堂点名器 V%s") % state.dmversion)
             self.label_3.setText(_("<html><head/><body><p align=\"center\"><span style=\" font-size:7pt; text-decoration: underline;\">一个支持 单抽，连抽的课堂点名小工具</span></p><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-size:8pt; font-weight:600;\">Contributors: Yish1, QQB-Roy, limuy2022</span></p><p align=\"center\"><span style=\" font-size:7pt; font-weight:600; font-style:italic;\"><br/></span><a href=\"https://cmxz.top/ktdmq\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">沉梦小站</span></a></p><p align=\"center\"><a href=\"https://github.com/Yish1/Class-Roster-Picker-NEXT\"><span style=\" font-size:7pt; font-weight:600; font-style:italic; text-decoration: underline; color:#0000ff;\">Yish1/Class-Roster-Picker-NEXT: 课堂点名器</span></a></p><p align=\"center\"><span style=\" font-size:7pt;\"><br/></span></p></body></html>"))
             self.tabWidget.setTabText(
                 self.tabWidget.indexOf(self.tab), _("基本设置"))

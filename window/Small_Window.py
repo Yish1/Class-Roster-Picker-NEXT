@@ -46,11 +46,10 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.signals = WorkerSignals()
         self.music = MusicPlayer()
 
-        # 自动隐藏倒计时：开启小窗即开始计时，30秒后最小化
+        # 点名结束后开启小窗即开始计时，60秒后最小化
         self.auto_hide_timer = QTimer(self)
         self.auto_hide_timer.setSingleShot(True)
         self.auto_hide_timer.timeout.connect(self.minimummode)
-        self.start_auto_hide()
         self.apply_transparency()
 
     def run_small_window(self):
