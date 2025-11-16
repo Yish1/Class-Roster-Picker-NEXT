@@ -33,6 +33,7 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.find_history()
         self.slider_value_changed("init")
         self.apply_translations()
+        self.refresh_bind()
 
         self.enable_tts = None
         self.title_text = None
@@ -58,7 +59,6 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_5.clicked.connect(self.count_name)
         self.pushButton_6.clicked.connect(lambda: os.system(
             "start https://cmxz.top/ktdmq#toc-head-17"))
-        self.comboBox_2.currentIndexChanged.connect(self.change_language)
         self.pushButton_12.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path, 'name'))))
         self.pushButton_15.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path, 'name'))))
         self.pushButton_10.clicked.connect(lambda: self.open_fold((os.path.join(state.appdata_path,'dmmusic'))))
@@ -74,6 +74,8 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
         self.pushButton_18.clicked.connect(self.save_allconfig)
         self.pushButton_19.clicked.connect(self.load_backup)
         self.pushButton_20.clicked.connect(self.apply_backup)
+        self.pushButton_24.clicked.connect(lambda: self.update_bind_picture("bind"))
+        self.pushButton_25.clicked.connect(lambda: self.update_bind_picture("unbind"))
 
         self.listWidget.itemSelectionChanged.connect(self.read_name_inlist)
         self.listWidget_2.itemSelectionChanged.connect(
@@ -105,6 +107,10 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
 
         self.lineEdit.textChanged.connect(
             lambda text: self.process_config("title_text", text))
+
+        self.comboBox_2.currentIndexChanged.connect(self.change_language)
+        self.comboBox_3.currentIndexChanged.connect(self.check_bind)
+        self.comboBox_4.currentIndexChanged.connect(self.show_bind_picture)
 
         self.pushButton_11.setEnabled(False)
         self.pushButton_13.setEnabled(False)
@@ -142,12 +148,16 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
             self.main_instance.dynamic_speed_preview(current_range)
 
     def tab_changed(self, index):
-        if index != 0 and index != 3:
-            self.frame.hide()
-            if index == 1:
-                self.file_path = self.file_path_bak
-        else:
-            self.frame.show()
+        # 显示/隐藏 保存按钮
+        self.frame.setVisible(index in (0, 3))
+
+        # index==1 时恢复原路径
+        if index == 1:
+            self.file_path = self.file_path_bak
+
+        # index==3 时刷新绑定图片
+        if index == 3:
+            self.refresh_bind()
 
     def read_name_list(self):
         txt_files_name = self.main_instance.read_name_list(1)
@@ -917,7 +927,99 @@ class SettingsWindow(QtWidgets.QMainWindow, Ui_Settings):  # 设置窗口
     def apply_smwindow_transparency(self):
         value = self.horizontalSlider_2.value()
         self.label_18.setText(f"{value}%%")
+
+        if state.small_window_flag is None:
+            state.small_window_flag = self.small_window.run_small_window()
+            log_print("小窗已启动")
+
         self.small_window.stop_auto_hide()
         self.small_window.apply_transparency(value)
         self.process_config("small_window_transparent", value)
 
+    def refresh_picture_list(self):
+        pic_path = os.path.join(state.appdata_path, "images")
+        pic_name = [filename for filename in os.listdir(
+            pic_path) if filename.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))]
+
+        return pic_name
+
+    def check_bind(self):
+        # 清洗 None
+        state.bind_picture = state.bind_picture.replace("None,", "").replace("None", "")
+
+        # 构建绑定字典
+        state.bind_picture_dict = {
+            k: v for k, v in (
+                item.split(":", 1) for item in state.bind_picture.split(",") if ":" in item
+            )
+        }
+
+        name = self.comboBox_3.currentText()
+        bound_pic = state.bind_picture_dict.get(name)
+
+        for i in range(self.comboBox_4.count()):
+            clean = self.comboBox_4.itemText(i).replace(_(" (当前绑定)"), "")
+
+            if clean == bound_pic:
+                self.comboBox_4.setItemText(i, clean + _(" (当前绑定)"))
+                self.comboBox_4.setCurrentIndex(i)
+            else:
+                self.comboBox_4.setItemText(i, clean)
+
+        self.show_bind_picture()
+    def refresh_bind(self):
+        name_list = self.refresh_name_list()
+        self.comboBox_3.clear()
+        self.comboBox_3.addItems(name_list)
+
+        pic_list = self.refresh_picture_list()
+        self.comboBox_4.clear()
+        self.comboBox_4.addItems(pic_list)
+
+        self.check_bind()
+
+        # self.pushButton_24.setEnabled(False)
+        # self.pushButton_25.setEnabled(False)  
+
+    def show_bind_picture(self):
+        pic_name = self.comboBox_4.currentText()
+        if not pic_name:
+            return
+        pic_name = pic_name.replace(_(" (当前绑定)"), "")
+
+        pic_path = os.path.join(state.appdata_path, "images", pic_name)
+        pix = QtGui.QPixmap(pic_path)
+        if pix.isNull():
+            log_print("无法加载图片:", pic_path)
+            return
+
+        self.label_17.setPixmap(
+            pix.scaled(self.label_17.size(), QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+        )
+
+    def update_bind_picture(self, mode):
+        '''
+        绑定名单与图片:
+        配置文件 bind_picture 格式:["名单1:图片1","名单2:图片2",...]
+        '''
+        name = self.comboBox_3.currentText()
+        pic = self.comboBox_4.currentText().replace(_(" (当前绑定)"), "")
+
+        # 构建绑定字典
+        items = [i for i in state.bind_picture.replace("None", "").split(",") if ":" in i]
+        state.bind_picture_dict = dict(item.split(":", 1) for item in items)
+
+        # 绑定 or 解绑
+        if mode == "bind":
+            state.bind_picture_dict[name] = pic
+            msg = (_("已成功将 图片 \"%s\" 绑定至 名单 \"%s\"！\n\nTips：要使绑定生效，还需在左侧背景设置中选择 ·自定义· ") % (pic, name), _("绑定成功"))
+        elif mode == "unbind":
+            state.bind_picture_dict.pop(name, None)
+            msg = (_("已成功将名单 \"%s\" 的图片解绑！") % name, _("解绑成功"))
+
+        # 保存配置
+        state.bind_picture = ",".join(f"{k}:{v}" for k, v in state.bind_picture_dict.items())
+        self.main_instance.update_config("bind_picture", state.bind_picture)
+
+        self.main_instance.show_message(*msg)
+        self.check_bind()

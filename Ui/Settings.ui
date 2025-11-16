@@ -1174,7 +1174,7 @@ p, li { white-space: pre-wrap; }
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>120</height>
+           <height>135</height>
           </size>
          </property>
          <property name="title">
@@ -1229,30 +1229,7 @@ p, li { white-space: pre-wrap; }
           <string>绑定背景图片与名单</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_27">
-          <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="label_15">
-            <property name="text">
-             <string>名单</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <spacer name="horizontalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="3" column="0" colspan="4">
+          <item row="3" column="0" colspan="3">
            <widget class="QLabel" name="label_17">
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
@@ -1265,30 +1242,17 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="2">
-           <widget class="QLabel" name="label_16">
-            <property name="text">
-             <string>背景图片</string>
+          <item row="1" column="2">
+           <widget class="QComboBox" name="comboBox_4">
+            <property name="minimumSize">
+             <size>
+              <width>130</width>
+              <height>30</height>
+             </size>
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
-           <spacer name="horizontalSpacer_5">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="2" column="0" colspan="4">
+          <item row="2" column="0" colspan="3">
            <widget class="QFrame" name="frame_12">
             <property name="maximumSize">
              <size>
@@ -1303,25 +1267,6 @@ p, li { white-space: pre-wrap; }
              <enum>QFrame::Raised</enum>
             </property>
             <layout class="QGridLayout" name="gridLayout_20">
-             <item row="0" column="0">
-              <widget class="QPushButton" name="pushButton_24">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>32</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>绑定</string>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="1">
               <widget class="QPushButton" name="pushButton_25">
                <property name="sizePolicy">
@@ -1341,11 +1286,49 @@ p, li { white-space: pre-wrap; }
                </property>
               </widget>
              </item>
+             <item row="0" column="0">
+              <widget class="QPushButton" name="pushButton_24">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>绑定</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </item>
-          <item row="0" column="3">
+          <item row="0" column="0" colspan="2">
+           <widget class="QLabel" name="label_15">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>名单</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
            <widget class="QComboBox" name="comboBox_3">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="minimumSize">
              <size>
               <width>130</width>
@@ -1354,13 +1337,16 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="1" column="3">
-           <widget class="QComboBox" name="comboBox_4">
-            <property name="minimumSize">
-             <size>
-              <width>130</width>
-              <height>30</height>
-             </size>
+          <item row="1" column="0" colspan="2">
+           <widget class="QLabel" name="label_16">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>背景图片</string>
             </property>
            </widget>
           </item>
@@ -1377,15 +1363,15 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="minimumSize">
           <size>
-           <width>0</width>
-           <height>250</height>
+           <width>325</width>
+           <height>240</height>
           </size>
          </property>
          <property name="title">
           <string>个性化设置</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_19">
-          <item row="7" column="0" colspan="2">
+          <item row="5" column="0" colspan="2">
            <widget class="QLineEdit" name="lineEdit">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -1407,73 +1393,6 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="placeholderText">
              <string>幸运儿是:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0" colspan="2">
-           <widget class="QLabel" name="label_7">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>启动时标题:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_11">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>主题</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0" colspan="2">
-           <widget class="QComboBox" name="comboBox">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>30</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="label">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>背景图片</string>
             </property>
            </widget>
           </item>
@@ -1499,6 +1418,50 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="text">
              <string>背景图片目录</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="2">
+           <widget class="QLabel" name="label_7">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>启动时标题:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="2">
+           <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>背景图片</string>
             </property>
            </widget>
           </item>

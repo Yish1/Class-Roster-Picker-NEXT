@@ -14,8 +14,6 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.setupUi(self)  # 初始化UI
         self.setWindowIcon(QtGui.QIcon(':/icons/picker.ico'))
         self.main_instance = main_instance
-
-    def run_small_window(self):
         self.setMinimumSize(QtCore.QSize(322, 191))
         # 设置半透明背景
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -55,6 +53,7 @@ class smallWindow(QtWidgets.QMainWindow, Ui_smallwindow):  # 小窗模式i
         self.start_auto_hide()
         self.apply_transparency()
 
+    def run_small_window(self):
         self.show()
         return self
 

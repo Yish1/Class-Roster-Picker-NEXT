@@ -43,8 +43,9 @@ class AppState:
         self.language_value: Optional[str] = None
         self.need_move_config: Optional[str] = None # 是否需要移动配置文件
         self.small_window_transparent: Optional[int] = None  # 小窗口透明度 1-100
-        self.theme_id: Optional[int] = None       # 主题ID
+        # self.theme_id: Optional[int] = None       # 主题ID
         self.saved_size: Optional[str] = None    # 窗口大小记录
+        self.bind_picture: Optional[str] = None  # 绑定背景图片
         
         # ============ 运行时变量 ============
         self.appdata_path: Optional[str] = None   # AppData 路径
@@ -65,6 +66,7 @@ class AppState:
         self.name_path: Optional[str] = None
         self.selected_file: Optional[str] = None
         self.connect: bool = False
+        self.bind_picture_dict = {}  # 名单-图片 绑定字典
         
         # ============ 窗口标识符 ============
         self.windows_move_flag: Optional[bool] = None

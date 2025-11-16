@@ -223,18 +223,41 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
 
     def set_bgimg(self):
         self.label_6.setText("")
-        if state.bgimg == 2:
+        
+        if state.bgimg == 2: # 自定义背景
             folder_path = os.path.join(state.appdata_path, 'images')
             os.makedirs(folder_path, exist_ok=True)
             file_list = os.listdir(folder_path)
-            if not file_list:
+
+            if not file_list: # 文件夹为空, 就约战壁纸
                 log_print("要使用自定义背景功能，请在 %s 中放入图片文件" % folder_path)
                 self.frame.setStyleSheet("#frame {\n"
                                          "border-image: url(:/images/(1070).webp);"
                                          "border-radius: 28px;"
                                          "}")
                 return
+
             self.label_6.setText(_("自定义背景"))
+
+            if state.bind_picture != "None" and ":" in state.bind_picture and state.selected_file:
+                # 构建绑定字典
+                items = [i for i in state.bind_picture.replace("None", "").split(",") if ":" in i]
+                state.bind_picture_dict = dict(item.split(":", 1) for item in items)
+                pic_name = state.bind_picture_dict.get(state.selected_file, None)
+
+                if pic_name is not None:
+                    bind_path = os.path.join(folder_path, pic_name)
+                    bind_path = bind_path.replace("\\", "/")
+
+                    if os.path.exists(bind_path):
+                        self.label_6.setText(_("自定义绑定背景"))
+                        self.frame.setStyleSheet("#frame {\n"
+                                                f"border-image: url('{bind_path}');"
+                                                "border-radius: 28px;"
+                                                "}")
+                        
+                        return
+                
             random_file = random.choice(file_list)
             log_print(random_file)
             
@@ -244,12 +267,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
                                      f"border-image: url('{file_path}');"
                                      "border-radius: 28px;"
                                      "}")
-        elif state.bgimg == 1 or state.bgimg == 0:
+            
+        elif state.bgimg == 1 or state.bgimg == 0: # eva背景
             self.frame.setStyleSheet("#frame {\n"
                                      "border-image: url(:/images/eva.webp);"
                                      "border-radius: 28px;"
                                      "}")
-        elif state.bgimg == 3:
+            
+        elif state.bgimg == 3: # 纯色背景
             self.frame.setStyleSheet("#frame {\n"
                                      "background-color: rgba(42, 45, 47, 0.92);\n"
                                      "border-radius: 28px;"
@@ -269,7 +294,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
         else:
             if hasattr(self, "settings_window"):
                 self.settings_window.activateWindow()
-                
+
     def closeEvent(self, event):
         # 关闭其他窗口的代码
         try:
@@ -384,6 +409,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             self.listWidget.setCurrentRow(self.listWidget.count() - 1)
 
         self.update_name_listwidget()
+        self.set_bgimg()
 
     def update_name_listwidget(self):
         """更新名单列表 Widget_2"""
@@ -424,52 +450,50 @@ class MainWindow(QtWidgets.QMainWindow, Ui_CRPmain):
             log_print(f"不重复名单列表已保存 {state.non_repetitive_list}")
 
     def read_config(self):
-        config = {}
         config_path = os.path.join(state.appdata_path, 'config.ini')
+
+        # 配置文件不存在，创建空文件
         if not os.path.exists(config_path):
-            with open(config_path, 'w', encoding='utf-8') as file:
-                file.write("")
+            open(config_path, 'w', encoding='utf-8').close()
 
         config = read_config_file(config_path)
+
+        # 配置项表：key → (state属性名, 默认值, 是否需要 int)
+        config_map = {
+            'language': ('language_value', 'zh_CN', False),
+            'allownametts': ('allownametts', 1, True),
+            'checkupdate': ('checkupdate', 2, True),
+            'bgimg': ('bgimg', 1, True),
+            'last_name_list': ('last_name_list', "None", False),
+            'latest_version': ('latest_version', 0, False),
+            'non_repetitive': ('non_repetitive', 1, True),
+            'bgmusic': ('bgmusic', 0, True),
+            'first_use': ('first_use', 0, True),
+            'inertia_roll': ('inertia_roll', 1, True),
+            'roll_speed': ('roll_speed', 80, True),
+            'title_text': ('title_text', _("幸运儿是:"), False),
+            'need_move_config': ('need_move_config', 1, True),
+            'small_window_transparent': ('small_window_transparent', 80, True),
+            'saved_size': ('saved_size', "905,405", False),
+            'bind_picture': ('bind_picture', "None", False),
+        }
+
         try:
-            state.language_value = config.get('language') if config.get(
-                'language') else self.update_config("language", "zh_CN", "w!")
-            state.allownametts = int(config.get('allownametts')) if config.get(
-                'allownametts') else self.update_config("allownametts", 1, "w!")
-            state.checkupdate = int(config.get('checkupdate')) if config.get(
-                'checkupdate') else self.update_config("checkupdate", 2, "w!")
-            state.bgimg = int(config.get('bgimg')) if config.get(
-                'bgimg') else self.update_config("bgimg", 1, "w!")
-            state.last_name_list = config.get('last_name_list') if config.get(
-                'last_name_list') else self.update_config("last_name_list", "None", "w!")
-            state.latest_version = config.get('latest_version') if config.get(
-                'latest_version') else self.update_config("latest_version", 0, "w!")
-            state.non_repetitive = int(config.get('non_repetitive')) if config.get(
-                'non_repetitive') else self.update_config("non_repetitive", 1, "w!")
-            state.bgmusic = int(config.get('bgmusic')) if config.get(
-                'bgmusic') else self.update_config("bgmusic", 0, "w!")
-            state.first_use = int(config.get('first_use')) if config.get(
-                'first_use') else self.update_config("first_use", 0, "w!")
-            state.inertia_roll = int(config.get('inertia_roll')) if config.get(
-                'inertia_roll') else self.update_config("inertia_roll", 1, "w!")
-            state.roll_speed = int(config.get('roll_speed')) if config.get(
-                'roll_speed') else self.update_config("roll_speed", "80", "w!")
-            state.title_text = config.get('title_text') if config.get(
-                'title_text') else _("幸运儿是:")
-            state.need_move_config = int(config.get('need_move_config')) if config.get(
-                'need_move_config') else self.update_config("need_move_config", 1, "w!")
-            state.theme_id = int(config.get('theme_id')) if config.get(
-                'theme_id') else self.update_config("theme_id", 1, "w!")
-            state.small_window_transparent = int(config.get('small_window_transparent')) if config.get(
-                'small_window_transparent') else self.update_config("small_window_transparent", 80, "w!")
-            state.saved_size = config.get('saved_size') if config.get(
-                'saved_size') else self.update_config("saved_size", "905,405", "w!")
+            for key, (state_attr, default, need_int) in config_map.items():
+                val = config.get(key)
+                if val is None:
+                    # 写入默认值
+                    self.update_config(key, default, mode="w!")
+                    setattr(state, state_attr, default)
+                else:
+                    setattr(state, state_attr, int(val) if need_int else val)
 
         except Exception as e:
-            log_print(f"配置文件读取失败，已重置无效为默认值！{e}")
+            log_print(f"配置文件错误，重置为默认：{e}")
             self.show_message(_("配置文件读取失败，已重置为默认值！\n%s") % e, _("读取配置文件失败！"))
             os.remove(config_path)
-            self.read_config()
+            return self.read_config()
+
         return config
 
     def update_config(self, variable, new_value, mode=None):
